@@ -15,6 +15,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
@@ -48,6 +49,7 @@ import javax.crypto.spec.SecretKeySpec;
 // For this example, I will include the logic assuming Bouncy Castle is available,
 // but will also provide a fallback/warning if it's not.
 import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.interfaces.ECPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.ECPublicKeySpec;
@@ -235,7 +237,7 @@ public class SatocashNfcClient {
             secureRandom.nextBytes(ivRandom);
         }
 
-        public byte[] generateClientKeypair() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+        public byte[] generateClientKeypair() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchProviderException {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", BouncyCastleProvider.PROVIDER_NAME);
             keyGen.initialize(new ECGenParameterSpec("secp256k1"), secureRandom);
             KeyPair keyPair = keyGen.generateKeyPair();
@@ -340,7 +342,7 @@ public class SatocashNfcClient {
                 keyAgreement.init(clientPrivateKey);
                 keyAgreement.doPhase(cardEphemeralPublicKey, true);
                 sharedSecret = keyAgreement.generateSecret();
-            } catch (InvalidKeyException e) {
+            } catch (InvalidKeyException | NoSuchProviderException e) {
                 throw new SatocashException("ECDH key agreement failed: " + e.getMessage(), SW_UNKNOWN_ERROR);
             }
 
@@ -1118,6 +1120,8 @@ public class SatocashNfcClient {
                  InvalidKeySpecException e) {
             Log.e(TAG, "Secure channel initialization failed: " + e.getMessage(), e);
             throw new SatocashException("Secure channel initialization failed: " + e.getMessage(), SW_INTERNAL_ERROR);
+        } catch (NoSuchProviderException e) {
+            throw new RuntimeException(e);
         }
     }
 
