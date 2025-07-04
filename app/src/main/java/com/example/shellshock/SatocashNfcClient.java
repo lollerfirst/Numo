@@ -27,8 +27,12 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyAgreement;
 import javax.crypto.Mac;
 import javax.crypto.NoSuchPaddingException;
@@ -102,7 +106,7 @@ public class SatocashNfcClient {
     private boolean secureChannelActive = false;
     private boolean authenticated = false;
 
-    // AID for the Satocash applet (example, adjust as needed)
+    // AID for the Satocash applet
     private static final byte[] SATOCASH_AID = {
             (byte) 0xA0, 0x00, 0x00, 0x00, 0x04, 0x53, 0x61, 0x74, 0x6F, 0x63, 0x61, 0x73, 0x68
     };
@@ -240,8 +244,8 @@ public class SatocashNfcClient {
 
             // Export public key in uncompressed format (0x04 || X || Y)
             // This requires Bouncy Castle's specific EC public key handling
-            if (clientPublicKey instanceof org.bouncycastle.jce.interfaces.ECPublicKey) {
-                org.bouncycastle.jce.interfaces.ECPublicKey bcPubKey = (org.bouncycastle.jce.interfaces.ECPublicKey) clientPublicKey;
+            if (clientPublicKey != null) {
+                ECPublicKey bcPubKey = (org.bouncycastle.jce.interfaces.ECPublicKey) clientPublicKey;
                 return bcPubKey.getQ().getEncoded(false); // false for uncompressed
             } else {
                 Log.e(TAG, "Client public key is not a Bouncy Castle ECPublicKey. Cannot get uncompressed bytes.");
@@ -354,7 +358,7 @@ public class SatocashNfcClient {
             return ivBuffer.array();
         }
 
-        public byte[] encryptCommand(byte[] commandApdu) throws SatocashException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, IOException {
+        public byte[] encryptCommand(byte[] commandApdu) throws SatocashException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, IOException, IllegalBlockSizeException, BadPaddingException {
             if (!initialized) {
                 throw new SatocashException("Secure channel not initialized", SW_SECURE_CHANNEL_UNINITIALIZED);
             }
@@ -393,7 +397,7 @@ public class SatocashNfcClient {
             return secureDataBuffer.array();
         }
 
-        public byte[] decryptResponse(byte[] encryptedResponse) throws SatocashException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException {
+        public byte[] decryptResponse(byte[] encryptedResponse) throws SatocashException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
             if (!initialized) {
                 throw new SatocashException("Secure channel not initialized", SW_SECURE_CHANNEL_UNINITIALIZED);
             }
@@ -449,7 +453,7 @@ public class SatocashNfcClient {
         }
     }
 
-    private IsoDep mIsoDep;
+    private final IsoDep mIsoDep;
     private byte[] selectedAid = null;
 
     public SatocashNfcClient(Tag tag) throws IOException {
@@ -560,7 +564,8 @@ public class SatocashNfcClient {
             }
 
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException |
-                 InvalidAlgorithmParameterException | IOException e) {
+                 InvalidAlgorithmParameterException | IOException | IllegalBlockSizeException |
+                 BadPaddingException e) {
             Log.e(TAG, "Secure APDU encryption/decryption error: " + e.getMessage(), e);
             throw new SatocashException("Secure APDU processing error: " + e.getMessage(), SW_INTERNAL_ERROR);
         }
@@ -869,7 +874,7 @@ public class SatocashNfcClient {
         public int unit;
     }
 
-    public java.util.List<KeysetInfo> exportKeysets(java.util.List<Integer> keysetIndices) throws SatocashException {
+    public List<KeysetInfo> exportKeysets(List<Integer> keysetIndices) throws SatocashException {
         Log.d(TAG, "Exporting keysets: " + keysetIndices.toString() + "...");
         ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
         dataStream.write((byte) keysetIndices.size());
@@ -878,7 +883,7 @@ public class SatocashNfcClient {
         }
 
         byte[] response = sendSecureApdu(CLA_BITCOIN, INS_SATOCASH_EXPORT_KEYSET, (byte) 0x00, (byte) 0x00, dataStream.toByteArray());
-        java.util.List<KeysetInfo> keysets = new java.util.ArrayList<>();
+        List<KeysetInfo> keysets = new ArrayList<>();
         ByteBuffer buffer = ByteBuffer.wrap(response);
 
         while (buffer.remaining() >= 11) { // 1 byte index + 8 bytes ID + 1 byte mint_index + 1 byte unit
@@ -937,7 +942,7 @@ public class SatocashNfcClient {
         public byte[] secret;
     }
 
-    public java.util.List<ProofInfo> exportProofs(java.util.List<Integer> proofIndices) throws SatocashException {
+    public List<ProofInfo> exportProofs(List<Integer> proofIndices) throws SatocashException, IOException {
         Log.d(TAG, "Exporting proofs: " + proofIndices.toString() + "...");
         ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
         dataStream.write((byte) proofIndices.size());
@@ -945,7 +950,7 @@ public class SatocashNfcClient {
             dataStream.write(shortToBytes((short) idx));
         }
 
-        java.util.List<ProofInfo> allProofs = new java.util.ArrayList<>();
+        List<ProofInfo> allProofs = new ArrayList<>();
 
         // Step 1: Initialize
         byte[] response = sendSecureApdu(CLA_BITCOIN, INS_SATOCASH_EXPORT_PROOFS, (byte) 0x00, OP_INIT, dataStream.toByteArray());
@@ -960,7 +965,7 @@ public class SatocashNfcClient {
                 if (response == null || response.length == 0) {
                     break; // No more data
                 }
-                java.util.List<ProofInfo> currentProofs = parseProofResponse(response);
+                List<ProofInfo> currentProofs = parseProofResponse(response);
                 if (currentProofs.isEmpty()) {
                     break; // No more data
                 }
@@ -976,8 +981,8 @@ public class SatocashNfcClient {
         return allProofs;
     }
 
-    private java.util.List<ProofInfo> parseProofResponse(byte[] response) {
-        java.util.List<ProofInfo> proofs = new java.util.ArrayList<>();
+    private List<ProofInfo> parseProofResponse(byte[] response) {
+        List<ProofInfo> proofs = new ArrayList<>();
         ByteBuffer buffer = ByteBuffer.wrap(response);
 
         while (buffer.remaining() >= 2 + 1 + 1 + 1 + 33 + 32) { // proof_index (2) + state (1) + keyset_index (1) + amount_exponent (1) + unblinded_key (33) + secret (32) = 70 bytes
@@ -997,7 +1002,7 @@ public class SatocashNfcClient {
         return proofs;
     }
 
-    public byte[] getProofInfo(Unit unit, ProofInfoType infoType, int indexStart, int indexSize) throws SatocashException {
+    public byte[] getProofInfo(Unit unit, ProofInfoType infoType, int indexStart, int indexSize) throws SatocashException, IOException {
         Log.d(TAG, "Getting proof info: Unit=" + unit.name() + ", InfoType=" + infoType.name() + "...");
         ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
         dataStream.write(shortToBytes((short) indexStart));
@@ -1110,7 +1115,7 @@ public class SatocashNfcClient {
             Log.d(TAG, "Secure channel initialized successfully!");
             return true;
         } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException |
-                 InvalidKeySpecException | NoSuchPaddingException | IOException e) {
+                 InvalidKeySpecException e) {
             Log.e(TAG, "Secure channel initialization failed: " + e.getMessage(), e);
             throw new SatocashException("Secure channel initialization failed: " + e.getMessage(), SW_INTERNAL_ERROR);
         }
@@ -1123,9 +1128,9 @@ public class SatocashNfcClient {
         public int status;
     }
 
-    public java.util.List<LogEntry> printLogs() throws SatocashException {
+    public List<LogEntry> printLogs() throws SatocashException {
         Log.d(TAG, "Getting operation logs...");
-        java.util.List<LogEntry> allLogs = new java.util.ArrayList<>();
+        List<LogEntry> allLogs = new ArrayList<>();
 
         // Initialize
         byte[] response = sendSecureApdu(CLA_BITCOIN, INS_PRINT_LOGS, (byte) 0x00, OP_INIT, null);
@@ -1149,7 +1154,7 @@ public class SatocashNfcClient {
                 if (response == null || response.length == 0) {
                     break;
                 }
-                java.util.List<LogEntry> currentLogs = parseLogEntry(response);
+                List<LogEntry> currentLogs = parseLogEntry(response);
                 if (currentLogs.isEmpty()) {
                     break;
                 }
@@ -1165,8 +1170,8 @@ public class SatocashNfcClient {
         return allLogs;
     }
 
-    private java.util.List<LogEntry> parseLogEntry(byte[] logData) {
-        java.util.List<LogEntry> logs = new java.util.ArrayList<>();
+    private List<LogEntry> parseLogEntry(byte[] logData) {
+        List<LogEntry> logs = new ArrayList<>();
         ByteBuffer buffer = ByteBuffer.wrap(logData);
         while (buffer.remaining() >= 7) { // Each log entry is 7 bytes
             LogEntry entry = new LogEntry();
@@ -1241,7 +1246,7 @@ public class SatocashNfcClient {
     }
 
     // Helper methods
-    private String bytesToHex(byte[] bytes) {
+    private static String bytesToHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
             sb.append(String.format("%02X", b));
@@ -1249,7 +1254,7 @@ public class SatocashNfcClient {
         return sb.toString();
     }
 
-    private byte[] hexStringToByteArray(String s) {
+    private static byte[] hexStringToByteArray(String s) {
         int len = s.length();
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
@@ -1259,7 +1264,7 @@ public class SatocashNfcClient {
         return data;
     }
 
-    private byte[] shortToBytes(short s) {
+    private static byte[] shortToBytes(short s) {
         return new byte[]{(byte) ((s >> 8) & 0xFF), (byte) (s & 0xFF)};
     }
 }
