@@ -57,4 +57,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.bcprov.jdk15on)
+    implementation(files("libs/cashu-java-sdk-1.0-SNAPSHOT.jar"))
 }
