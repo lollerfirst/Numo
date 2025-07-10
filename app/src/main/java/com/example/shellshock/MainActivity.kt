@@ -39,7 +39,8 @@ class MainActivity : ComponentActivity() {
         }
 
         // Handle NFC intent if the app was launched by an NFC tag
-        if (intent != null && NfcAdapter.ACTION_TECH_DISCOVERED == intent.action) {
+        // The manifest filter with aid-filter will ensure this intent is already filtered
+        if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action) {
             handleNfcIntent(intent)
         }
     }
@@ -47,6 +48,8 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         // Enable foreground dispatch to give this app priority for NFC intents
+        // This is still useful if the app is already running and a new tag is discovered.
+        // The techLists array ensures only IsoDep tags are dispatched.
         nfcAdapter?.let {
             val pendingIntent = android.app.PendingIntent.getActivity(
                 this, 0, Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
@@ -66,12 +69,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        if (intent != null && NfcAdapter.ACTION_TECH_DISCOVERED == intent.action) {
+        // The manifest filter with aid-filter will ensure this intent is already filtered
+        if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action) {
             handleNfcIntent(intent)
         }
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI19n")
     private fun handleNfcIntent(intent: Intent) {
         val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
         if (tag != null) {
@@ -89,6 +93,8 @@ class MainActivity : ComponentActivity() {
                     // based on your application's logic.
 
                     // 1. Select applet
+                    // This step might be redundant if the AID filter already selected it,
+                    // but it's good practice to explicitly select it or confirm.
                     satocashClient.selectApplet(SatocashNfcClient.SATOCASH_AID)
                     withContext(Dispatchers.Main) {
                         textView.text = "Satocash Applet found and selected!"

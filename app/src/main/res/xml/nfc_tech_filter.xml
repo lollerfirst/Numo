@@ -3,4 +3,6 @@
     <tech-list>
         <tech-alias>android.nfc.tech.IsoDep</tech-alias>
     </tech-list>
+    <!-- Add this aid-filter for the Satocash AID -->
+    <aid-filter android:name="A0000000045361746F63617368" />
 </resources>
