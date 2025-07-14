@@ -44,6 +44,8 @@ class MainActivity : ComponentActivity() {
             textView.text = "NFC is not available on this device."
             nfcScanHint.visibility = View.GONE // Hide hint if NFC is not available
             return
+        } else {
+            nfcScanHint.visibility = View.VISIBLE // Show hint initially if NFC is available
         }
 
         // Handle NFC intent if the app was launched by an NFC tag
@@ -67,8 +69,7 @@ class MainActivity : ComponentActivity() {
             it.enableForegroundDispatch(this, pendingIntent, null, techLists)
             Log.d(TAG, "Foreground dispatch enabled.")
         }
-        // Ensure hint is visible when resuming if no card is present
-        nfcScanHint.visibility = View.VISIBLE
+        // Do NOT set nfcScanHint.visibility here. It's handled by handleNfcIntent and finally block.
         textView.text = "" // Clear previous card info
     }
 
