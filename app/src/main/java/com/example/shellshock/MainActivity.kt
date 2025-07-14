@@ -113,11 +113,13 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             } else {
-                withContext(Dispatchers.Main) {
-                    textView.text = "Please enter an amount greater than 0."
-                    textView.visibility = View.VISIBLE
-                    keypadLayout.visibility = View.GONE
-                    nfcScanHint.visibility = View.GONE
+                lifecycleScope.launch(Dispatchers.IO) {
+                    withContext(Dispatchers.Main) {
+                        textView.text = "Please enter an amount greater than 0."
+                        textView.visibility = View.VISIBLE
+                        keypadLayout.visibility = View.GONE
+                        nfcScanHint.visibility = View.GONE
+                    }
                 }
             }
         }

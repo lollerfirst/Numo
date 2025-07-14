@@ -171,7 +171,7 @@ public class SatocashWallet {
                                     output,
                                     selectedKeysetId,
                                     pointToHex(computeB_(hashToCurve(secret.getBytes()), blindingFactor), true),
-                                    ""
+                                    Optional.empty()
                             );
                             return new Pair<>(blindedMessage, new Pair<>(secret, blindingFactor));
                         })
