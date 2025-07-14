@@ -17,6 +17,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.security.SecureRandom
+import android.app.AlertDialog
+import android.text.InputType
+import android.widget.LinearLayout
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 class MainActivity : ComponentActivity() {
     private val TAG = "com.example.shellshock.MainActivity"
@@ -116,19 +120,31 @@ class MainActivity : ComponentActivity() {
                     Log.d(TAG, "Card Status: $status")
 
                     // 4. Verify PIN (example)
-                    try {
-                        val pin = "1234" // Replace with actual PIN input
-                        satocashClient.verifyPin(pin, 0)
-                        withContext(Dispatchers.Main) {
-                            textView.append("\nPIN Verified! Card Ready.")
-                        }
-                        Log.d(TAG, "PIN Verified.")
-                    } catch (e: SatocashNfcClient.SatocashException) {
-                        withContext(Dispatchers.Main) {
-                            textView.append("\nPIN Verification Failed: ${e.message} (SW: ${String.format("0x%04X", e.sw)})")
-                        }
-                        Log.e(TAG, "PIN Verification Failed: ${e.message} (SW: ${String.format("0x%04X", e.sw)})")
+                    // Prompt for PIN using a dialog
+                    val pin = withContext(Dispatchers.Main) {
+                        showPinInputDialog()
                     }
+
+                    if (pin != null) {
+                        try {
+                            satocashClient.verifyPin(pin, 0)
+                            withContext(Dispatchers.Main) {
+                                textView.append("\nPIN Verified! Card Ready.")
+                            }
+                            Log.d(TAG, "PIN Verified.")
+                        } catch (e: SatocashNfcClient.SatocashException) {
+                            withContext(Dispatchers.Main) {
+                                textView.append("\nPIN Verification Failed: ${e.message} (SW: ${String.format("0x%04X", e.sw)})")
+                            }
+                            Log.e(TAG, "PIN Verification Failed: ${e.message} (SW: ${String.format("0x%04X", e.sw)})")
+                        }
+                    } else {
+                        withContext(Dispatchers.Main) {
+                            textView.append("\nPIN entry cancelled.")
+                        }
+                        Log.d(TAG, "PIN entry cancelled by user.")
+                    }
+
 
                     // Example: Get Card Label
                     try {
@@ -181,6 +197,96 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private suspend fun showPinInputDialog(): String? = withContext(Dispatchers.Main) {
+        return@withContext suspendCancellableCoroutine { continuation ->
+            val builder = AlertDialog.Builder(this@MainActivity)
+            builder.setTitle("Enter PIN")
+
+            val input = EditText(this@MainActivity)
+            input.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
+            input.hint = "PIN"
+
+            val layout = LinearLayout(this@MainActivity)
+            layout.orientation = LinearLayout.VERTICAL
+            layout.setPadding(50, 20, 50, 20) // Add some padding
+            layout.addView(input)
+
+            // Add a simple numeric keypad
+            val keypadLayout = LinearLayout(this@MainActivity)
+            keypadLayout.orientation = LinearLayout.VERTICAL
+            keypadLayout.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+
+            val buttons = arrayOf(
+                arrayOf("1", "2", "3"),
+                arrayOf("4", "5", "6"),
+                arrayOf("7", "8", "9"),
+                arrayOf("", "0", "DEL") // Empty string for spacing, DEL for backspace
+            )
+
+            for (row in buttons) {
+                val rowLayout = LinearLayout(this@MainActivity)
+                rowLayout.orientation = LinearLayout.HORIZONTAL
+                rowLayout.layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { weight = 1.0f }
+
+                for (text in row) {
+                    val button = Button(this@MainActivity)
+                    button.text = text
+                    button.layoutParams = LinearLayout.LayoutParams(
+                        0,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply { weight = 1.0f }
+                    button.setOnClickListener {
+                        when (text) {
+                            "DEL" -> {
+                                if (input.text.isNotEmpty()) {
+                                    input.text = input.text.delete(input.text.length - 1, input.text.length)
+                                }
+                            }
+                            "" -> { /* Do nothing for empty button */ }
+                            else -> {
+                                input.append(text)
+                            }
+                        }
+                    }
+                    rowLayout.addView(button)
+                }
+                keypadLayout.addView(rowLayout)
+            }
+            layout.addView(keypadLayout)
+
+            builder.setView(layout)
+
+            builder.setPositiveButton("OK") { dialog, _ ->
+                val pin = input.text.toString()
+                if (continuation.isActive) {
+                    continuation.resume(pin) {}
+                }
+                dialog.dismiss()
+            }
+            builder.setNegativeButton("Cancel") { dialog, _ ->
+                if (continuation.isActive) {
+                    continuation.resume(null) {}
+                }
+                dialog.cancel()
+            }
+
+            builder.setOnCancelListener {
+                if (continuation.isActive) {
+                    continuation.resume(null) {}
+                }
+            }
+
+            val dialog = builder.create()
+            dialog.show()
         }
     }
 
