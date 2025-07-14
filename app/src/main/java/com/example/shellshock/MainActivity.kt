@@ -33,6 +33,8 @@ class MainActivity : ComponentActivity() {
     private var nfcAdapter: NfcAdapter? = null
 
     private var requestedAmount: Long = 0
+    private var satocashClient: SatocashNfcClient? = null
+    private var satocashWallet: SatocashWallet? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +63,65 @@ class MainActivity : ComponentActivity() {
         }
 
         setupKeypadListeners()
+
+        // Set up the Request Payment button listener here
+        requestPaymentButton.setOnClickListener {
+            if (requestedAmount > 0) {
+                // Launch a coroutine to handle the payment process
+                lifecycleScope.launch(Dispatchers.IO) {
+                    if (satocashClient == null || satocashWallet == null) {
+                        withContext(Dispatchers.Main) {
+                            textView.text = "Please tap an NFC card first."
+                            textView.visibility = View.VISIBLE
+                            keypadLayout.visibility = View.GONE
+                            nfcScanHint.visibility = View.VISIBLE
+                        }
+                        return@launch
+                    }
+
+                    try {
+                        withContext(Dispatchers.Main) {
+                            textView.append("\nRequesting payment for $requestedAmount SAT...")
+                        }
+                        // Ensure PIN is authenticated before requesting payment
+                        // This part assumes PIN is already authenticated or will be handled by getPayment if needed
+                        // For now, we'll assume authentication happens during card detection.
+                        // If getPayment itself needs PIN, it should handle it.
+                        // If not, we need to re-prompt PIN here if not authenticated.
+                        // For simplicity, let's assume the card is ready after initial detection and PIN entry.
+
+                        val receivedProofs: List<Proof> = satocashWallet!!.getPayment(requestedAmount, "SAT").join()
+                        withContext(Dispatchers.Main) {
+                            textView.append("\nPayment successful! Received ${receivedProofs.size} proofs.")
+                            receivedProofs.forEach { proof ->
+                                textView.append("\n  Proof: Amount=${proof.amount}, Keyset=${proof.keysetId}")
+                            }
+                        }
+                        Log.d(TAG, "Payment successful. Received proofs: $receivedProofs")
+                    } catch (e: Exception) {
+                        withContext(Dispatchers.Main) {
+                            textView.append("\nPayment failed: ${e.message}")
+                        }
+                        Log.e(TAG, "Payment failed: ${e.message}", e)
+                    } finally {
+                        // After payment attempt, show keypad again
+                        withContext(Dispatchers.Main) {
+                            keypadLayout.visibility = View.VISIBLE
+                            nfcScanHint.visibility = View.GONE
+                            textView.visibility = View.GONE
+                        }
+                    }
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    textView.text = "Please enter an amount greater than 0."
+                    textView.visibility = View.VISIBLE
+                    keypadLayout.visibility = View.GONE
+                    nfcScanHint.visibility = View.GONE
+                }
+            }
+        }
+
 
         // Handle NFC intent if the app was launched by an NFC tag
         if (NfcAdapter.ACTION_TECH_DISCOVERED == intent.action) {
@@ -142,28 +203,26 @@ class MainActivity : ComponentActivity() {
             Log.d(TAG, "NFC Tag discovered: ${tag.id?.toHexString()}")
 
             lifecycleScope.launch(Dispatchers.IO) {
-                var satocashClient: SatocashNfcClient? = null
-                var satocashWallet: SatocashWallet? = null
                 try {
                     satocashClient = SatocashNfcClient(tag)
-                    satocashClient.connect()
-                    satocashWallet = SatocashWallet(satocashClient)
+                    satocashClient?.connect()
+                    satocashWallet = SatocashWallet(satocashClient!!)
 
-                    satocashClient.selectApplet(SatocashNfcClient.SATOCASH_AID)
+                    satocashClient?.selectApplet(SatocashNfcClient.SATOCASH_AID)
                     withContext(Dispatchers.Main) {
                         textView.text = "Satocash Applet found and selected!"
                     }
                     Log.d(TAG, "Satocash Applet selected.")
 
-                    satocashClient.initSecureChannel()
+                    satocashClient?.initSecureChannel()
                     withContext(Dispatchers.Main) {
                         textView.append("\nSecure Channel Initialized!")
                     }
                     Log.d(TAG, "Secure Channel Initialized.")
 
-                    val status = satocashClient.getStatus()
+                    val status = satocashClient?.getStatus()
                     withContext(Dispatchers.Main) {
-                        textView.append("\nCard Status: ${status["applet_version"]}, PIN tries: ${status["pin_tries_remaining"]}")
+                        textView.append("\nCard Status: ${status?.get("applet_version")}, PIN tries: ${status?.get("pin_tries_remaining")}")
                     }
                     Log.d(TAG, "Card Status: $status")
 
@@ -173,44 +232,39 @@ class MainActivity : ComponentActivity() {
 
                     if (pin != null) {
                         try {
-                            satocashWallet.authenticatePIN(pin).join() // Authenticate using SatocashWallet
+                            satocashWallet?.authenticatePIN(pin)?.join() // Authenticate using SatocashWallet
                             withContext(Dispatchers.Main) {
                                 textView.append("\nPIN Verified! Card Ready.")
                             }
                             Log.d(TAG, "PIN Verified.")
 
-                            // Now, handle the request payment button click
-                            withContext(Dispatchers.Main) {
-                                requestPaymentButton.setOnClickListener {
-                                    if (requestedAmount > 0) {
-                                        lifecycleScope.launch(Dispatchers.IO) {
-                                            try {
-                                                withContext(Dispatchers.Main) {
-                                                    textView.append("\nRequesting payment for $requestedAmount SAT...")
-                                                }
-                                                val receivedProofs: List<Proof> = satocashWallet.getPayment(requestedAmount, "SAT").join()
-                                                withContext(Dispatchers.Main) {
-                                                    textView.append("\nPayment successful! Received ${receivedProofs.size} proofs.")
-                                                    receivedProofs.forEach { proof ->
-                                                        textView.append("\n  Proof: Amount=${proof.amount}, Keyset=${proof.keysetId}")
-                                                    }
-                                                }
-                                                Log.d(TAG, "Payment successful. Received proofs: $receivedProofs")
-                                            } catch (e: Exception) {
-                                                withContext(Dispatchers.Main) {
-                                                    textView.append("\nPayment failed: ${e.message}")
-                                                }
-                                                Log.e(TAG, "Payment failed: ${e.message}", e)
-                                            }
-                                        }
-                                    } else {
-                                        withContext(Dispatchers.Main) {
-                                            textView.append("\nPlease enter an amount greater than 0.")
-                                        }
-                                    }
+                            // Example: Get Card Label
+                            try {
+                                val label = satocashClient?.getCardLabel()
+                                withContext(Dispatchers.Main) {
+                                    textView.append("\nCard Label: $label")
                                 }
-                                // Trigger the button click programmatically if you want it to happen immediately after PIN
-                                // requestPaymentButton.performClick()
+                                Log.d(TAG, "Card Label: $label")
+                            } catch (e: SatocashNfcClient.SatocashException) {
+                                withContext(Dispatchers.Main) {
+                                    textView.append("\nFailed to get card label: ${e.message}")
+                                }
+                                Log.e(TAG, "Failed to get card label: ${e.message}")
+                            }
+
+                            // Example: Import a dummy mint
+                            try {
+                                val dummyMintUrl = "https://dummy.mint.example.com"
+                                val mintIndex = satocashClient?.importMint(dummyMintUrl)
+                                withContext(Dispatchers.Main) {
+                                    textView.append("\nImported mint at index: $mintIndex")
+                                }
+                                Log.d(TAG, "Imported mint at index: $mintIndex")
+                            } catch (e: SatocashNfcClient.SatocashException) {
+                                withContext(Dispatchers.Main) {
+                                    textView.append("\nFailed to import mint: ${e.message}")
+                                }
+                                Log.e(TAG, "Failed to import mint: ${e.message}")
                             }
 
                         } catch (e: RuntimeException) { // Catch RuntimeException from CompletableFuture.join()
