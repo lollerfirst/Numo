@@ -1,0 +1,3 @@
+# android gridlayout existing-buttons ui-configuration
+User wants to use existing buttons (button_1, button_2, etc.) in GridLayout with 3 buttons per row, equal width, tight fit configuration
+

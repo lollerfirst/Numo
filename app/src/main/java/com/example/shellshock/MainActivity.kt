@@ -294,30 +294,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_pos -> {
-                Toast.makeText(this, "Already at Point of Sale", Toast.LENGTH_SHORT).show()
-                if (requestAmount > 0) {
-                    keypadLayout.visibility = View.GONE
-                    nfcScanHint.visibility = View.VISIBLE
-                    textView.visibility = View.VISIBLE
-                    textView.text = "Please tap your card to start the payment of $requestAmount SAT"
-                } else {
-                    keypadLayout.visibility = View.VISIBLE
-                    nfcScanHint.visibility = View.GONE
-                    textView.visibility = View.GONE
-                }
-            }
-            R.id.nav_request_payment -> {
-                Toast.makeText(this, "Request Payment selected", Toast.LENGTH_SHORT).show()
-                if (requestAmount > 0) {
-                    keypadLayout.visibility = View.GONE
-                    nfcScanHint.visibility = View.VISIBLE
-                    textView.visibility = View.VISIBLE
-                    textView.text = "Please tap your card to start the payment of $requestAmount SAT"
-                } else {
-                    keypadLayout.visibility = View.VISIBLE
-                    nfcScanHint.visibility = View.GONE
-                    textView.visibility = View.GONE
-                }
+                // Launch Modern POS Activity
+                val intent = Intent(this, ModernPOSActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_import_proof -> {
                 val intent = Intent(this, ImportProofActivity::class.java)

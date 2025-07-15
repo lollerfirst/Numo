@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import android.app.AlertDialog
+import android.content.res.Configuration
 import android.text.InputType
 import android.widget.LinearLayout
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -67,6 +68,7 @@ class ImportProofActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please enter a Cashu proof token", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
     override fun onResume() {
