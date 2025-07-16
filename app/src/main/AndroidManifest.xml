@@ -25,11 +25,19 @@
             android:name=".ModernPOSActivity"
             android:exported="true"
             android:label="Point of Sale"
-            android:theme="@style/Theme.Shellshock">
+            android:theme="@style/Theme.Shellshock"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            
+            <!-- Intent filter for NFC tag discovery -->
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+            <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/nfc_tech_filter" />
         </activity>
         
         <!-- Original MainActivity - for NFC functionality -->
@@ -49,6 +57,11 @@
         <activity android:name=".ImportProofActivity"
             android:exported="false"
             android:label="Import Proof"
+            android:theme="@style/Theme.Shellshock">
+        </activity>
+        <activity android:name=".TopUpActivity"
+            android:exported="false"
+            android:label="Top Up"
             android:theme="@style/Theme.Shellshock">
         </activity>
     </application>
