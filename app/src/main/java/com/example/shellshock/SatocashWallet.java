@@ -170,8 +170,8 @@ public class SatocashWallet {
                     return new Proof(
                             1L << pf.amountExponent,
                             keysetIndicesToIds.get(pf.keysetIndex),
-                            new StringSecret(bytesToHex(pf.secret).toLowerCase()),
-                            bytesToHex(pf.unblindedKey).toLowerCase(),
+                            new StringSecret(bytesToHex(pf.secret)),
+                            bytesToHex(pf.unblindedKey),
                             Optional.empty(),
                             Optional.empty()
                     );
@@ -228,7 +228,7 @@ public class SatocashWallet {
 
                 // Import changeProofs to card
                 Map<String, Integer> keysetIdsToIndices = transposeMap(keysetIndicesToIds);
-                importProofs(changeProofs, keysetIdsToIndices);
+                importProofs(changeProofs, mintUrl, unit, keysetIdsToIndices);
                 return new Token(receiveProofs, "SAT", mintUrl).encode();
             } catch (SatocashNfcClient.SatocashException | IOException e) {
                 throw new RuntimeException(e);
@@ -313,20 +313,43 @@ public class SatocashWallet {
         });
     }
 
-    private void importProofs(List<Proof> proofs, Map<String, Integer> keysetIdsToIndices) throws SatocashNfcClient.SatocashException {
+    private void importProofs(
+            List<Proof> proofs,
+            String mint,
+            String unit,
+            Map<String, Integer> keysetIdsToIndices
+    ) throws SatocashNfcClient.SatocashException {
         for (Proof proof : proofs) {
+
+            int mintIndex = findMintIndex(mint);
+
+            if (mintIndex >= 16) {
+                throw new RuntimeException("No such mint in this card");
+            }
+
             // Check the keyset is in the card, import otherwise
             if (!keysetIdsToIndices.containsKey(proof.keysetId)) {
-                int index = cardClient.importKeyset(proof.keysetId, 0, SatocashNfcClient.Unit.SAT /* TODO: change this to the actual unit of the keyset*/);
+                int index = cardClient.importKeyset(proof.keysetId, mintIndex, SatocashNfcClient.Unit.valueOf(unit));
                 keysetIdsToIndices.put(proof.keysetId, index);
             }
             cardClient.importProof(
                     keysetIdsToIndices.get(proof.keysetId),
                     ilog2(proof.amount),
                     proof.c,
-                    proof.secret.toString()
+                    ((StringSecret)proof.secret).getSecret()
             );
         }
+    }
+
+    private int findMintIndex(String mint) throws SatocashNfcClient.SatocashException {
+        int i;
+        for (i = 0; i < 16; ++i) {
+            String exportedMint = cardClient.exportMint(i);
+            if (mint.equals(exportedMint)) {
+                break;
+            }
+        }
+        return i;
     }
 
     public static int ilog2(long number) {
