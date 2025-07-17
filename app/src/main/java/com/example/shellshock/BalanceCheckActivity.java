@@ -255,7 +255,7 @@ public class BalanceCheckActivity extends AppCompatActivity {
 
                 int state = proofStates.get(i);
                 Log.d(TAG,"state: " + state);
-                if (state == 0) { // State 0 = unspent
+                if (state == 1) { // State 0 = unspent
 
                         unspentCount++;
                         int amountExponent = amounts.get(i);
