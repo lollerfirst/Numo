@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/windowBackground"
+    android:background="@android:color/black"
     tools:context=".BalanceCheckActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@android:color/transparent"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="Check NFC Balance"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:title="Check Balance"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
@@ -24,7 +24,9 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.4">
 
         <TextView
             android:id="@+id/title_text"
@@ -32,27 +34,29 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
             android:gravity="center"
-            android:text="NFC Card Balance Check"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="24sp"
+            android:text="Ready to Scan"
+            android:textColor="@android:color/white"
+            android:textSize="28sp"
             android:textStyle="bold" />
 
-        <ImageView
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_animation"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="32dp"
-            android:src="@drawable/ic_balance_check"
-            android:tint="@color/textColorPrimary" />
+            app:lottie_rawRes="@raw/nfc_scan"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
             android:gravity="center"
-            android:text="Tap your NFC card to check balance"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="16sp" />
+            android:text="Hold your NFC card near the device."
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/card_info_display"
@@ -63,7 +67,7 @@
             android:gravity="center"
             android:padding="16dp"
             android:background="@drawable/keypad_border"
-            android:textColor="@color/textColorPrimary"
+            android:textColor="@android:color/white"
             android:textSize="16sp"
             android:visibility="gone" />
 
@@ -76,10 +80,27 @@
             android:padding="16dp"
             android:background="@drawable/keypad_border"
             android:textSize="24sp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/success_green"
             android:textStyle="bold"
             android:visibility="gone" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="#2C2C2E"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:text="Back"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -45,6 +45,25 @@
             android:theme="@style/Theme.Shellshock">
         </activity>
         
+        <!-- Classic POS Activity with Number Pad -->
+        <activity android:name=".POSActivity"
+            android:exported="false"
+            android:label="Classic POS"
+            android:theme="@style/Theme.Shellshock"
+            android:parentActivityName=".ModernPOSActivity"
+            android:launchMode="singleTop" >
+            <!-- Parent meta-data for up navigation -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ModernPOSActivity" />
+            <!-- NFC intent filters -->
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+            <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/nfc_tech_filter" />
+        </activity>
+        
         <activity android:name=".BalanceCheckActivity"
             android:exported="false"
             android:label="Check Balance"

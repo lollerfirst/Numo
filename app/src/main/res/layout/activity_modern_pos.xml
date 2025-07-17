@@ -4,84 +4,100 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/windowBackground"
+    android:background="@android:color/black"
     tools:context=".ModernPOSActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@android:color/transparent"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="POS"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:title="Wallet"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/token_display"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/balance_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:padding="8dp"
-        android:background="@drawable/keypad_border"
-        android:gravity="start"
-        android:textIsSelectable="true"
-        android:visibility="gone"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="16sp"
+        app:cardBackgroundColor="#1C1C1E"
+        app:cardCornerRadius="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-    <Button
-        android:id="@+id/copy_token_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:text="Copy Token"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/token_display" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
 
-    <TextView
-        android:id="@+id/amount_display"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Balance"
+                android:textColor="#E5E5EA"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/balance_display"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 sats"
+                android:textColor="@android:color/white"
+                android:textSize="48sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <ListView
+        android:id="@+id/transaction_list"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_margin="16dp"
-        android:gravity="end"
-        android:text="0"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="60sp"
-        app:layout_constraintBottom_toTopOf="@id/keypad"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="16dp"
+        app:layout_constraintBottom_toTopOf="@id/button_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/copy_token_button" />
+        app:layout_constraintTop_toBottomOf="@id/balance_card" />
 
-    <GridLayout
-        android:id="@+id/keypad"
+    <LinearLayout
+        android:id="@+id/button_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:background="@drawable/keypad_border"
-        android:columnCount="3"
-        android:padding="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/submit_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-    </GridLayout>
-
-    <Button
-        android:id="@+id/submit_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:backgroundTint="@color/colorAccent"
-        android:padding="20dp"
-        android:text="Submit"
-        android:textColor="@color/keypadButtonTextColor"
-        android:textSize="24sp"
+        android:orientation="horizontal"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/receive_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="#2C2C2E"
+            android:drawableTop="@drawable/ic_receive"
+            android:padding="16dp"
+            android:text="Receive"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/send_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="#2C2C2E"
+            android:drawableTop="@drawable/ic_send"
+            android:padding="16dp"
+            android:text="Send"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

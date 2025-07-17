@@ -14,7 +14,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // No instrumentation runner needed - only unit tests
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -31,12 +31,12 @@ android {
     }
     
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 
     buildFeatures {
@@ -46,7 +46,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.8"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 
     packaging {
@@ -59,8 +59,11 @@ android {
         lintConfig = file("src/main/res/xml/lint.xml")
         baseline = file("lint-baseline.xml")
         abortOnError = false  // We want to build even with lint warnings
-        // Also disable the specific NewApi checks for Optional
+        // Disable the specific NewApi checks for Optional and ignore classpath issues
         disable += "NewApi"
+        disable += "InvalidPackage"  // For libs JAR files
+        // Disable lint checking on JAR dependencies
+        checkDependencies = false
     }
 
     useLibrary("org.apache.http.legacy")
@@ -89,14 +92,16 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
     
-    // Testing
+    // Testing - Unit and Integration tests only, NO UI tests
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    testImplementation("org.mockito:mockito-core:5.8.0")
+    testImplementation("org.mockito:mockito-kotlin:5.2.1")
+    testImplementation("org.hamcrest:hamcrest:2.2")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    
+    // Debug tools (keeping only necessary ones)
     debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
     
     // Project specific dependencies
     implementation("org.bouncycastle:bcprov-jdk15on:1.70")
@@ -111,4 +116,5 @@ dependencies {
     
     // CBOR library from Peter O. Upokecenter
     implementation("com.upokecenter:cbor:4.5.2")
+    implementation("com.airbnb.android:lottie:5.2.0")
 }

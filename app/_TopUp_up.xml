@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
+    android:background="@drawable/gradient_background"
     tools:context=".TopUpActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -23,7 +23,7 @@
         android:layout_height="0dp"
         android:layout_margin="16dp"
         android:padding="12dp"
-        android:background="#1C1C1E"
+        android:background="@drawable/keypad_border"
         android:textColor="@android:color/white"
         android:scrollbars="vertical"
         android:gravity="bottom"
@@ -39,9 +39,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:hint="Enter Cashu Token"
-        android:textColorHint="#E5E5EA"
-        app:boxStrokeColor="#E5E5EA"
-        app:hintTextColor="#E5E5EA"
+        android:textColorHint="@android:color/white"
+        app:boxStrokeColor="@android:color/white"
+        app:hintTextColor="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/top_up_submit_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -61,7 +61,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:backgroundTint="#2C2C2E"
+        android:backgroundTint="@color/colorPrimary"
         android:padding="20dp"
         android:text="Top Up"
         android:textColor="@android:color/white"

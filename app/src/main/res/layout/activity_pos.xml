@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5F7">
+    android:background="@color/colorPrimary">
 
     <!-- Toolbar with menu -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#007AFF"
+        android:background="@color/colorPrimaryDark"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
@@ -38,7 +38,7 @@
                     android:layout_height="wrap_content"
                     android:text="Point of Sale"
                     android:textSize="32sp"
-                    android:textColor="#1D1D1F"
+                    android:textColor="@color/textColorPrimary"
                     android:textStyle="bold"
                     android:gravity="center" />
 
@@ -57,7 +57,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="80dp"
                     android:textSize="32sp"
-                    android:textColor="#000000"
+                    android:textColor="@color/textColorPrimary"
                     android:text="0"
                     android:gravity="center"
                     android:padding="20dp"
@@ -71,9 +71,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="24sp"
-                    android:textColor="#000000"
+                    android:textColor="@color/textColorPrimary"
                     android:hint="Enter amount"
-                    android:textColorHint="#666666"
+                    android:textColorHint="@color/textColorSecondary"
                     android:gravity="center"
                     android:padding="20dp"
                     android:background="@drawable/rounded_edit_text"
@@ -84,7 +84,45 @@
 
             </LinearLayout>
 
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="32dp">
 
+                <Button
+                    android:id="@+id/clearButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Clear"
+                    android:textSize="16sp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:background="@drawable/red_button"
+                    android:elevation="6dp"
+                    android:padding="16dp"
+                    android:layout_marginEnd="12dp"
+                    android:textAllCaps="false" />
+
+                <Button
+                    android:id="@+id/enterButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Enter"
+                    android:textSize="16sp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:background="@drawable/blue_button"
+                    android:elevation="6dp"
+                    android:padding="16dp"
+                    android:layout_marginStart="12dp"
+                    android:textAllCaps="false" />
+
+            </LinearLayout>
 
             <!-- Keyboard Title -->
             <TextView
@@ -92,7 +130,7 @@
                 android:layout_height="wrap_content"
                 android:text="Number Keyboard"
                 android:textSize="16sp"
-                android:textColor="#6E6E73"
+                android:textColor="@color/textColorSecondary"
                 android:gravity="center"
                 android:paddingBottom="16dp" />
 

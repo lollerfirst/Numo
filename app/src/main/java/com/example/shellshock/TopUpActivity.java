@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -42,8 +43,14 @@ public class TopUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(R.style.Theme_ShellShock);
         setContentView(R.layout.activity_top_up);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Top Up Wallet");
+        }
 
         proofTokenEditText = findViewById(R.id.top_up_amount_edit_text);
         topUpSubmitButton = findViewById(R.id.top_up_submit_button);
@@ -69,6 +76,12 @@ public class TopUpActivity extends AppCompatActivity {
                 Toast.makeText(this, "Please enter a Cashu proof token", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void logStatus(String message) {

@@ -2,6 +2,7 @@ package com.example.shellshock;
 
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Color;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
@@ -10,11 +11,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.airbnb.lottie.LottieAnimationView;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,9 +29,13 @@ public class BalanceCheckActivity extends AppCompatActivity {
     private static final String TAG = "BalanceCheckActivity";
     private TextView balanceDisplay;
     private TextView cardInfoDisplay;
+    private LottieAnimationView lottieAnimationView;
+    private Button backButton;
     private NfcAdapter nfcAdapter;
     private SatocashNfcClient satocashClient;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private int successColor;
+    private int errorColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,25 +50,36 @@ public class BalanceCheckActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("NFC Balance Check");
+            getSupportActionBar().setTitle("Check Balance");
         }
 
         balanceDisplay = findViewById(R.id.balance_display);
         cardInfoDisplay = findViewById(R.id.card_info_display);
+        lottieAnimationView = findViewById(R.id.lottie_animation);
+        backButton = findViewById(R.id.back_button);
+
+        successColor = Color.parseColor("#4CAF50"); // Green color for success
+        errorColor = Color.parseColor("#F44336");   // Red color for error
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         Log.d(TAG, "NFC Adapter available: " + (nfcAdapter != null));
-        
-        // Show initial message to tap card
-        updateCardInfoDisplay("Tap your NFC card to check balance");
-        
+
+        updateCardInfoDisplay("Hold your NFC card near the device.");
+
+        backButton.setOnClickListener(v -> {
+            finish();
+        });
+
         Log.d(TAG, "BalanceCheckActivity onCreate() completed - ready for NFC tap");
     }
 
     private void updateBalanceDisplay(long balance) {
         mainHandler.post(() -> {
             balanceDisplay.setText(String.format("Balance: %d sats", balance));
+            balanceDisplay.setTextColor(successColor);
             balanceDisplay.setVisibility(View.VISIBLE);
+            lottieAnimationView.setAnimation(R.raw.success);
+            lottieAnimationView.playAnimation();
         });
     }
 
@@ -74,8 +93,11 @@ public class BalanceCheckActivity extends AppCompatActivity {
     private void handleBalanceCheckError(String message) {
         mainHandler.post(() -> {
             balanceDisplay.setText(String.format("Error: %s", message));
+            balanceDisplay.setTextColor(errorColor);
             balanceDisplay.setVisibility(View.VISIBLE);
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            lottieAnimationView.setAnimation(R.raw.error);
+            lottieAnimationView.playAnimation();
         });
     }
 
@@ -118,7 +140,7 @@ public class BalanceCheckActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         Log.d(TAG,"=== NFC onNewIntent triggered ===");
         Log.d(TAG,"Action: " + intent.getAction());
-        
+
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
             Log.d(TAG,"✅ ACTION_TECH_DISCOVERED matched!");
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
@@ -126,7 +148,7 @@ public class BalanceCheckActivity extends AppCompatActivity {
                 Log.d(TAG,"✅ Tag received: " + tag.toString());
                 Log.d(TAG,"Tag ID: " + android.util.Base64.encodeToString(tag.getId(), android.util.Base64.NO_WRAP));
                 Log.d(TAG,"Technologies: " + java.util.Arrays.toString(tag.getTechList()));
-                
+
                 try {
                     Log.d(TAG,"🔍 Checking if IsoDep available...");
                     android.nfc.tech.IsoDep isoDep = android.nfc.tech.IsoDep.get(tag);
@@ -155,11 +177,11 @@ public class BalanceCheckActivity extends AppCompatActivity {
             try {
                 Log.d(TAG, "1. Creating Satocash client...");
                 satocashClient = new SatocashNfcClient(tag);
-                
+
                 Log.d(TAG, "2. Connecting to NFC card...");
                 satocashClient.connect();
                 Log.d(TAG, "✅ Successfully connected to NFC card");
-                
+
                 Log.d(TAG, "3. Selecting Satocash applet...");
                 satocashClient.selectApplet(SatocashNfcClient.SATOCASH_AID);
                 Log.d(TAG, "✅ Satocash Applet found and selected!");
@@ -169,10 +191,9 @@ public class BalanceCheckActivity extends AppCompatActivity {
                 Log.d(TAG, "✅ Secure Channel Initialized!");
 
                 Log.d(TAG, "5. Getting accurate card balance (no PIN authentication)...");
-                // Get balance using getProofInfo without PIN authentication
                 long totalBalance = getCardBalance();
                 Log.d(TAG, "✅ Balance check complete: " + totalBalance + " sats");
-                
+
                 updateBalanceDisplay(totalBalance);
 
             } catch (IOException e) {
@@ -200,32 +221,30 @@ public class BalanceCheckActivity extends AppCompatActivity {
 
     public long getCardBalance() {
         Log.d(TAG, "Getting card balance using getProofInfo (no PIN required)...");
-        
+
         try {
-            // First get card status to determine total number of proofs
             Map<String, Object> status = satocashClient.getStatus();
             Log.d(TAG, "Card status: " + status.toString());
-            
+
             int nbProofsUnspent = (int) status.getOrDefault("nb_proofs_unspent", 0);
             int nbProofsSpent = (int) status.getOrDefault("nb_proofs_spent", 0);
             int totalProofs = nbProofsUnspent + nbProofsSpent;
-            
+
             if (totalProofs == 0) {
                 Log.d(TAG, "No proofs found in card");
                 updateCardInfoDisplay("Card has no proofs");
                 return 0;
             }
-            
+
             Log.d(TAG, "Total proofs in card: " + totalProofs + " (" + nbProofsUnspent + " unspent, " + nbProofsSpent + " spent)");
-            
-            // Use getProofInfo to get the state of all proofs (unspent vs spent)
+
             List<Integer> proofStates = satocashClient.getProofInfo(
                 SatocashNfcClient.Unit.SAT,
                 SatocashNfcClient.ProofInfoType.METADATA_STATE,
-                0,                // Start from index 0
-                totalProofs       // Get state for all actual proofs
+                0,
+                totalProofs
             );
-            
+
             Log.d(TAG, "Retrieved state info for " + proofStates.size() + " proofs");
             Log.d(TAG, "ProofState: " + proofStates);
 
@@ -233,43 +252,38 @@ public class BalanceCheckActivity extends AppCompatActivity {
                 updateCardInfoDisplay("No proof state data available");
                 return 0;
             }
-            
-            // Get amounts for all proofs
+
             List<Integer> amounts = satocashClient.getProofInfo(
                 SatocashNfcClient.Unit.SAT,
                 SatocashNfcClient.ProofInfoType.METADATA_AMOUNT_EXPONENT,
                 0,
                 totalProofs
             );
-            
+
             if (amounts.isEmpty()) {
                 Log.e(TAG, "Amounts data missing or mismatched");
                 updateCardInfoDisplay("Proof data inconsistent");
                 return 0;
             }
-            
-            // Calculate total balance by summing up amounts for unspent proofs
+
             long totalBalance = 0;
             int unspentCount = 0;
             for (int i = 0; i < proofStates.size(); i++) {
-
                 int state = proofStates.get(i);
                 Log.d(TAG,"state: " + state);
-                if (state == 1) { // State 0 = unspent
-
-                        unspentCount++;
-                        int amountExponent = amounts.get(i);
-                        long amount = (long) Math.pow(2, amountExponent);
-                        totalBalance += amount;
-                        Log.d(TAG, "Proof " + i + ": " + amount + " sats (exp=" + amountExponent + ")");
-
+                if (state == 1) { // State 1 = unspent
+                    unspentCount++;
+                    int amountExponent = amounts.get(i);
+                    long amount = (long) Math.pow(2, amountExponent);
+                    totalBalance += amount;
+                    Log.d(TAG, "Proof " + i + ": " + amount + " sats (exp=" + amountExponent + ")");
                 }
             }
-            
+
             Log.d(TAG, "Total balance: " + totalBalance + " sats from " + unspentCount + " active proofs");
             updateCardInfoDisplay("Card has " + unspentCount + " active proofs worth " + totalBalance + " sats");
             return totalBalance;
-            
+
         } catch (SatocashNfcClient.SatocashException e) {
             Log.e(TAG, "Satocash exception: " + e.getMessage(), e);
             mainHandler.post(() -> {
