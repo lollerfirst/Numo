@@ -324,10 +324,7 @@ public class POSActivity extends AppCompatActivity {
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_modern_wallet) {
-            startActivity(new Intent(this, ModernPOSActivity.class));
-            return true;
-        } else if (item.getItemId() == R.id.action_top_up) {
+        if (item.getItemId() == R.id.action_top_up) {
             startActivity(new Intent(this, TopUpActivity.class));
             return true;
         } else if (item.getItemId() == R.id.action_balance_check) {

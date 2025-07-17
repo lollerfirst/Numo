@@ -39,22 +39,6 @@
             <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/nfc_tech_filter" />
         </activity>
-        
-        <!-- Modern POS Activity -->
-        <activity
-            android:name=".ModernPOSActivity"
-            android:exported="false"
-            android:label="Modern Wallet"
-            android:theme="@style/Theme.Shellshock"
-            android:launchMode="singleTop">
-            
-            <!-- Intent filter for NFC tag discovery -->
-            <intent-filter>
-                <action android:name="android.nfc.action.TECH_DISCOVERED" />
-            </intent-filter>
-            <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
-                android:resource="@xml/nfc_tech_filter" />
-        </activity>
         <activity android:name=".TopUpActivity"
             android:exported="false"
             android:label="Top Up"
