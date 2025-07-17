@@ -30,8 +30,6 @@ public class POSActivity extends AppCompatActivity {
     private static final String TAG = "POSActivity";
     private TextView displayTextView;
     private EditText displayField;
-    private Button clearButton;
-    private Button enterButton;
     private Button submitButton;
     private GridLayout keyboardGrid;
     private NfcAdapter nfcAdapter;
@@ -53,8 +51,6 @@ public class POSActivity extends AppCompatActivity {
         // Initialize views
         displayTextView = findViewById(R.id.displayTextView);
         displayField = findViewById(R.id.displayField);
-        clearButton = findViewById(R.id.clearButton);
-        enterButton = findViewById(R.id.enterButton);
         submitButton = findViewById(R.id.submitButton);
         keyboardGrid = findViewById(R.id.keyboardGrid);
         
@@ -71,18 +67,6 @@ public class POSActivity extends AppCompatActivity {
     }
     
     private void setupButtons() {
-        clearButton.setOnClickListener(v -> {
-            currentAmount = 0;
-            updateDisplay();
-        });
-        
-        enterButton.setOnClickListener(v -> {
-            // Handle enter - could be used to confirm amount
-            if (currentAmount > 0) {
-                displayTextView.setText("Amount confirmed: " + currentAmount + " SAT");
-            }
-        });
-        
         submitButton.setOnClickListener(v -> {
             if (currentAmount > 0) {
                 // Start NFC payment process
@@ -128,6 +112,15 @@ public class POSActivity extends AppCompatActivity {
             // Set click listener
             final String buttonText = buttonTexts[i];
             button.setOnClickListener(v -> handleNumberPadClick(buttonText));
+            
+            // Add long press clear for backspace button
+            if (buttonText.equals("⌫")) {
+                button.setOnLongClickListener(v -> {
+                    currentAmount = 0;
+                    updateDisplay();
+                    return true; // Consume the long click
+                });
+            }
             
             keyboardGrid.addView(button);
         }
