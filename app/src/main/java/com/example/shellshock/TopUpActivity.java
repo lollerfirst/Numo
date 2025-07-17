@@ -1,6 +1,7 @@
 package com.example.shellshock;
 
 import android.app.PendingIntent;
+import android.text.Layout;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -49,6 +50,22 @@ public class TopUpActivity extends AppCompatActivity {
         topUpSubmitButton = findViewById(R.id.top_up_submit_button);
         statusTextView = findViewById(R.id.statusTextView);
 
+        // Handle incoming share intent
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null && "text/plain".equals(type)) {
+            String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+            if (sharedText != null) {
+                pendingProofToken = sharedText;
+                proofTokenEditText.setText(sharedText);
+                logStatus("Received shared token: " + sharedText.substring(0, Math.min(sharedText.length(), 30)) + "...");
+                // Automatically show NFC dialog
+                showNfcDialog();
+            }
+        }
+
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (nfcAdapter == null) {
             logStatus("NFC is not available on this device. Cannot flash proofs.");
@@ -75,13 +92,18 @@ public class TopUpActivity extends AppCompatActivity {
         Log.d(TAG, message);
         mainHandler.post(() -> {
             statusTextView.append(message + "\n");
-            // Scroll to the bottom
-            int scrollAmount = statusTextView.getLayout().getLineTop(statusTextView.getLineCount()) - statusTextView.getHeight();
-            if (scrollAmount > 0) {
-                statusTextView.scrollTo(0, scrollAmount);
-            } else {
-                statusTextView.scrollTo(0, 0);
-            }
+            // Wait for layout to be ready before scrolling
+            statusTextView.post(() -> {
+                Layout layout = statusTextView.getLayout();
+                if (layout != null) {
+                    int scrollAmount = layout.getLineTop(statusTextView.getLineCount()) - statusTextView.getHeight();
+                    if (scrollAmount > 0) {
+                        statusTextView.scrollTo(0, scrollAmount);
+                    } else {
+                        statusTextView.scrollTo(0, 0);
+                    }
+                }
+            });
         });
     }
 

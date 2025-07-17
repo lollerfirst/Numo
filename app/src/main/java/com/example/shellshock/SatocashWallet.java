@@ -107,7 +107,7 @@ public class SatocashWallet {
                     if ((metadataAmountInfo.get(i) & 0x80) == 0) {
                         int keysetIndex = metadataKeysetIndices.get(i);
                         String keysetId = keysetIndicesToIds.get(keysetIndex);
-                        if (keysetId != null) {
+                        if (keysetId != null && keysetsFeesMap.containsKey(keysetId)) {
                             Proof p = new Proof();
                             p.amount = 1L << (metadataAmountInfo.get(i) & 0x7F); // Remove the spent bit
                             p.keysetId = keysetId;

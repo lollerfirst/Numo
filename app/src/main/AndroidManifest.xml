@@ -40,9 +40,14 @@
                 android:resource="@xml/nfc_tech_filter" />
         </activity>
         <activity android:name=".TopUpActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="Top Up"
             android:theme="@style/Theme.Shellshock">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
         </activity>
         
         <activity android:name=".BalanceCheckActivity"
