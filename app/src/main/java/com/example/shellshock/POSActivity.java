@@ -122,7 +122,7 @@ public class POSActivity extends AppCompatActivity {
             button.setTextSize(24);
             button.setPadding(16, 16, 16, 16);
             button.setBackground(getDrawable(R.drawable.keypad_button_background));
-            button.setTextColor(getResources().getColor(R.color.keypadButtonTextColor, getTheme()));
+            button.setTextColor(getResources().getColor(android.R.color.white, getTheme()));
             button.setElevation(4);
             
             // Set click listener
@@ -324,7 +324,10 @@ public class POSActivity extends AppCompatActivity {
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_top_up) {
+        if (item.getItemId() == R.id.action_modern_wallet) {
+            startActivity(new Intent(this, ModernPOSActivity.class));
+            return true;
+        } else if (item.getItemId() == R.id.action_top_up) {
             startActivity(new Intent(this, TopUpActivity.class));
             return true;
         } else if (item.getItemId() == R.id.action_balance_check) {

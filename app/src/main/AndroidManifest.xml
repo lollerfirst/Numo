@@ -20,9 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Shellshock"
         tools:targetApi="31">
-        <!-- Modern POS Activity - Main Launcher -->
+        <!-- Classic POS Activity - Main Launcher -->
         <activity
-            android:name=".ModernPOSActivity"
+            android:name=".POSActivity"
             android:exported="true"
             android:label="Point of Sale"
             android:theme="@style/Theme.Shellshock"
@@ -39,40 +39,38 @@
             <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/nfc_tech_filter" />
         </activity>
-        <activity android:name=".TopUpActivity"
-            android:exported="false"
-            android:label="Top Up"
-            android:theme="@style/Theme.Shellshock">
-        </activity>
         
-        <!-- Classic POS Activity with Number Pad -->
-        <activity android:name=".POSActivity"
+        <!-- Modern POS Activity -->
+        <activity
+            android:name=".ModernPOSActivity"
             android:exported="false"
-            android:label="Classic POS"
+            android:label="Modern Wallet"
             android:theme="@style/Theme.Shellshock"
-            android:parentActivityName=".ModernPOSActivity"
-            android:launchMode="singleTop" >
-            <!-- Parent meta-data for up navigation -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ModernPOSActivity" />
-            <!-- NFC intent filters -->
+            android:launchMode="singleTop">
+            
+            <!-- Intent filter for NFC tag discovery -->
             <intent-filter>
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
             </intent-filter>
             <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/nfc_tech_filter" />
         </activity>
+        <activity android:name=".TopUpActivity"
+            android:exported="false"
+            android:label="Top Up"
+            android:theme="@style/Theme.Shellshock"
+            android:parentActivityName=".POSActivity">
+        </activity>
         
         <activity android:name=".BalanceCheckActivity"
             android:exported="false"
             android:label="Check Balance"
             android:theme="@style/Theme.Shellshock"
-            android:parentActivityName=".ModernPOSActivity" >
+            android:parentActivityName=".POSActivity" >
             <!-- Parent meta-data for up navigation -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ModernPOSActivity" />
+                android:value=".POSActivity" />
             <!-- NFC intent filters -->
             <intent-filter>
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
