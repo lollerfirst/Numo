@@ -23,10 +23,12 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ScrollView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.io.IOException;
 import java.util.*;
@@ -41,6 +43,10 @@ public class ModernPOSActivity extends AppCompatActivity {
     private AlertDialog nfcDialog;
     private TextView tokenDisplay;
     private Button copyTokenButton;
+    private Button resetButton;
+    private ScrollView tokenScrollContainer;
+    private LinearLayout tokenActionsContainer;
+    private ConstraintLayout inputModeContainer;
     private NfcAdapter nfcAdapter;
     private SatocashNfcClient satocashClient;
     private SatocashWallet satocashWallet;
@@ -62,11 +68,16 @@ public class ModernPOSActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Find all views
         amountDisplay = findViewById(R.id.amount_display);
         submitButton = findViewById(R.id.submit_button);
         GridLayout keypad = findViewById(R.id.keypad);
         tokenDisplay = findViewById(R.id.token_display);
         copyTokenButton = findViewById(R.id.copy_token_button);
+        resetButton = findViewById(R.id.reset_button);
+        tokenScrollContainer = findViewById(R.id.token_scroll_container);
+        tokenActionsContainer = findViewById(R.id.token_actions_container);
+        inputModeContainer = findViewById(R.id.input_mode_container);
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
@@ -110,6 +121,27 @@ public class ModernPOSActivity extends AppCompatActivity {
                 copyTokenToClipboard(token);
             }
         });
+
+        resetButton.setOnClickListener(v -> resetToInputMode());
+    }
+
+    private void resetToInputMode() {
+        tokenScrollContainer.setVisibility(View.GONE);
+        tokenActionsContainer.setVisibility(View.GONE);
+        inputModeContainer.setVisibility(View.VISIBLE);
+        
+        // Clear token display
+        tokenDisplay.setText("");
+        
+        // Reset amount display
+        currentInput.setLength(0);
+        updateDisplay();
+    }
+
+    private void switchToTokenMode() {
+        inputModeContainer.setVisibility(View.GONE);
+        tokenScrollContainer.setVisibility(View.VISIBLE);
+        tokenActionsContainer.setVisibility(View.VISIBLE);
     }
 
     private void copyTokenToClipboard(String token) {
@@ -314,10 +346,8 @@ public class ModernPOSActivity extends AppCompatActivity {
             if (nfcDialog != null && nfcDialog.isShowing()) {
                 nfcDialog.dismiss();
             }
-            tokenDisplay.setVisibility(View.VISIBLE);
+            switchToTokenMode();
             tokenDisplay.setText(token);
-            copyTokenButton.setVisibility(View.VISIBLE);
-            amountDisplay.setText("0");
             Toast.makeText(this, "Payment successful!", Toast.LENGTH_SHORT).show();
         });
     }
@@ -330,10 +360,9 @@ public class ModernPOSActivity extends AppCompatActivity {
             if (nfcDialog != null && nfcDialog.isShowing()) {
                 nfcDialog.dismiss();
             }
-            tokenDisplay.setVisibility(View.VISIBLE);
+            switchToTokenMode();
             tokenDisplay.setText("Error: " + message);
             copyTokenButton.setVisibility(View.GONE);
-            amountDisplay.setText("0");
         });
     }
 
