@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class ModernPOSActivity extends AppCompatActivity {
@@ -383,55 +384,73 @@ public class ModernPOSActivity extends AppCompatActivity {
                 satocashClient.initSecureChannel();
                 Log.d(TAG, "Secure Channel Initialized!");
 
-                // Create a CompletableFuture for the PIN dialog result
-                CompletableFuture<String> pinFuture = new CompletableFuture<>();
-                
-                showPinDialog(pinFuture::complete);
-                
-                // Wait for PIN input
-                String pin = pinFuture.join();
-                
-                if (pin != null) {
-                    try {
-                        CompletableFuture<Boolean> authFuture = satocashWallet.authenticatePIN(pin);
-                        boolean authenticated = authFuture.join();
+                // Try payment without PIN first
+                try {
+                    Log.d(TAG, "Attempting payment without PIN...");
+                    CompletableFuture<String> paymentFuture = satocashWallet.getPayment(requestedAmount, "SAT");
+                    String token = paymentFuture.join();
+                    Log.d(TAG, "Payment successful without PIN! Token received.");
+                    handlePaymentSuccess(token);
+                    return;
+                } catch (Exception e) {
+                    Log.d(TAG, "Payment without PIN failed, attempting with PIN authentication...");
+                    // Check if the error indicates authentication is required
+                    if (e.getMessage() != null && (e.getMessage().contains("Not authenticated") || 
+                        e.getCause() instanceof SatocashNfcClient.SatocashException &&
+                        ((SatocashNfcClient.SatocashException)e.getCause()).getSw() == 0x6982)) { // SW_SECURITY_STATUS_NOT_SATISFIED
                         
-                        if (authenticated) {
-                            Log.d(TAG, "PIN Verified! Card Ready.");
-
+                        // Create a CompletableFuture for the PIN dialog result
+                        CompletableFuture<String> pinFuture = new CompletableFuture<>();
+                        showPinDialog(pinFuture::complete);
+                        
+                        // Wait for PIN input
+                        String pin = pinFuture.join();
+                        
+                        if (pin != null) {
                             try {
-                                Log.d(TAG, "Starting payment for " + requestedAmount + " SAT...");
-                                CompletableFuture<String> paymentFuture = satocashWallet.getPayment(requestedAmount, "SAT");
-                                String token = paymentFuture.join();
-                                Log.d(TAG, "Payment successful! Token received.");
-                                handlePaymentSuccess(token);
-                            } catch (Exception e) {
-                                Log.e(TAG, "Payment failed: " + e.getMessage());
-                                handlePaymentError(e.getMessage());
+                                boolean authenticated = satocashWallet.authenticatePIN(pin).join();
+                                
+                                if (authenticated) {
+                                    Log.d(TAG, "PIN Verified! Card Ready.");
+
+                                    try {
+                                        Log.d(TAG, "Starting payment for " + requestedAmount + " SAT...");
+                                        CompletableFuture<String> paymentFuture = satocashWallet.getPayment(requestedAmount, "SAT");
+                                        String token = paymentFuture.join();
+                                        Log.d(TAG, "Payment successful! Token received.");
+                                        handlePaymentSuccess(token);
+                                    } catch (Exception pe) {
+                                        Log.e(TAG, "Payment failed: " + pe.getMessage());
+                                        handlePaymentError(pe.getMessage());
+                                    }
+                                } else {
+                                    String message = "PIN Verification Failed";
+                                    Log.e(TAG, message);
+                                    handlePaymentError(message);
+                                }
+
+                            } catch (RuntimeException re) {
+                                Throwable cause = re.getCause();
+                                if (cause instanceof SatocashNfcClient.SatocashException) {
+                                    SatocashNfcClient.SatocashException satocashEx = (SatocashNfcClient.SatocashException) cause;
+                                    String message = String.format("PIN Verification Failed: %s (SW: 0x%04X)",
+                                            satocashEx.getMessage(), satocashEx.getSw());
+                                    Log.e(TAG, message);
+                                    handlePaymentError(message);
+                                } else {
+                                    String message = "Authentication Failed: " + re.getMessage();
+                                    Log.e(TAG, message);
+                                    handlePaymentError(message);
+                                }
                             }
                         } else {
-                            String message = "PIN Verification Failed";
-                            Log.e(TAG, message);
-                            handlePaymentError(message);
+                            Log.d(TAG, "PIN entry cancelled.");
+                            handlePaymentError("PIN entry cancelled");
                         }
-
-                    } catch (RuntimeException e) {
-                        Throwable cause = e.getCause();
-                        if (cause instanceof SatocashNfcClient.SatocashException) {
-                            SatocashNfcClient.SatocashException satocashEx = (SatocashNfcClient.SatocashException) cause;
-                            String message = String.format("PIN Verification Failed: %s (SW: 0x%04X)",
-                                    satocashEx.getMessage(), satocashEx.getSw());
-                            Log.e(TAG, message);
-                            handlePaymentError(message);
-                        } else {
-                            String message = "Authentication Failed: " + e.getMessage();
-                            Log.e(TAG, message);
-                            handlePaymentError(message);
-                        }
+                    } else {
+                        // If it's not an authentication error, propagate the original error
+                        throw e;
                     }
-                } else {
-                    Log.d(TAG, "PIN entry cancelled.");
-                    handlePaymentError("PIN entry cancelled");
                 }
 
             } catch (IOException e) {
