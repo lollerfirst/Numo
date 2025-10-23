@@ -11,8 +11,24 @@
         <item name="colorOnSecondary">@color/textColorPrimary</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Text colors -->
+        <item name="android:textColor">@color/textColorPrimary</item>
         <!-- Background colors -->
         <item name="android:windowBackground">@color/windowBackground</item>
-        <item name="android:textColor">@color/textColorPrimary</item>
+        <item name="android:colorBackground">@color/windowBackground</item>
+        <!-- Surface colors -->
+        <item name="colorSurface">@color/surfaceColor</item>
+        <item name="colorOnSurface">@color/textColorPrimary</item>
+        <!-- Custom attributes -->
+        <item name="keypadButtonColor">@color/keypadButtonColor</item>
+        <item name="keypadButtonTextColor">@color/keypadButtonTextColor</item>
+        <item name="keypadButtonPressedColor">@color/keypadButtonPressedColor</item>
+        <item name="inputBoxStrokeColor">@color/inputBoxStrokeColor</item>
     </style>
+
+    <!-- Define custom attributes -->
+    <attr name="keypadButtonColor" format="color" />
+    <attr name="keypadButtonTextColor" format="color" />
+    <attr name="keypadButtonPressedColor" format="color" />
+    <attr name="inputBoxStrokeColor" format="color" />
 </resources>
