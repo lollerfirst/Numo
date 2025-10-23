@@ -24,6 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:hint="Enter Cashu Proof Token"
+        android:textColorHint="@color/textColorPrimary"
+        app:hintTextColor="@color/textColorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/top_up_submit_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +37,8 @@
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:maxLines="3"
-            android:textColor="@color/textColorPrimary" />
+            android:textColor="@color/textColorPrimary"
+            android:textColorHint="@color/textColorPrimary" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
