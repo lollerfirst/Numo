@@ -50,7 +50,7 @@ public class TokenHistoryAdapter extends RecyclerView.Adapter<TokenHistoryAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TokenHistoryEntry entry = entries.get(position);
-        holder.amountText.setText(String.format(Locale.getDefault(), "%d sats", entry.getAmount()));
+        holder.amountText.setText(String.format(Locale.getDefault(), "%d ₿", entry.getAmount()));
         holder.dateText.setText(dateFormat.format(entry.getDate()));
         
         holder.copyButton.setOnClickListener(v -> {
@@ -83,8 +83,8 @@ public class TokenHistoryAdapter extends RecyclerView.Adapter<TokenHistoryAdapte
         shareIntent.putExtra(Intent.EXTRA_TEXT, cashuUri);
         
         // Combine both intents into a chooser
-        Intent chooserIntent = Intent.createChooser(shareIntent, "Open token with...");
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { uriIntent });
+        Intent chooserIntent = Intent.createChooser(uriIntent, "Open token with...");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { shareIntent });
         
         try {
             context.startActivity(chooserIntent);

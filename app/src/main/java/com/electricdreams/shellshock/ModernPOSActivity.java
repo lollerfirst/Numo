@@ -185,8 +185,8 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         shareIntent.putExtra(Intent.EXTRA_TEXT, cashuUri);
         
         // Combine both intents into a chooser
-        Intent chooserIntent = Intent.createChooser(shareIntent, "Open token with...");
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { uriIntent });
+        Intent chooserIntent = Intent.createChooser(uriIntent, "Open token with...");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { shareIntent });
         
         try {
             startActivity(chooserIntent);
@@ -252,9 +252,9 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
     private String formatAmount(String amount) {
         try {
             long value = amount.isEmpty() ? 0 : Long.parseLong(amount);
-            return NumberFormat.getNumberInstance(Locale.US).format(value) + " sats";
+            return NumberFormat.getNumberInstance(Locale.US).format(value) + " ₿";
         } catch (NumberFormatException e) {
-            return "0 sats";
+            return "";
         }
     }
 
