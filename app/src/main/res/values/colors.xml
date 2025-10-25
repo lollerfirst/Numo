@@ -26,4 +26,7 @@
     <!-- Default Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- Icon Colors -->
+    <color name="iconTint">@color/navigationIconTint</color>
 </resources>

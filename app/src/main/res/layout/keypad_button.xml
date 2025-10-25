@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="52dp"
+    android:maxHeight="52dp"
+    android:layout_margin="2dp"
     android:background="@drawable/keypad_button_background"
-    android:textColor="?attr/keypadButtonTextColor"
-    android:textSize="24sp" />
+    android:textSize="24sp"
+    android:textStyle="normal"
+    android:backgroundTint="@color/white"
+    android:textColor="@color/black"
+    android:stateListAnimator="@null"
+    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+    android:gravity="center" />
