@@ -267,7 +267,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
     private String formatAmount(String amount) {
         try {
             long value = amount.isEmpty() ? 0 : Long.parseLong(amount);
-            return NumberFormat.getNumberInstance(Locale.US).format(value) + " ₿";
+            return "₿ " + NumberFormat.getNumberInstance(Locale.US).format(value);
         } catch (NumberFormatException e) {
             return "";
         }
@@ -279,7 +279,8 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         amountDisplay.setText(displayAmount);
         
         // Update submit button text
-        if (currentInput.length() > 0) {
+        long value = currentInput.toString().isEmpty() ? 0 : Long.parseLong(currentInput.toString());
+        if (value > 0) {
             submitButton.setText("Charge " + displayAmount);
             submitButton.setEnabled(true);
         } else {
