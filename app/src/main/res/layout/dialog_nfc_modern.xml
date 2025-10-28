@@ -15,6 +15,7 @@
         android:padding="24dp">
 
         <TextView
+            android:id="@+id/nfc_dialog_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -32,6 +33,16 @@
             android:textColor="@color/colorAccent"
             android:textSize="36sp" />
 
+        <TextView
+            android:id="@+id/nfc_hint_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:textAlignment="center"
+            android:visibility="gone"
+            android:textSize="16sp" />
+            
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
