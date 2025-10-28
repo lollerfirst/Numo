@@ -442,10 +442,14 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         waitingForRescan = false;
 
         new Thread(() -> {
+            SatocashNfcClient tempClient = null;
             try {
-                satocashClient = new SatocashNfcClient(tag);
-                satocashClient.connect();
+                tempClient = new SatocashNfcClient(tag);
+                tempClient.connect();
                 Log.d(TAG, "Connected to NFC card");
+                
+                // Store the client in the class variable AFTER successful connection
+                satocashClient = tempClient;
 
                 satocashWallet = new SatocashWallet(satocashClient);
                 Log.d(TAG, "Created Satocash wallet instance");
@@ -481,6 +485,19 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                         if (statusWord == SW.UNAUTHORIZED) {
                             Log.d(TAG, "Got SW_UNAUTHORIZED, need PIN authentication");
                             
+                            try {
+                                // Make sure to close the connection properly before showing PIN dialog
+                                if (satocashClient != null) {
+                                    satocashClient.close();
+                                    Log.d(TAG, "NFC connection closed before PIN entry");
+                                    // Null out the client to avoid using a closed connection later
+                                    final SatocashNfcClient closedClient = satocashClient;
+                                    satocashClient = null;
+                                }
+                            } catch (IOException ioe) {
+                                Log.e(TAG, "Error closing NFC connection before PIN entry: " + ioe.getMessage());
+                            }
+                            
                             // With the new flow, we'll save the PIN and ask for a rescan
                             CompletableFuture<String> pinFuture = new CompletableFuture<>();
                             mainHandler.post(() -> {
@@ -498,17 +515,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                                 // Save the PIN for the next scan
                                 savedPin = enteredPin;
                                 waitingForRescan = true;
-                                
-                                // Close the NFC connection so the card can be removed
-                                try {
-                                    if (satocashClient != null) {
-                                        satocashClient.close();
-                                        Log.d(TAG, "NFC connection closed for PIN rescan flow.");
-                                    }
-                                } catch (IOException ioe) {
-                                    Log.e(TAG, "Error closing NFC connection: " + ioe.getMessage());
-                                }
-                                
+                                                                
                                 // Show a dialog asking user to rescan the card
                                 mainHandler.post(() -> {
                                     showRescanDialog();
@@ -543,9 +550,12 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                 handlePaymentError(message);
             } finally {
                 try {
-                    if (satocashClient != null) {
+                    // Only close the connection if we haven't already closed it
+                    // and we're not in the PIN entry flow
+                    if (satocashClient != null && !waitingForRescan) {
                         satocashClient.close();
-                        Log.d(TAG, "NFC connection closed.");
+                        Log.d(TAG, "NFC connection closed in finally block.");
+                        satocashClient = null;
                     }
                 } catch (IOException e) {
                     Log.e(TAG, "Error closing NFC connection: " + e.getMessage());
@@ -785,6 +795,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         }
 
         new Thread(() -> {
+            SatocashNfcClient tempClient = null;
             try {
                 if (rescanDialog != null && rescanDialog.isShowing()) {
                     mainHandler.post(() -> rescanDialog.dismiss());
@@ -794,9 +805,12 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                     showProcessingDialog();
                 });
                 
-                satocashClient = new SatocashNfcClient(tag);
-                satocashClient.connect();
+                tempClient = new SatocashNfcClient(tag);
+                tempClient.connect();
                 Log.d(TAG, "Connected to NFC card for PIN payment");
+                
+                // Store in class variable AFTER successful connection
+                satocashClient = tempClient;
 
                 satocashWallet = new SatocashWallet(satocashClient);
                 Log.d(TAG, "Created Satocash wallet instance");
@@ -871,6 +885,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                     if (satocashClient != null) {
                         satocashClient.close();
                         Log.d(TAG, "NFC connection closed.");
+                        satocashClient = null;
                     }
                 } catch (IOException e) {
                     Log.e(TAG, "Error closing NFC connection: " + e.getMessage());
