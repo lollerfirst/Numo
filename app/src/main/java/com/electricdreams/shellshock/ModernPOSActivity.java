@@ -499,52 +499,20 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                                 savedPin = enteredPin;
                                 waitingForRescan = true;
                                 
+                                // Close the NFC connection so the card can be removed
+                                try {
+                                    if (satocashClient != null) {
+                                        satocashClient.close();
+                                        Log.d(TAG, "NFC connection closed for PIN rescan flow.");
+                                    }
+                                } catch (IOException ioe) {
+                                    Log.e(TAG, "Error closing NFC connection: " + ioe.getMessage());
+                                }
+                                
                                 // Show a dialog asking user to rescan the card
                                 mainHandler.post(() -> {
                                     showRescanDialog();
                                 });
-                            } else {
-                                Log.d(TAG, "PIN entry cancelled.");
-                                handlePaymentError("PIN entry cancelled");
-                            }
-                            String pin = pinFuture.join();
-                            
-                            if (pin != null) {
-                                try {
-                                    boolean authenticated = satocashWallet.authenticatePIN(pin).join();
-                                    
-                                    if (authenticated) {
-                                        Log.d(TAG, "PIN Verified! Card Ready.");
-
-                                        try {
-                                            Log.d(TAG, "Starting payment for " + requestedAmount + " SAT...");
-                                            CompletableFuture<String> paymentFuture = satocashWallet.getPayment(requestedAmount, "SAT");
-                                            String token = paymentFuture.join();
-                                            Log.d(TAG, "Payment successful! Token received.");
-                                            handlePaymentSuccess(token);
-                                        } catch (Exception pe) {
-                                            Log.e(TAG, "Payment failed: " + pe.getMessage());
-                                            handlePaymentError(pe.getMessage());
-                                        }
-                                    } else {
-                                        String message = "PIN Verification Failed";
-                                        Log.e(TAG, message);
-                                        handlePaymentError(message);
-                                    }
-                                } catch (RuntimeException re) {
-                                    Throwable reCause = re.getCause();
-                                    if (reCause instanceof SatocashNfcClient.SatocashException) {
-                                        SatocashNfcClient.SatocashException pinEx = (SatocashNfcClient.SatocashException) reCause;
-                                        String message = String.format("PIN Verification Failed: %s (SW: 0x%04X)",
-                                                pinEx.getMessage(), pinEx.getSw());
-                                        Log.e(TAG, message);
-                                        handlePaymentError(message);
-                                    } else {
-                                        String message = "Authentication Failed: " + re.getMessage();
-                                        Log.e(TAG, message);
-                                        handlePaymentError(message);
-                                    }
-                                }
                             } else {
                                 Log.d(TAG, "PIN entry cancelled.");
                                 handlePaymentError("PIN entry cancelled");
