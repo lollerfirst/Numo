@@ -76,6 +76,7 @@ public class CashuHostCardEmulationService extends HostApduService {
                             // Validate the token against expected amount
                             boolean isValid = false;
                             if (expectedAmount > 0) {
+                                Log.i(TAG, "Validating token for expected amount: " + expectedAmount);
                                 isValid = CashuPaymentHelper.validateToken(cashuToken, expectedAmount);
                                 if (!isValid) {
                                     String errorMsg = "Token validation failed for amount: " + expectedAmount;
@@ -86,7 +87,10 @@ public class CashuHostCardEmulationService extends HostApduService {
                                     
                                     // Notify callback of validation error
                                     if (paymentCallback != null) {
+                                        Log.i(TAG, "Calling error callback with: " + errorMsg);
                                         paymentCallback.onCashuPaymentError(errorMsg);
+                                    } else {
+                                        Log.e(TAG, "Payment callback is null, can't report validation error");
                                     }
                                     return;
                                 }
@@ -103,11 +107,11 @@ public class CashuHostCardEmulationService extends HostApduService {
                                 try {
                                     // Try to redeem the token - this will throw an exception if redemption fails
                                     String redeemedToken = CashuPaymentHelper.redeemToken(cashuToken);
-                                    Log.i(TAG, "Token successfully redeemed and reissued");
+                                    Log.i(TAG, "Token successfully redeemed and reissued: " + redeemedToken.substring(0, Math.min(redeemedToken.length(), 20)) + "...");
                                     
                                     // Notify the callback with the redeemed token
                                     if (paymentCallback != null) {
-                                        Log.i(TAG, "Calling payment callback with redeemed token");
+                                        Log.i(TAG, "Calling payment success callback");
                                         paymentCallback.onCashuTokenReceived(redeemedToken);
                                     } else {
                                         Log.e(TAG, "Payment callback is null, can't deliver redeemed token");
@@ -122,8 +126,10 @@ public class CashuHostCardEmulationService extends HostApduService {
                                     
                                     // Notify callback of error
                                     if (paymentCallback != null) {
-                                        Log.i(TAG, "Calling payment error callback");
+                                        Log.i(TAG, "Calling payment error callback for redemption failure");
                                         paymentCallback.onCashuPaymentError(errorMsg);
+                                    } else {
+                                        Log.e(TAG, "Payment callback is null, can't report redemption error");
                                     }
                                 } catch (Exception e) {
                                     // This is an unexpected error
@@ -135,20 +141,25 @@ public class CashuHostCardEmulationService extends HostApduService {
                                     
                                     // Notify callback of error
                                     if (paymentCallback != null) {
-                                        Log.i(TAG, "Calling payment error callback");
+                                        Log.i(TAG, "Calling payment error callback for unexpected error");
                                         paymentCallback.onCashuPaymentError(errorMsg);
+                                    } else {
+                                        Log.e(TAG, "Payment callback is null, can't report redemption error");
                                     }
                                 } finally {
                                     // Always reset the write mode to ensure service is ready for next interaction
+                                    Log.i(TAG, "Resetting write mode in finally block");
                                     if (ndefProcessor != null) {
                                         ndefProcessor.setWriteMode(false);
+                                    } else {
+                                        Log.e(TAG, "NDEF processor is null in finally block");
                                     }
                                 }
                             } else {
                                 Log.e(TAG, "Token failed validation, ignoring");
                             }
                         } else {
-                            Log.i(TAG, "No Cashu token found in received message: " + message);
+                            Log.i(TAG, "No Cashu token found in received message");
                         }
                     } catch (Exception e) {
                         Log.e(TAG, "Error in onNdefMessageReceived: " + e.getMessage(), e);

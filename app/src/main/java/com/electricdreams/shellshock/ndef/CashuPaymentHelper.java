@@ -90,19 +90,40 @@ public class CashuPaymentHelper {
      */
     public static String extractCashuToken(String text) {
         if (text == null) {
+            Log.i(TAG, "extractCashuToken: Input text is null");
             return null;
         }
         
         // If the text is already a Cashu token, return it as is
         if (isCashuToken(text)) {
+            Log.i(TAG, "extractCashuToken: Input is already a Cashu token");
             return text;
         }
         
-        // Check for a token parameter in URLs
+        Log.i(TAG, "extractCashuToken: Analyzing text: " + text);
+        
+        // Check for a token parameter in URLs like https://wallet.cashu.me/#token=cashu...
+        if (text.contains("#token=cashu")) {
+            Log.i(TAG, "extractCashuToken: Found #token=cashu pattern");
+            int tokenStart = text.indexOf("#token=cashu");
+            // Start at "cashu" part
+            int cashuStart = tokenStart + 7; // "#token=" is 7 chars
+            
+            // Find the end of the token (end of string, &, or #)
+            int cashuEnd = text.length();
+            
+            // Extract the token
+            String token = text.substring(cashuStart, cashuEnd);
+            Log.i(TAG, "extractCashuToken: Extracted token from URL fragment: " + token);
+            return token;
+        }
+        
+        // Check for a token parameter in URLs with query string like ?token=cashu...
         if (text.contains("token=cashu")) {
+            Log.i(TAG, "extractCashuToken: Found token=cashu pattern");
             int tokenStart = text.indexOf("token=cashu");
             // Start at "cashu" part
-            int cashuStart = tokenStart + 6;
+            int cashuStart = tokenStart + 6; // "token=" is 6 chars
             
             // Find the end of the token (end of string, &, or #)
             int cashuEnd = text.length();
@@ -119,7 +140,7 @@ public class CashuPaymentHelper {
             
             // Extract the token
             String token = text.substring(cashuStart, cashuEnd);
-            Log.i(TAG, "Extracted token from URL parameter: " + token);
+            Log.i(TAG, "extractCashuToken: Extracted token from URL parameter: " + token);
             return token;
         }
         
@@ -128,6 +149,7 @@ public class CashuPaymentHelper {
         for (String prefix : prefixes) {
             int tokenIndex = text.indexOf(prefix);
             if (tokenIndex >= 0) {
+                Log.i(TAG, "extractCashuToken: Found " + prefix + " at position " + tokenIndex);
                 // Found a token, extract from here to the end or until whitespace/delimiter
                 int endIndex = text.length();
                 
@@ -141,12 +163,12 @@ public class CashuPaymentHelper {
                 }
                 
                 String token = text.substring(tokenIndex, endIndex);
-                Log.i(TAG, "Extracted token from text: " + token);
+                Log.i(TAG, "extractCashuToken: Extracted token from text: " + token);
                 return token;
             }
         }
         
-        // No token found
+        Log.i(TAG, "extractCashuToken: No Cashu token found in text");
         return null;
     }
 

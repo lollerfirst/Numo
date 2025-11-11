@@ -305,8 +305,8 @@ public class NdefProcessor {
      * Process a received NDEF message
      */
     private void processReceivedNdefMessage(byte[] ndefData) {
-        Log.d(TAG, "Processing received NDEF message");
-        Log.d(TAG, "Hex dump: " + bytesToHex(Arrays.copyOfRange(ndefData, 0, Math.min(ndefData.length, 100))));
+        Log.i(TAG, "Processing received NDEF message");
+        Log.i(TAG, "Hex dump: " + bytesToHex(Arrays.copyOfRange(ndefData, 0, Math.min(ndefData.length, 100))));
         
         int offset = 0;
         int totalLength = 0;
@@ -314,9 +314,9 @@ public class NdefProcessor {
         // Detect framing:
         // Type 4: first two bytes form the NDEF file length
         if (ndefData.length >= 2) {
-            Log.d(TAG, "Type 4 style NDEF");
+            Log.i(TAG, "Type 4 style NDEF");
             totalLength = ((ndefData[0] & 0xFF) << 8) | (ndefData[1] & 0xFF);
-            Log.d(TAG, "NDEF message total length from header: " + totalLength);
+            Log.i(TAG, "NDEF message total length from header: " + totalLength);
             offset = 2;
         } else {
             Log.e(TAG, "Invalid NDEF data - length less than 2 bytes");
@@ -331,7 +331,7 @@ public class NdefProcessor {
             
             // Read record header starting at offset
             byte header = ndefData[offset];
-            Log.d(TAG, "NDEF header byte: 0x" + String.format("%02X", header));
+            Log.i(TAG, "NDEF header byte: 0x" + String.format("%02X", header));
             
             if (offset + 1 >= ndefData.length) {
                 Log.e(TAG, "Invalid data - can't read type length");
@@ -339,7 +339,7 @@ public class NdefProcessor {
             }
             
             int typeLength = ndefData[offset + 1] & 0xFF;
-            Log.d(TAG, "NDEF type length: " + typeLength);
+            Log.i(TAG, "NDEF type length: " + typeLength);
             
             // Determine payload length field size based on the SR flag (0x10)
             int payloadLength;
@@ -347,7 +347,7 @@ public class NdefProcessor {
             
             // Check SR (Short Record) flag
             boolean isShortRecord = (header & 0x10) != 0;
-            Log.d(TAG, "Is short record: " + isShortRecord);
+            Log.i(TAG, "Is short record: " + isShortRecord);
             
             if (isShortRecord) { // Short record: 1 byte payload length
                 if (offset + 2 >= ndefData.length) {
@@ -357,7 +357,7 @@ public class NdefProcessor {
                 
                 payloadLength = ndefData[offset + 2] & 0xFF;
                 typeFieldStart = offset + 3;
-                Log.d(TAG, "Short record payload length: " + payloadLength);
+                Log.i(TAG, "Short record payload length: " + payloadLength);
             } else { // Normal record: payload length is 4 bytes
                 if (offset + 5 >= ndefData.length) {
                     Log.e(TAG, "Invalid data - can't read normal record payload length");
@@ -369,7 +369,7 @@ public class NdefProcessor {
                         ((ndefData[offset + 4] & 0xFF) << 8) |
                         (ndefData[offset + 5] & 0xFF);
                 typeFieldStart = offset + 6;
-                Log.d(TAG, "Normal record payload length: " + payloadLength);
+                Log.i(TAG, "Normal record payload length: " + payloadLength);
             }
             
             // Safety check for typeFieldStart
@@ -380,7 +380,7 @@ public class NdefProcessor {
             
             // Check TNF (Type Name Format)
             int tnf = header & 0x07;
-            Log.d(TAG, "TNF: " + tnf);
+            Log.i(TAG, "TNF: " + tnf);
             
             // Check if we have a valid type field
             if (typeFieldStart + typeLength > ndefData.length) {
@@ -391,15 +391,15 @@ public class NdefProcessor {
             // Get the record type
             byte[] typeField = Arrays.copyOfRange(ndefData, typeFieldStart, typeFieldStart + typeLength);
             String typeStr = new String(typeField);
-            Log.d(TAG, "Record type: " + typeStr + " (hex: " + bytesToHex(typeField) + ")");
+            Log.i(TAG, "Record type: " + typeStr + " (hex: " + bytesToHex(typeField) + ")");
             
             // For text records, verify the record type is "T" (0x54)
             // For URI records, verify the record type is "U" (0x55)
             boolean isTextRecord = (typeLength == 1 && ndefData[typeFieldStart] == 0x54);
             boolean isUriRecord = (typeLength == 1 && ndefData[typeFieldStart] == 0x55);
             
-            Log.d(TAG, "Is Text Record: " + isTextRecord);
-            Log.d(TAG, "Is URI Record: " + isUriRecord);
+            Log.i(TAG, "Is Text Record: " + isTextRecord);
+            Log.i(TAG, "Is URI Record: " + isUriRecord);
             
             if (!isTextRecord && !isUriRecord) {
                 Log.w(TAG, "NDEF message is neither a Text Record nor URI Record. Type: " + 
@@ -409,7 +409,7 @@ public class NdefProcessor {
             
             // Payload starts immediately after the type field
             int payloadStart = typeFieldStart + typeLength;
-            Log.d(TAG, "Payload start position: " + payloadStart);
+            Log.i(TAG, "Payload start position: " + payloadStart);
             
             if (payloadStart >= ndefData.length) {
                 Log.e(TAG, "Payload start index out of bounds, returning");
@@ -421,11 +421,11 @@ public class NdefProcessor {
                 byte status = ndefData[payloadStart];
                 // Lower 6 bits of status indicate the language code length
                 int languageCodeLength = status & 0x3F;
-                Log.d(TAG, "Language code length: " + languageCodeLength);
+                Log.i(TAG, "Language code length: " + languageCodeLength);
                 
                 int textStart = payloadStart + 1 + languageCodeLength;
                 int textLength = payloadLength - 1 - languageCodeLength;
-                Log.d(TAG, "Text start position: " + textStart + ", length: " + textLength);
+                Log.i(TAG, "Text start position: " + textStart + ", length: " + textLength);
                 
                 if (textStart + textLength > ndefData.length) {
                     Log.e(TAG, "Text extraction bounds exceed data size: " + 
@@ -436,11 +436,11 @@ public class NdefProcessor {
                 byte[] textBytes = Arrays.copyOfRange(ndefData, textStart, textStart + textLength);
                 String text = new String(textBytes, "UTF-8");
                 
-                Log.d(TAG, "Extracted text: " + text);
+                Log.i(TAG, "Extracted text: " + text);
                 
                 // Call the callback if set
                 if (callback != null) {
-                    Log.d(TAG, "Calling onNdefMessageReceived with text: " + text);
+                    Log.i(TAG, "Calling onNdefMessageReceived with text: " + text);
                     callback.onNdefMessageReceived(text);
                 } else {
                     Log.e(TAG, "Callback is null, can't deliver message");
@@ -448,11 +448,11 @@ public class NdefProcessor {
             } else if (isUriRecord) {
                 // URI Record handling - first byte is the URI identifier code
                 byte uriIdentifierCode = ndefData[payloadStart];
-                Log.d(TAG, "URI identifier code: " + uriIdentifierCode);
+                Log.i(TAG, "URI identifier code: " + uriIdentifierCode);
                 
                 int uriStart = payloadStart + 1;
                 int uriLength = payloadLength - 1;
-                Log.d(TAG, "URI start position: " + uriStart + ", length: " + uriLength);
+                Log.i(TAG, "URI start position: " + uriStart + ", length: " + uriLength);
                 
                 if (uriStart + uriLength > ndefData.length) {
                     Log.e(TAG, "URI extraction bounds exceed data size");
@@ -465,11 +465,11 @@ public class NdefProcessor {
                 // Prepend the URI prefix according to the identifier code
                 String prefix = getUriPrefix(uriIdentifierCode);
                 String fullUri = prefix + uri;
-                Log.d(TAG, "Extracted URI: " + fullUri);
+                Log.i(TAG, "Extracted URI: " + fullUri);
                 
                 // Call the callback if set
                 if (callback != null) {
-                    Log.d(TAG, "Calling onNdefMessageReceived with URI: " + fullUri);
+                    Log.i(TAG, "Calling onNdefMessageReceived with URI: " + fullUri);
                     callback.onNdefMessageReceived(fullUri);
                 } else {
                     Log.e(TAG, "Callback is null, can't deliver message");
