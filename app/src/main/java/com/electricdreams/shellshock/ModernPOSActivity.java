@@ -41,8 +41,8 @@ import java.util.*;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
-import com.electricdreams.shellshock.nfc.CashuHostCardEmulationService;
-import com.electricdreams.shellshock.nfc.CashuPaymentHelper;
+import com.electricdreams.shellshock.ndef.CashuHostCardEmulationService;
+import com.electricdreams.shellshock.ndef.CashuPaymentHelper;
 
 public class ModernPOSActivity extends AppCompatActivity implements SatocashWallet.OperationFeedback {
 
