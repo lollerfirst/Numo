@@ -1,4 +1,4 @@
-package com.electricdreams.shellshock.nfc;
+package com.electricdreams.shellshock.ndef;
 
 import android.util.Log;
 import java.nio.charset.Charset;

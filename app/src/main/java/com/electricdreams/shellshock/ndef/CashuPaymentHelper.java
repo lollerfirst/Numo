@@ -174,7 +174,9 @@ public class CashuPaymentHelper {
             com.cashujdk.nut01.KeysetId keysetId = new com.cashujdk.nut01.KeysetId();
             keysetId.set_id(selectedKeysetId);
             
-            List<OutputData> outputData = OutputHelper.createOutputs(createOutputAmounts(tokenAmount - fee), keysetId);
+            // Create an instance of OutputHelper
+            OutputHelper outputHelper = new OutputHelper();
+            List<OutputData> outputData = outputHelper.createOutputs(createOutputAmounts(tokenAmount - fee), keysetId);
 
             // Request the keys in the keyset
             CompletableFuture<GetKeysResponse> keysFuture = cashuHttpClient.getKeys(selectedKeysetId);
