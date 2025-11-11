@@ -1,6 +1,7 @@
 package com.electricdreams.shellshock.ndef;
 
 import android.util.Log;
+import android.util.Pair;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -15,8 +16,11 @@ import java.util.stream.Collectors;
 
 import org.bouncycastle.math.ec.ECPoint;
 
+import static com.cashujdk.cryptography.Cashu.*;
+
 import com.cashujdk.api.CashuHttpClient;
 import com.cashujdk.nut00.BlindSignature;
+import com.cashujdk.nut00.BlindedMessage;
 import com.cashujdk.nut00.InnerToken;
 import com.cashujdk.nut00.Proof;
 import com.cashujdk.nut00.StringSecret;
@@ -273,9 +277,30 @@ public class CashuPaymentHelper {
             com.cashujdk.nut01.KeysetId keysetId = new com.cashujdk.nut01.KeysetId();
             keysetId.set_id(selectedKeysetId);
             
-            // Create an instance of OutputHelper
-            OutputHelper outputHelper = new OutputHelper();
-            List<OutputData> outputData = outputHelper.createOutputs(createOutputAmounts(tokenAmount - fee), keysetId);
+            List<Long> outputAmounts = createOutputAmounts(tokenAmount - fee);
+
+            // Store blinded messages, secrets, and blinding factors for later use
+            List<BlindedMessage> blindedMessages = new ArrayList<>();
+            List<StringSecret> secrets = new ArrayList<>();
+            List<BigInteger> blindingFactors = new ArrayList<>();
+            
+            for (Long output : outputAmounts) {
+                StringSecret secret = StringSecret.random();
+                secrets.add(secret);
+                
+                // Generate a random blinding factor
+                BigInteger blindingFactor = new BigInteger(256, new SecureRandom());
+                blindingFactors.add(blindingFactor);
+                
+                // Create a blinded message with Y = B
+                BlindedMessage blindedMessage = new BlindedMessage(
+                        output,
+                        selectedKeysetId,
+                        pointToHex(computeB_(messageToCurve(secret.getSecret()), blindingFactor), true),
+                        Optional.empty()
+                );
+                blindedMessages.add(blindedMessage);
+            }
 
             // Request the keys in the keyset
             CompletableFuture<GetKeysResponse> keysFuture = cashuHttpClient.getKeys(selectedKeysetId);
@@ -283,7 +308,7 @@ public class CashuPaymentHelper {
             // Create swap payload
             PostSwapRequest swapRequest = new PostSwapRequest();
             swapRequest.inputs = receiveProofs.stream().map(p -> new Proof(p.amount, p.keysetId, p.secret, p.c, Optional.empty(), Optional.empty())).collect(Collectors.toList());
-            swapRequest.outputs = outputData.stream().map(bm -> bm.blindedMessage).collect(Collectors.toList());
+            swapRequest.outputs = blindedMessages;
 
             Log.d(TAG, "Attempting to swap proofs");
 
@@ -299,7 +324,7 @@ public class CashuPaymentHelper {
 
             Log.d(TAG, "Successfully swapped and received proofs");
 
-            List<Proof> proofs = constructAndVerifyProofs(response, keysResponse.keysets.get(0), outputData);
+            List<Proof> proofs = constructAndVerifyProofs(response, keysResponse.keysets.get(0), secrets, blindingFactors);
             if (proofs.isEmpty()) {
                 throw new RedemptionException("Failed to verify proofs from mint");
             }
@@ -333,7 +358,7 @@ public class CashuPaymentHelper {
         }
     }
 
-    private static long[] createOutputAmounts(long amount) {
+    private static List<Long> createOutputAmounts(long amount) {
         List<Long> receiveOutputAmounts = new ArrayList<>();
         long amountLeft = amount;
         for (int i = 0; amountLeft > 0; ++i) {
@@ -342,21 +367,11 @@ public class CashuPaymentHelper {
             }
             amountLeft >>= 1;
         }
-        // Convert list to array
-        long[] amountArray = new long[receiveOutputAmounts.size()];
-        for (int i = 0; i < receiveOutputAmounts.size(); i++) {
-            amountArray[i] = receiveOutputAmounts.get(i);
-        }
-        return amountArray;
+        return receiveOutputAmounts;
     }
 
-    private static List<Proof> constructAndVerifyProofs(PostSwapResponse response, KeysetItemResponse keyset, List<OutputData> outputsAndSecretData) {
-        List<BigInteger> blindingFactors = outputsAndSecretData.stream().map((output) -> new BigInteger(1, output.blindingFactor)).toList();
-        @SuppressWarnings("unchecked")
-        List<StringSecret> secrets = outputsAndSecretData.stream()
-            .map((output) -> (StringSecret) output.secret)
-            .collect(Collectors.toList());
-
+    private static List<Proof> constructAndVerifyProofs(PostSwapResponse response, KeysetItemResponse keyset, 
+                                              List<StringSecret> secrets, List<BigInteger> blindingFactors) {
         List<Proof> result = new ArrayList<>();
         for (int i = 0; i < response.signatures.size(); ++i) {
             BlindSignature signature = response.signatures.get(i);
