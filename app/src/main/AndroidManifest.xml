@@ -4,7 +4,9 @@
 
     <!-- Permissions for NFC client functionality -->
     <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.HOST_CARD_EMULATION" />
     <uses-feature android:name="android.hardware.nfc" android:required="true" />
+    <uses-feature android:name="android.hardware.nfc.hce" android:required="true" />
     
     <!-- Permission for network access -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -90,6 +92,19 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ModernPOSActivity" />
         </activity>
+        
+        <!-- HCE Service for Cashu payments -->
+        <service android:name=".nfc.CashuHostCardEmulationService"
+            android:exported="true"
+            android:permission="android.permission.BIND_NFC_SERVICE">
+            <intent-filter>
+                <action android:name="android.nfc.cardemulation.action.HOST_APDU_SERVICE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.nfc.cardemulation.host_apdu_service"
+                android:resource="@xml/aid_list" />
+        </service>
     </application>
 
 </manifest>

@@ -43,6 +43,33 @@
             android:visibility="gone"
             android:textSize="16sp" />
             
+        <!-- Payment method buttons -->
+        <LinearLayout
+            android:id="@+id/payment_method_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+            
+            <Button
+                android:id="@+id/btn_smartcard_payment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:text="Smartcard"
+                android:visibility="gone" />
+                
+            <Button
+                android:id="@+id/btn_ndef_payment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:text="NDEF"
+                android:visibility="gone" />
+        </LinearLayout>
+            
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

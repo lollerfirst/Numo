@@ -2,4 +2,8 @@
     <string name="app_name">shellshock</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    
+    <!-- Host Card Emulation strings -->
+    <string name="service_description">Cashu Payment Service</string>
+    <string name="ndef_aid_description">NDEF Tag Type 4</string>
 </resources>
