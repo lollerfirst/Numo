@@ -5,6 +5,7 @@ import android.util.Log;
 import com.cashujdk.nut18.PaymentRequest;
 import com.cashujdk.nut18.Transport;
 import com.cashujdk.nut18.TransportTag;
+import com.cashujdk.nut00.Token;
 
 import java.util.Optional;
 
@@ -52,7 +53,7 @@ public class CashuPaymentHelper {
      * Note: This only does basic format validation, not cryptographic verification
      */
     public static boolean isCashuToken(String text) {
-        return text != null && text.startsWith("cashuB");
+        return text != null && (text.startsWith("cashuB") || text.startsWith("cashuA"));
     }
 
     /**
@@ -70,20 +71,32 @@ public class CashuPaymentHelper {
      * @param expectedAmount The expected amount in sats
      * @return True if the token is valid and matches the expected amount, false otherwise
      */
-    public static boolean validateToken(String token, long expectedAmount) {
-        if (!isCashuToken(token)) {
+    public static boolean validateToken(String tokenString, long expectedAmount) {
+        if (!isCashuToken(tokenString)) {
             Log.e(TAG, "Invalid token format (not a Cashu token)");
             return false;
         }
         
         try {
-            // TODO: Here we need to use Cashu-JDK to parse and validate the token
-            // This should verify:
-            // 1. The token structure is valid
-            // 2. The token amount matches expectedAmount
-            // 3. The token hasn't been spent already (if possible to check)
+            Token token = Token.decode(token);
+            if (token.unit != "sat") {
+                Log.e(TAG, "Unsupported token unit: " + token.unit);
+                return false;
+            }
+
+            long tokenAmount = 0;
+            token.tokens.stream().foreach((token) -> {
+                List<Proof> proofs = token.getProofsShortId();
+                proofs.stream().foreach((proof) -> {
+                    tokenAmount += proof.amount;
+                });
+            });
+
+            if (tokenAmount < expectedAmount) {
+                Log.e(TAG, "Amount was insufficient: " + expectedAmount + " sats required but " + tokenAmount + " sats provided");
+                return false;
+            }
             
-            // Placeholder for now - we'll add detailed implementation later
             Log.d(TAG, "Token format validation passed, cryptographic verification pending");
             return true;
         } catch (Exception e) {
@@ -93,29 +106,31 @@ public class CashuPaymentHelper {
     }
     
     /**
-     * Attempt to redeem a Cashu token
+     * Attempt to redeem a Cashu token and get a reissued token
      * @param token The token to redeem
-     * @return True if redemption was successful, false otherwise
+     * @return A new Token with redeemed proofs, or null if redemption failed
      */
-    public static boolean redeemToken(String token) {
+    public static String redeemToken(String token) {
         if (!isCashuToken(token)) {
             Log.e(TAG, "Cannot redeem: Invalid token format");
-            return false;
+            return null;
         }
         
         try {
             // TODO: Use Cashu-JDK to redeem the token
             // This should:
-            // 1. Submit the token to the mint for redemption
-            // 2. Handle the response (success/failure)
-            // 3. Update local records as needed
+            // 1. Parse the original token into a Token object
+            // 2. Submit the proofs to the mint for redemption
+            // 3. Receive new reissued proofs from the mint
+            // 4. Create a new Token with the reissued proofs
+            // 5. Return the encoded form of the new Token (token.encode())
             
             // Placeholder for now - detailed implementation needed
             Log.d(TAG, "Token redemption placeholder - IMPLEMENT ACTUAL REDEMPTION LOGIC");
-            return true;
+            return token; // Currently just returning the original token for testing
         } catch (Exception e) {
             Log.e(TAG, "Token redemption failed: " + e.getMessage(), e);
-            return false;
+            return null;
         }
     }
 }

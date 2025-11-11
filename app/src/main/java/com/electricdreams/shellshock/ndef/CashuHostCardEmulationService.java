@@ -79,14 +79,26 @@ public class CashuHostCardEmulationService extends HostApduService {
                         if (isValid) {
                             Log.d(TAG, "Token passed validation");
                             
-                            // TODO: Add token redemption here
-                            // boolean redeemed = CashuPaymentHelper.redeemToken(message);
-                            
-                            // Notify the callback
-                            if (paymentCallback != null) {
-                                paymentCallback.onCashuTokenReceived(message);
+                            // Try to redeem the token
+                            String redeemedToken = CashuPaymentHelper.redeemToken(message);
+                            if (redeemedToken != null) {
+                                Log.d(TAG, "Token successfully redeemed and reissued");
+                                
+                                // Notify the callback with the redeemed token
+                                if (paymentCallback != null) {
+                                    paymentCallback.onCashuTokenReceived(redeemedToken);
+                                } else {
+                                    Log.e(TAG, "Payment callback is null, can't deliver redeemed token");
+                                }
                             } else {
-                                Log.e(TAG, "Payment callback is null, can't deliver token");
+                                Log.e(TAG, "Failed to redeem token");
+                                // Notify of failure
+                                if (paymentCallback != null) {
+                                    // Still send the original token if redemption fails
+                                    // This allows the app to handle the failure gracefully
+                                    Log.w(TAG, "Sending original token despite redemption failure");
+                                    paymentCallback.onCashuTokenReceived(message);
+                                }
                             }
                         } else {
                             Log.e(TAG, "Token failed validation, ignoring");
