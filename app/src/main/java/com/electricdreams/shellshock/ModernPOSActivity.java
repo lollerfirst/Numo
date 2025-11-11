@@ -427,8 +427,8 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
     
     private void setupNdefPayment(CashuHostCardEmulationService service, String paymentRequest, 
                                   TextView statusText, AlertDialog dialog, long amount) {
-        // Set the payment request to the HCE service
-        service.setPaymentRequest(paymentRequest);
+        // Set the payment request to the HCE service with expected amount
+        service.setPaymentRequest(paymentRequest, amount);
         
         // Set up callback for when a token is received
         service.setPaymentCallback(token -> {
