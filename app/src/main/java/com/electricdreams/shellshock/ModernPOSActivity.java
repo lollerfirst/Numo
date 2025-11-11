@@ -386,7 +386,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         ndefDialog.show();
         
         // Start or use the HCE service
-        statusText.setText("Initializing NFC...");
+        statusText.setText("Initializing Host Card Emulation...");
         
         // Force start the HCE service
         Intent serviceIntent = new Intent(this, CashuHostCardEmulationService.class);
@@ -401,14 +401,14 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                 setupNdefPayment(hceService, paymentRequest, statusText, ndefDialog, amount);
             } else {
                 // Try one more time with a longer delay
-                statusText.setText("Waiting for NFC service...");
+                statusText.setText("Waiting for HCE service...");
                 new Handler().postDelayed(() -> {
                     CashuHostCardEmulationService service = CashuHostCardEmulationService.getInstance();
                     if (service != null) {
                         setupNdefPayment(service, paymentRequest, statusText, ndefDialog, amount);
                     } else {
-                        statusText.setText("Error: NFC service not available");
-                        Toast.makeText(this, "NFC service not available. Make sure NFC is enabled in your device settings.", Toast.LENGTH_LONG).show();
+                        statusText.setText("Error: Host Card Emulation service not available");
+                        Toast.makeText(this, "HCE service not available. Make sure NFC is enabled and Host Card Emulation is supported on your device.", Toast.LENGTH_LONG).show();
                     }
                 }, 3000);
             }

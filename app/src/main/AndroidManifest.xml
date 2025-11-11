@@ -94,7 +94,7 @@
         </activity>
         
         <!-- HCE Service for Cashu payments -->
-        <service android:name=".nfc.CashuHostCardEmulationService"
+        <service android:name=".ndef.CashuHostCardEmulationService"
             android:exported="true"
             android:permission="android.permission.BIND_NFC_SERVICE">
             <intent-filter>
