@@ -82,6 +82,73 @@ public class CashuPaymentHelper {
     public static boolean isCashuToken(String text) {
         return text != null && (text.startsWith("cashuB") || text.startsWith("cashuA"));
     }
+    
+    /**
+     * Extract a Cashu token from a string that might contain other content
+     * @param text Text that may contain a Cashu token (e.g., URL, URI, or plain text)
+     * @return The extracted Cashu token or null if no token was found
+     */
+    public static String extractCashuToken(String text) {
+        if (text == null) {
+            return null;
+        }
+        
+        // If the text is already a Cashu token, return it as is
+        if (isCashuToken(text)) {
+            return text;
+        }
+        
+        // Check for a token parameter in URLs
+        if (text.contains("token=cashu")) {
+            int tokenStart = text.indexOf("token=cashu");
+            // Start at "cashu" part
+            int cashuStart = tokenStart + 6;
+            
+            // Find the end of the token (end of string, &, or #)
+            int cashuEnd = text.length();
+            int ampIndex = text.indexOf('&', cashuStart);
+            int hashIndex = text.indexOf('#', cashuStart);
+            
+            if (ampIndex > cashuStart && (ampIndex < cashuEnd)) {
+                cashuEnd = ampIndex;
+            }
+            
+            if (hashIndex > cashuStart && (hashIndex < cashuEnd)) {
+                cashuEnd = hashIndex;
+            }
+            
+            // Extract the token
+            String token = text.substring(cashuStart, cashuEnd);
+            Log.i(TAG, "Extracted token from URL parameter: " + token);
+            return token;
+        }
+        
+        // Look for "cashuA" or "cashuB" in the text
+        String[] prefixes = {"cashuA", "cashuB"};
+        for (String prefix : prefixes) {
+            int tokenIndex = text.indexOf(prefix);
+            if (tokenIndex >= 0) {
+                // Found a token, extract from here to the end or until whitespace/delimiter
+                int endIndex = text.length();
+                
+                // Look for common delimiters that might appear after the token
+                for (int i = tokenIndex + prefix.length(); i < text.length(); i++) {
+                    char c = text.charAt(i);
+                    if (Character.isWhitespace(c) || c == '"' || c == '\'' || c == '<' || c == '>' || c == '&' || c == '#') {
+                        endIndex = i;
+                        break;
+                    }
+                }
+                
+                String token = text.substring(tokenIndex, endIndex);
+                Log.i(TAG, "Extracted token from text: " + token);
+                return token;
+            }
+        }
+        
+        // No token found
+        return null;
+    }
 
     /**
      * Check if a string is a valid Cashu payment request

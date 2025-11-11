@@ -67,14 +67,16 @@ public class CashuHostCardEmulationService extends HostApduService {
                         Log.i(TAG, "========== RECEIVED NDEF MESSAGE ==========");
                         Log.i(TAG, "Message content: " + message);
                         
-                        // Check if it's a Cashu token
-                        if (CashuPaymentHelper.isCashuToken(message)) {
-                            Log.i(TAG, "Received potential Cashu token, validating...");
+                        // First try to extract a Cashu token from the message
+                        String cashuToken = CashuPaymentHelper.extractCashuToken(message);
+                        
+                        if (cashuToken != null) {
+                            Log.i(TAG, "Extracted Cashu token: " + cashuToken);
                             
                             // Validate the token against expected amount
                             boolean isValid = false;
                             if (expectedAmount > 0) {
-                                isValid = CashuPaymentHelper.validateToken(message, expectedAmount);
+                                isValid = CashuPaymentHelper.validateToken(cashuToken, expectedAmount);
                                 if (!isValid) {
                                     String errorMsg = "Token validation failed for amount: " + expectedAmount;
                                     Log.e(TAG, errorMsg);
@@ -100,7 +102,7 @@ public class CashuHostCardEmulationService extends HostApduService {
                                 
                                 try {
                                     // Try to redeem the token - this will throw an exception if redemption fails
-                                    String redeemedToken = CashuPaymentHelper.redeemToken(message);
+                                    String redeemedToken = CashuPaymentHelper.redeemToken(cashuToken);
                                     Log.i(TAG, "Token successfully redeemed and reissued");
                                     
                                     // Notify the callback with the redeemed token
@@ -146,7 +148,7 @@ public class CashuHostCardEmulationService extends HostApduService {
                                 Log.e(TAG, "Token failed validation, ignoring");
                             }
                         } else {
-                            Log.i(TAG, "Received message is not a Cashu token: " + message);
+                            Log.i(TAG, "No Cashu token found in received message: " + message);
                         }
                     } catch (Exception e) {
                         Log.e(TAG, "Error in onNdefMessageReceived: " + e.getMessage(), e);
