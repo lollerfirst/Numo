@@ -26,7 +26,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ScrollView;
+import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -59,7 +59,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
     private Button copyTokenButton;
     private Button openWithButton;
     private Button resetButton;
-    private ScrollView tokenScrollContainer;
+    private FrameLayout tokenScrollContainer;
     private LinearLayout tokenActionsContainer;
     private ConstraintLayout inputModeContainer;
     private NfcAdapter nfcAdapter;
