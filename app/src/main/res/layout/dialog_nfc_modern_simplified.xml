@@ -13,27 +13,27 @@
         android:background="@color/white"
         android:padding="24dp">
 
-        <!-- NFC indicator container at top - credit card proportions -->
+        <!-- NFC indicator container at top - credit card proportions, now larger -->
         <FrameLayout
             android:id="@+id/card_container"
-            android:layout_width="220dp"
-            android:layout_height="140dp"
+            android:layout_width="280dp"
+            android:layout_height="180dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="48dp"
             android:background="@drawable/nfc_payment_background_rect">
 
-            <!-- Center image - shows contactless icon and cashu icon -->
+            <!-- Icons displayed horizontally in center -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:orientation="vertical"
-                android:gravity="center">
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginEnd="12dp"
                     android:src="@drawable/contactless"
                     android:contentDescription="Contactless payment" />
 
