@@ -329,10 +329,10 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         }
         final String finalPaymentRequest = paymentRequestLocal;
         
-        // Show the unified NFC scan dialog
+        // Show the unified NFC scan dialog using the new design
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.Theme_Shellshock);
         LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_nfc_modern, null);
+        View dialogView = inflater.inflate(R.layout.dialog_nfc_modern_new, null);
         builder.setView(dialogView);
 
         // Set up dialog content
@@ -351,14 +351,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
             } else {
                 hintView.setText("Scan your Satocash card to make the payment");
             }
-            hintView.setVisibility(View.VISIBLE);
         }
-        
-        // Hide payment method buttons in unified flow
-        Button smartcardButton = dialogView.findViewById(R.id.btn_smartcard_payment);
-        Button ndefButton = dialogView.findViewById(R.id.btn_ndef_payment);
-        if (smartcardButton != null) smartcardButton.setVisibility(View.GONE);
-        if (ndefButton != null) ndefButton.setVisibility(View.GONE);
         
         // Add cancel button functionality if available
         Button cancelButton = dialogView.findViewById(R.id.nfc_cancel_button);
@@ -585,7 +578,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
     private void showRescanDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.Theme_Shellshock);
         LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_nfc_modern, null);
+        View dialogView = inflater.inflate(R.layout.dialog_nfc_modern_new, null);
         builder.setView(dialogView);
 
         TextView nfcAmountDisplay = dialogView.findViewById(R.id.nfc_amount_display);
@@ -603,7 +596,6 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         TextView hintView = dialogView.findViewById(R.id.nfc_hint_text);
         if (hintView != null) {
             hintView.setText("PIN accepted. Please scan your card again to complete payment.");
-            hintView.setVisibility(View.VISIBLE);
         }
 
         builder.setCancelable(true);
@@ -619,7 +611,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
 
     private void showProcessingDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.Theme_Shellshock);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_nfc_modern, null);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_nfc_modern_new, null);
         builder.setView(dialogView);
 
         TextView titleView = dialogView.findViewById(R.id.nfc_dialog_title);
@@ -630,6 +622,18 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         TextView amountView = dialogView.findViewById(R.id.nfc_amount_display);
         if (amountView != null) {
             amountView.setText(formatAmount(String.valueOf(requestedAmount)));
+        }
+        
+        // Update hint text
+        TextView hintView = dialogView.findViewById(R.id.nfc_hint_text);
+        if (hintView != null) {
+            hintView.setText("Please wait while we process your payment...");
+        }
+        
+        // Hide the cancel button since this is a processing dialog
+        Button cancelButton = dialogView.findViewById(R.id.nfc_cancel_button);
+        if (cancelButton != null) {
+            cancelButton.setVisibility(View.GONE);
         }
         
         builder.setCancelable(false);

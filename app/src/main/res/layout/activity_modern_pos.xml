@@ -63,8 +63,8 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Token Display Container -->
-    <ScrollView
+    <!-- Token Display Container with Fading Effect -->
+    <FrameLayout
         android:id="@+id/token_scroll_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -77,18 +77,31 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/amount_display">
-
-        <TextView
-            android:id="@+id/token_display"
+        
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:gravity="start"
-            android:textIsSelectable="true"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:fontFamily="monospace" />
-    </ScrollView>
+            android:maxHeight="160dp">
+
+            <TextView
+                android:id="@+id/token_display"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:gravity="start"
+                android:textIsSelectable="true"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:fontFamily="monospace" />
+        </ScrollView>
+        
+        <!-- Gradient overlay for fading effect -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/token_text_fade" />
+    </FrameLayout>
 
     <!-- Token Action Buttons Container -->
     <LinearLayout
