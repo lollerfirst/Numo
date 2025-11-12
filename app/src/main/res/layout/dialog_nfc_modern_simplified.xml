@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="@color/black"
+    app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="8dp"
     app:cardElevation="8dp">
 
@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        android:padding="24dp">
+        android:padding="24dp"
+        android:background="@color/white">
 
         <!-- NFC indicator container - credit card proportions (1.59:1 height:width ratio) -->
         <FrameLayout
@@ -54,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="@color/white"
             android:text="CANCEL"
             android:textColor="#FF0000"
             android:textStyle="bold"
