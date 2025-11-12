@@ -22,7 +22,7 @@
             android:layout_marginTop="48dp"
             android:background="@drawable/nfc_payment_background_rect">
 
-            <!-- Icons displayed horizontally in center -->
+            <!-- Icons displayed horizontally in center, Cashu icon first -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -31,17 +31,17 @@
                 android:gravity="center_vertical">
 
                 <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginEnd="12dp"
-                    android:src="@drawable/contactless"
-                    android:contentDescription="Contactless payment" />
-
-                <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
+                    android:layout_marginEnd="12dp"
                     android:src="@drawable/cashu"
                     android:contentDescription="Cashu" />
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/contactless"
+                    android:contentDescription="Contactless payment" />
             </LinearLayout>
         </FrameLayout>
 
