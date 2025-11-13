@@ -19,6 +19,8 @@ If the card is PIN-protected, the customer enters their PIN through a secure inp
 
 The app also includes a balance checking feature to verify a card's available funds, and a top-up function that allows loading Cashu tokens onto cards.
 
+Additionally, Shellshock now simulates a Type 4 Forum tag with a payment request that can be read from or written to using NDEF (NFC Data Exchange Format). This makes the application compatible with web applications like cashu.me that utilize the WebNFC API for NFC interactions. This feature enables seamless communication between web-based Cashu applications and the Shellshock terminal.
+
 ## Features
 
 - Simple amount entry with numeric keypad
@@ -27,6 +29,8 @@ The app also includes a balance checking feature to verify a card's available fu
 - Balance checking functionality
 - Card top-up capability
 - Immediate token display and copy functionality
+- Type 4 Forum tag simulation with NDEF (NFC Data Exchange Format) compatibility
+- Compatibility with web applications like cashu.me through WebNFC API
 - [Coming Soon] Direct "Open With" integration for Cashu wallets
 
 ## Requirements
@@ -57,6 +61,17 @@ Alternatively, you can open the project in Android Studio and build it using the
 ## Smartcard Compatibility
 
 Shellshock interfaces with the [Satocash-Applet](https://github.com/Toporin/Satocash-Applet), a JavaCard applet implementation that enables secure storage and transfer of Cashu tokens on smartcards. The applet must be installed on a compatible JavaCard for the app to function properly. For more information about the smartcard implementation and compatibility, please refer to the Satocash-Applet repository.
+
+## NDEF Compatibility
+
+Shellshock now simulates a Type 4 Forum tag with payment requests encoded using NDEF (NFC Data Exchange Format). This feature enables:
+
+- Reading/writing NDEF messages from web applications that use the WebNFC API
+- Direct compatibility with web-based Cashu applications like cashu.me
+- Seamless integration between physical NFC devices and web-based payment systems
+- Cross-platform payment processing without requiring specialized hardware
+
+The NDEF implementation follows the NFC Forum specifications, ensuring broad compatibility with various NFC-enabled applications and devices.
 
 ## Getting Started
 
