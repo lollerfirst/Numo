@@ -788,6 +788,37 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         
         super.onDestroy();
     }
+    
+    @Override
+    public void onConfigurationChanged(android.content.res.Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        
+        // Handle orientation changes here without restarting activity
+        // We don't need to do much since our layouts should adapt automatically
+        // But we can adjust any specific UI elements if needed
+        
+        // If we're in a payment dialog, make sure it still fits the screen properly
+        if (nfcDialog != null && nfcDialog.isShowing()) {
+            // Reset dialog dimensions to match new screen size
+            nfcDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 
+                                           ViewGroup.LayoutParams.MATCH_PARENT);
+        }
+        
+        if (rescanDialog != null && rescanDialog.isShowing()) {
+            rescanDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 
+                                             ViewGroup.LayoutParams.MATCH_PARENT);
+        }
+        
+        if (processingDialog != null && processingDialog.isShowing()) {
+            processingDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 
+                                                 ViewGroup.LayoutParams.MATCH_PARENT);
+        }
+        
+        if (paymentMethodDialog != null && paymentMethodDialog.isShowing()) {
+            paymentMethodDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 
+                                                    ViewGroup.LayoutParams.MATCH_PARENT);
+        }
+    }
 
     @Override
     protected void onNewIntent(Intent intent) {
