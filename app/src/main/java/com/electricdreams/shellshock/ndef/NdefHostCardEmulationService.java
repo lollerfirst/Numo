@@ -82,13 +82,17 @@ public class NdefHostCardEmulationService extends HostApduService {
                         if (cashuToken != null) {
                             Log.i(TAG, "Extracted Cashu token: " + cashuToken);
                             
-                            // Validate the token against expected amount
+                            // Get the list of allowed mints
+                            List<String> allowedMints = com.electricdreams.shellshock.util.MintManager.getInstance(getApplicationContext()).getAllowedMints();
+                            Log.i(TAG, "Using allowed mints list with " + allowedMints.size() + " entries");
+                            
+                            // Validate the token against expected amount and mints
                             boolean isValid = false;
                             if (expectedAmount > 0) {
                                 Log.i(TAG, "Validating token for expected amount: " + expectedAmount);
-                                isValid = CashuPaymentHelper.validateToken(cashuToken, expectedAmount);
+                                isValid = CashuPaymentHelper.validateToken(cashuToken, expectedAmount, allowedMints);
                                 if (!isValid) {
-                                    String errorMsg = "Token validation failed for amount: " + expectedAmount;
+                                    String errorMsg = "Token validation failed for amount or mint";
                                     Log.e(TAG, errorMsg);
                                     
                                     // Clear payment request on validation failure
@@ -103,7 +107,7 @@ public class NdefHostCardEmulationService extends HostApduService {
                                     }
                                     return;
                                 }
-                                Log.i(TAG, "Token passed amount validation for " + expectedAmount + " sats");
+                                Log.i(TAG, "Token passed amount and mint validation for " + expectedAmount + " sats");
                             } else {
                                 // If no expected amount, just do basic validation
                                 Log.w(TAG, "No expected amount set for validation, performing basic check only");

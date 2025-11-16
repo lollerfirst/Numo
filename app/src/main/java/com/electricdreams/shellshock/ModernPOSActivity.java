@@ -467,11 +467,17 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         final boolean ndefAvailable = NdefHostCardEmulationService.isHceAvailable(this);
         String paymentRequestLocal = null;
         
+        // Get allowed mints
+        com.electricdreams.shellshock.util.MintManager mintManager = com.electricdreams.shellshock.util.MintManager.getInstance(this);
+        List<String> allowedMints = mintManager.getAllowedMints();
+        Log.d(TAG, "Using " + allowedMints.size() + " allowed mints for payment request");
+        
         if (ndefAvailable) {
             // Create the payment request in case we need it
             paymentRequestLocal = CashuPaymentHelper.createPaymentRequest(
                 amount, 
-                "Payment of " + amount + " sats"
+                "Payment of " + amount + " sats",
+                allowedMints
             );
             
             if (paymentRequestLocal == null) {
@@ -575,10 +581,16 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         
         Log.i(TAG, "Starting NDEF payment flow for " + amount + " sats");
         
+        // Get allowed mints
+        com.electricdreams.shellshock.util.MintManager mintManager = com.electricdreams.shellshock.util.MintManager.getInstance(this);
+        List<String> allowedMints = mintManager.getAllowedMints();
+        Log.d(TAG, "Using " + allowedMints.size() + " allowed mints for payment request");
+        
         // Create the payment request
         String paymentRequest = CashuPaymentHelper.createPaymentRequest(
                 amount, 
-                "Payment of " + amount + " sats"
+                "Payment of " + amount + " sats",
+                allowedMints
         );
         
         if (paymentRequest == null) {

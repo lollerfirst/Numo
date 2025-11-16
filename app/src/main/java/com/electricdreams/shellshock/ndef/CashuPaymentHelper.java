@@ -50,9 +50,10 @@ public class CashuPaymentHelper {
      * Create a Cashu payment request for a specific amount
      * @param amount Amount in sats
      * @param description Optional description for the payment
+     * @param allowedMints List of allowed mints (can be null)
      * @return Payment request string (creq...)
      */
-    public static String createPaymentRequest(long amount, String description) {
+    public static String createPaymentRequest(long amount, String description, List<String> allowedMints) {
         try {
             PaymentRequest paymentRequest = new PaymentRequest();
             paymentRequest.amount = Optional.of(amount);
@@ -66,6 +67,12 @@ public class CashuPaymentHelper {
             // Set single-use flag
             paymentRequest.singleUse = Optional.of(true);
             
+            // Set allowed mints if provided
+            if (allowedMints != null && !allowedMints.isEmpty()) {
+                paymentRequest.mints = Optional.of(allowedMints);
+                Log.d(TAG, "Added " + allowedMints.size() + " allowed mints to payment request");
+            }
+            
             // Encode and return
             String encodedRequest = paymentRequest.encode();
             Log.d(TAG, "Created payment request: " + encodedRequest);
@@ -75,6 +82,16 @@ public class CashuPaymentHelper {
             e.printStackTrace();
             return null;
         }
+    }
+    
+    /**
+     * Create a Cashu payment request for a specific amount (without specifying allowed mints)
+     * @param amount Amount in sats
+     * @param description Optional description for the payment
+     * @return Payment request string (creq...)
+     */
+    public static String createPaymentRequest(long amount, String description) {
+        return createPaymentRequest(amount, description, null);
     }
 
     /**
@@ -186,12 +203,13 @@ public class CashuPaymentHelper {
     }
     
     /**
-     * Validate a Cashu token for a specific amount
-     * @param token The token to validate
+     * Validate a Cashu token for a specific amount and against allowed mints
+     * @param tokenString The token to validate
      * @param expectedAmount The expected amount in sats
-     * @return True if the token is valid and matches the expected amount, false otherwise
+     * @param allowedMints List of allowed mints (can be null for no validation)
+     * @return True if the token is valid and matches the expected amount and mint, false otherwise
      */
-    public static boolean validateToken(String tokenString, long expectedAmount) {
+    public static boolean validateToken(String tokenString, long expectedAmount, List<String> allowedMints) {
         if (!isCashuToken(tokenString)) {
             Log.e(TAG, "Invalid token format (not a Cashu token)");
             return false;
@@ -202,6 +220,17 @@ public class CashuPaymentHelper {
             if (!token.unit.equals("sat")) {
                 Log.e(TAG, "Unsupported token unit: " + token.unit);
                 return false;
+            }
+
+            // Validate mint if allowedMints is provided
+            if (allowedMints != null && !allowedMints.isEmpty()) {
+                String mintUrl = token.mint;
+                if (!allowedMints.contains(mintUrl)) {
+                    Log.e(TAG, "Mint not in allowed list: " + mintUrl);
+                    return false;
+                } else {
+                    Log.d(TAG, "Token mint validated: " + mintUrl);
+                }
             }
 
             long tokenAmount = token.tokens.stream()
@@ -219,6 +248,16 @@ public class CashuPaymentHelper {
             Log.e(TAG, "Token validation failed: " + e.getMessage(), e);
             return false;
         }
+    }
+    
+    /**
+     * Validate a Cashu token for a specific amount (without checking mints)
+     * @param tokenString The token to validate
+     * @param expectedAmount The expected amount in sats
+     * @return True if the token is valid and matches the expected amount, false otherwise
+     */
+    public static boolean validateToken(String tokenString, long expectedAmount) {
+        return validateToken(tokenString, expectedAmount, null);
     }
     
     /**
