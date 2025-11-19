@@ -30,6 +30,8 @@ import android.widget.Toast;
 import android.widget.FrameLayout;
 
 import com.electricdreams.shellshock.core.util.CurrencyManager;
+import com.electricdreams.shellshock.feature.history.TokenHistoryActivity;
+import com.electricdreams.shellshock.feature.settings.SettingsActivity;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
