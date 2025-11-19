@@ -29,7 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.FrameLayout;
 
-import com.electricdreams.shellshock.util.CurrencyManager;
+import com.electricdreams.shellshock.core.util.CurrencyManager;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -68,7 +68,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
     private ConstraintLayout inputModeContainer;
     private NfcAdapter nfcAdapter;
     private SatocashNfcClient satocashClient;
-    private BitcoinPriceWorker bitcoinPriceWorker;
+    private com.electricdreams.shellshock.core.worker.BitcoinPriceWorker bitcoinPriceWorker;
     
     // Flag to indicate if we're in USD input mode
     private boolean isUsdInputMode = false;
@@ -123,7 +123,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         inputModeContainer = findViewById(R.id.input_mode_container);
 
         // Initialize bitcoin price worker
-        bitcoinPriceWorker = BitcoinPriceWorker.getInstance(this);
+        bitcoinPriceWorker = com.electricdreams.shellshock.core.worker.BitcoinPriceWorker.getInstance(this);
         
         // Set up the price listener to only update the display if it's needed
         // This way, it won't reset the amount input when price updates
@@ -468,7 +468,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         String paymentRequestLocal = null;
         
         // Get allowed mints
-        com.electricdreams.shellshock.util.MintManager mintManager = com.electricdreams.shellshock.util.MintManager.getInstance(this);
+        com.electricdreams.shellshock.core.util.MintManager mintManager = com.electricdreams.shellshock.core.util.MintManager.getInstance(this);
         List<String> allowedMints = mintManager.getAllowedMints();
         Log.d(TAG, "Using " + allowedMints.size() + " allowed mints for payment request");
         
@@ -582,7 +582,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         Log.i(TAG, "Starting NDEF payment flow for " + amount + " sats");
         
         // Get allowed mints
-        com.electricdreams.shellshock.util.MintManager mintManager = com.electricdreams.shellshock.util.MintManager.getInstance(this);
+        com.electricdreams.shellshock.core.util.MintManager mintManager = com.electricdreams.shellshock.core.util.MintManager.getInstance(this);
         List<String> allowedMints = mintManager.getAllowedMints();
         Log.d(TAG, "Using " + allowedMints.size() + " allowed mints for payment request");
         

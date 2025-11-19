@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.electricdreams.shellshock.util.CurrencyManager;
-import com.electricdreams.shellshock.util.MintManager;
+import com.electricdreams.shellshock.core.util.CurrencyManager;
+import com.electricdreams.shellshock.core.util.MintManager;
 
 import java.util.List;
 
