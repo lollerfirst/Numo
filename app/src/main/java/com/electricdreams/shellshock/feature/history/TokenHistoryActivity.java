@@ -1,4 +1,4 @@
-package com.electricdreams.shellshock;
+package com.electricdreams.shellshock.feature.history;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,9 +12,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.electricdreams.shellshock.R;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.electricdreams.shellshock.core.data.model.TokenHistoryEntry;
+import com.electricdreams.shellshock.ui.adapter.TokenHistoryAdapter;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

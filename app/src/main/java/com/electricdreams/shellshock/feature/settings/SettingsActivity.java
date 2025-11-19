@@ -1,4 +1,4 @@
-package com.electricdreams.shellshock;
+package com.electricdreams.shellshock.feature.settings;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,8 +15,11 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.electricdreams.shellshock.util.CurrencyManager;
-import com.electricdreams.shellshock.util.MintManager;
+import com.electricdreams.shellshock.R;
+
+import com.electricdreams.shellshock.core.util.CurrencyManager;
+import com.electricdreams.shellshock.core.util.MintManager;
+import com.electricdreams.shellshock.ui.adapter.MintsAdapter;
 
 import java.util.List;
 

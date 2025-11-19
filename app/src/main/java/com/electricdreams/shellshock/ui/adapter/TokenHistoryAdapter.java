@@ -1,4 +1,4 @@
-package com.electricdreams.shellshock;
+package com.electricdreams.shellshock.ui.adapter;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.electricdreams.shellshock.R;
+import com.electricdreams.shellshock.core.data.model.TokenHistoryEntry;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

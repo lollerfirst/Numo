@@ -1,4 +1,4 @@
-package com.electricdreams.shellshock.util;
+package com.electricdreams.shellshock.core.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;

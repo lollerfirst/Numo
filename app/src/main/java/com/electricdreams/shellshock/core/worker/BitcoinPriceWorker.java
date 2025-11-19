@@ -1,4 +1,4 @@
-package com.electricdreams.shellshock;
+package com.electricdreams.shellshock.core.worker;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.electricdreams.shellshock.util.CurrencyManager;
+import com.electricdreams.shellshock.core.util.CurrencyManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;

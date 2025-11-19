@@ -1,4 +1,4 @@
-package com.electricdreams.shellshock;
+package com.electricdreams.shellshock.core.data.model;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.Date;

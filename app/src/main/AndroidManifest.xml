@@ -86,7 +86,7 @@
                 android:resource="@xml/nfc_tech_filter" />
         </activity>
         
-        <activity android:name=".TokenHistoryActivity"
+        <activity android:name="com.electricdreams.shellshock.feature.history.TokenHistoryActivity"
             android:exported="false"
             android:label="Token History"
             android:theme="@style/Theme.Shellshock"
@@ -97,7 +97,7 @@
                 android:value=".ModernPOSActivity" />
         </activity>
         
-        <activity android:name=".SettingsActivity"
+        <activity android:name="com.electricdreams.shellshock.feature.settings.SettingsActivity"
             android:exported="false"
             android:label="Settings"
             android:theme="@style/Theme.Shellshock"
