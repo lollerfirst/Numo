@@ -220,14 +220,17 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         
         // Check if we need to set up an automatic payment from basket checkout
         if (paymentAmount > 0) {
-            // Set input to the payment amount from basket
+            // Set input to the payment amount from basket and set requested amount
             currentInput = new StringBuilder(String.valueOf(paymentAmount));
+            requestedAmount = paymentAmount;
             updateDisplay();
             
             // Automatically proceed with payment
             new Handler().postDelayed(() -> {
                 if (submitButton.isEnabled()) {
-                    submitButton.performClick();
+                    Log.d(TAG, "Auto-initiating payment flow for basket checkout with amount: " + paymentAmount);
+                    // Directly show payment method dialog (skipping the button click)
+                    showPaymentMethodDialog(paymentAmount);
                 }
             }, 500); // Small delay to allow UI to update
         } else {
