@@ -154,15 +154,13 @@ public class ItemSelectionActivity extends AppCompatActivity {
         // Add the satoshi amount as an extra (the ModernPOSActivity will need to be modified to accept this)
         intent.putExtra("EXTRA_PAYMENT_AMOUNT", satoshisAmount);
         
-        // Add flag to clear the activity stack and start fresh
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        // Don't clear the activity stack to allow returning to the item selection after payment
         
         // Clear the basket after checkout
         basketManager.clearBasket();
         
         // Start the activity
         startActivity(intent);
-        finish();
     }
     
     private class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {

@@ -114,6 +114,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         // Check if we have a payment amount from intent (basket checkout)
         Intent intent = getIntent();
         long paymentAmount = intent.getLongExtra("EXTRA_PAYMENT_AMOUNT", 0);
+        Log.d(TAG, "Created ModernPOSActivity with payment amount from basket: " + paymentAmount);
 
         // Find all views
         amountDisplay = findViewById(R.id.amount_display);
