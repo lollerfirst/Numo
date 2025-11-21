@@ -85,6 +85,65 @@ public class CashuPaymentHelper {
             return null;
         }
     }
+
+    /**
+     * Create a Cashu payment request that includes a Nostr transport according to NUT-18.
+     * This is intended for QR-based payments where the sender will use Nostr DM (NIP-17)
+     * to deliver the resulting ecash.
+     *
+     * @param amount       Amount in sats
+     * @param description  Optional description for the payment
+     * @param allowedMints List of allowed mints (can be null)
+     * @param nprofile     Receiver Nostr nprofile
+     * @return Encoded payment request (creqA...)
+     */
+    public static String createPaymentRequestWithNostr(
+            long amount,
+            String description,
+            List<String> allowedMints,
+            String nprofile
+    ) {
+        try {
+            PaymentRequest paymentRequest = new PaymentRequest();
+            paymentRequest.amount = Optional.of(amount);
+            paymentRequest.unit = Optional.of("sat");
+            paymentRequest.description = Optional.of(
+                    description != null ? description : "Payment for " + amount + " sats"
+            );
+
+            // Random short ID
+            String id = java.util.UUID.randomUUID().toString().substring(0, 8);
+            paymentRequest.id = Optional.of(id);
+
+            paymentRequest.singleUse = Optional.of(true);
+
+            if (allowedMints != null && !allowedMints.isEmpty()) {
+                String[] mintsArray = allowedMints.toArray(new String[0]);
+                paymentRequest.mints = Optional.of(mintsArray);
+                Log.d(TAG, "Added " + allowedMints.size() + " allowed mints to payment request (Nostr)");
+            }
+
+            // Nostr transport as per NUT-18
+            Transport nostrTransport = new Transport();
+            nostrTransport.type = "nostr";      // t: "nostr"
+            nostrTransport.target = nprofile;    // a: <nprofile>
+
+            // Tags: [["n", "17"]] to indicate NIP-17 DM support
+            TransportTag nipTag = new TransportTag();
+            nipTag.key = "n";
+            nipTag.value = "17";
+            nostrTransport.tags = Optional.of(new TransportTag[]{nipTag});
+
+            paymentRequest.transport = Optional.of(new Transport[]{nostrTransport});
+
+            String encodedRequest = paymentRequest.encode();
+            Log.d(TAG, "Created Nostr payment request: " + encodedRequest);
+            return encodedRequest;
+        } catch (Exception e) {
+            Log.e(TAG, "Error creating Nostr payment request: " + e.getMessage(), e);
+            return null;
+        }
+    }
     
     /**
      * Create a Cashu payment request for a specific amount (without specifying allowed mints)
