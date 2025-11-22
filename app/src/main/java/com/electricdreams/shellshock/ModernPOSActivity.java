@@ -68,14 +68,15 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
     };
 
     private TextView amountDisplay;
-    private TextView fiatAmountDisplay;
+    private TextView fiatAmountDisplay; // Kept for logic but hidden
     private Button submitButton;
+    private TextView currencyText;
     private StringBuilder currentInput = new StringBuilder();
 
     private TextView tokenDisplay;
     private Button openWithButton;
     private Button resetButton;
-    private ImageButton switchCurrencyButton;
+    private View switchCurrencyButton; // Changed to View for the invisible click target
     private FrameLayout tokenScrollContainer;
     private LinearLayout tokenActionsContainer;
     private ConstraintLayout inputModeContainer;
@@ -130,9 +131,11 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         Log.d(TAG, "Created ModernPOSActivity with payment amount from basket: " + paymentAmount);
 
         // Find all views
+        // Find all views
         amountDisplay = findViewById(R.id.amount_display);
         fiatAmountDisplay = findViewById(R.id.fiat_amount_display);
         submitButton = findViewById(R.id.submit_button);
+        currencyText = findViewById(R.id.currency_text);
         GridLayout keypad = findViewById(R.id.keypad);
         tokenDisplay = findViewById(R.id.token_display);
         openWithButton = findViewById(R.id.open_with_button);
@@ -142,8 +145,23 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         tokenActionsContainer = findViewById(R.id.token_actions_container);
         inputModeContainer = findViewById(R.id.input_mode_container);
 
+        // Enable edge-to-edge
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        
+        // Adjust padding for system bars
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, windowInsets) -> {
+            androidx.core.graphics.Insets insets = windowInsets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars());
+            // Apply top inset to top bar elements or root padding if needed
+            // For now, we'll just add top padding to the root view to avoid overlap
+            v.setPadding(0, insets.top, 0, insets.bottom);
+            return androidx.core.view.WindowInsetsCompat.CONSUMED;
+        });
+
         // Initialize bitcoin price worker
         bitcoinPriceWorker = com.electricdreams.shellshock.core.worker.BitcoinPriceWorker.getInstance(this);
+        
+        // Set window background to green for edge-to-edge effect
+        getWindow().setBackgroundDrawableResource(R.color.color_primary_green);
         
         // Set up the price listener to only update the display if it's needed
         // This way, it won't reset the amount input when price updates
@@ -169,15 +187,17 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         });
 
         // Set up bottom navigation
+        // Set up bottom navigation
         ImageButton moreOptionsButton = findViewById(R.id.action_more_options);
         ImageButton historyButton = findViewById(R.id.action_history);
-        ImageButton settingsButton = findViewById(R.id.action_settings);
         ImageButton catalogButton = findViewById(R.id.action_catalog);
+        ImageButton settingsButton = findViewById(R.id.action_settings);
 
+        // Map buttons to actions
         moreOptionsButton.setOnClickListener(v -> showOverflowMenu(v));
         historyButton.setOnClickListener(v -> startActivity(new Intent(this, PaymentsHistoryActivity.class)));
-        settingsButton.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
         catalogButton.setOnClickListener(v -> startActivity(new Intent(this, com.electricdreams.shellshock.feature.items.ItemSelectionActivity.class)));
+        settingsButton.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         vibrator = (android.os.Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -193,7 +213,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         
         // Update keypad button creation to use weight for equal sizing
         for (String label : buttonLabels) {
-            Button button = (Button) inflater.inflate(R.layout.keypad_button, keypad, false);
+            Button button = (Button) inflater.inflate(R.layout.keypad_button_green_screen, keypad, false);
             button.setText(label);
             button.setOnClickListener(v -> onKeypadButtonClick(label));
             
@@ -487,6 +507,13 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
             submitButton.setText("Charge");
             submitButton.setEnabled(false);
             requestedAmount = 0;
+        }
+        
+        // Update currency text
+        if (isUsdInputMode) {
+            currencyText.setText("USD");
+        } else {
+            currencyText.setText("SATS");
         }
     }
 
