@@ -429,6 +429,24 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         }
         updateDisplay();
     }
+    
+    private void animateAmountChange(String newText) {
+        // Sleek modern animation: slide up and fade out, then slide up and fade in
+        amountDisplay.animate()
+            .alpha(0f)
+            .translationY(-20f)
+            .setDuration(100)
+            .withEndAction(() -> {
+                amountDisplay.setText(newText);
+                amountDisplay.setTranslationY(20f);
+                amountDisplay.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setDuration(150)
+                    .start();
+            })
+            .start();
+    }
 
     private String formatAmount(String amount) {
         try {
@@ -467,7 +485,10 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                     String wholePart = String.valueOf(cents / 100);
                     String centsPart = String.format("%02d", cents % 100);
                     String displayFiat = symbol + wholePart + "." + centsPart;
-                    amountDisplay.setText(displayFiat);
+                    
+                    if (!amountDisplay.getText().toString().equals(displayFiat)) {
+                        animateAmountChange(displayFiat);
+                    }
                     
                     // Format sats equivalent
                     String satoshiEquivalent = "₿ " + NumberFormat.getNumberInstance(Locale.US).format(satsValue);
@@ -475,14 +496,20 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                 } catch (NumberFormatException e) {
                     CurrencyManager currencyManager = CurrencyManager.getInstance(this);
                     String symbol = currencyManager.getCurrentSymbol();
-                    amountDisplay.setText(symbol + "0.00");
+                    String zeroText = symbol + "0.00";
+                    if (!amountDisplay.getText().toString().equals(zeroText)) {
+                        amountDisplay.setText(zeroText);
+                    }
                     fiatAmountDisplay.setText("₿ 0");
                     satsValue = 0;
                 }
             } else {
                 CurrencyManager currencyManager = CurrencyManager.getInstance(this);
                 String symbol = currencyManager.getCurrentSymbol();
-                amountDisplay.setText(symbol + "0.00");
+                String zeroText = symbol + "0.00";
+                if (!amountDisplay.getText().toString().equals(zeroText)) {
+                    amountDisplay.setText(zeroText);
+                }
                 fiatAmountDisplay.setText("₿ 0");
                 satsValue = 0;
             }
@@ -492,7 +519,9 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
             
             // Format sats amount
             String displayAmount = formatAmount(inputStr);
-            amountDisplay.setText(displayAmount);
+            if (!amountDisplay.getText().toString().equals(displayAmount)) {
+                animateAmountChange(displayAmount);
+            }
             
             // Calculate and display fiat equivalent
             if (bitcoinPriceWorker != null) {
