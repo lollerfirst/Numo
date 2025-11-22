@@ -1,5 +1,6 @@
 package com.electricdreams.shellshock.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -31,8 +32,13 @@ fun HistoryScreen(
     onOpenClick: (String) -> Unit,
     onDeleteClick: (PaymentHistoryEntry) -> Unit
 ) {
-    Scaffold(
-        topBar = {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        // Top Bar
+        if (onBackClick != null) {
             CashAppTopBar(
                 title = "Activity",
                 onBackClick = onBackClick,
@@ -44,14 +50,29 @@ fun HistoryScreen(
                     }
                 }
             )
-        },
-        containerColor = Color.White
-    ) { paddingValues ->
+        } else {
+            // Top bar for tab navigation (no back button)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Activity",
+                    style = CashAppTypography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+            }
+        }
+        
+        // Content
         if (history.isEmpty()) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -62,9 +83,7 @@ fun HistoryScreen(
             }
         } else {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {

@@ -114,8 +114,16 @@ fun CashAppBottomBar(
     items: List<BottomNavItem>,
     selectedIndex: Int,
     onItemSelected: (Int) -> Unit,
+    backgroundColor: Color = BottomBarBackground,
     modifier: Modifier = Modifier
 ) {
+    // Animate background color changes
+    val animatedBackgroundColor by animateColorAsState(
+        targetValue = backgroundColor,
+        animationSpec = tween(durationMillis = 300),
+        label = "bottomBarBackground"
+    )
+    
     // Container with custom shape and shadow
     Surface(
         modifier = modifier
@@ -126,7 +134,7 @@ fun CashAppBottomBar(
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
                 spotColor = Color.Black.copy(alpha = 0.3f)
             ),
-        color = BottomBarBackground,
+        color = animatedBackgroundColor,
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
     ) {
         Row(

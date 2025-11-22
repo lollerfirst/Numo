@@ -45,6 +45,7 @@ import com.electricdreams.shellshock.ui.screens.HistoryScreen
 import com.electricdreams.shellshock.ui.screens.KeypadScreen
 import com.electricdreams.shellshock.ui.screens.SettingsScreen
 import com.electricdreams.shellshock.ui.theme.CashAppTheme
+import com.electricdreams.shellshock.ui.theme.CashGreen
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -61,6 +62,7 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
     private val currencySymbolState = mutableStateOf("$")
     private val isUsdModeState = mutableStateOf(false)
     private val selectedNavIndex = mutableStateOf(2) // Default to Cash (Keypad) which is index 2
+    private val bottomBarBackgroundColor = mutableStateOf(CashGreen) // Dynamic background for bottom bar
 
     // Screen Data States
     private val historyState = mutableStateOf<List<PaymentHistoryEntry>>(emptyList())
@@ -84,6 +86,7 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
     // NFC Balance Check Client
     private var satocashClient: SatocashNfcClient? = null
 
+    @androidx.compose.animation.ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         // Load theme preference
         val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
@@ -107,13 +110,23 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
                             selectedIndex = selectedNavIndex.value,
                             onItemSelected = { index -> 
                                 selectedNavIndex.value = index
+                                // Update bottom bar background based on screen
+                                bottomBarBackgroundColor.value = when (index) {
+                                    0 -> Color.White // Home/Activity
+                                    1 -> Color.White // Card/Balance
+                                    2 -> CashGreen   // Cash/Keypad
+                                    3 -> Color.White // Investing/Catalog
+                                    4 -> Color.White // Profile/Settings
+                                    else -> Color.White
+                                }
                                 // Refresh data when switching tabs
                                 when (index) {
                                     0 -> loadHistory()
                                     1 -> { /* Balance is updated via NFC */ }
                                     3 -> loadCatalog()
                                 }
-                            }
+                            },
+                            backgroundColor = bottomBarBackgroundColor.value
                         )
                     },
                     containerColor = Color.White
@@ -261,6 +274,14 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
 
         isUsdInputMode = !isUsdInputMode
         isUsdModeState.value = isUsdInputMode
+        
+        // Update currency symbol immediately
+        if (isUsdInputMode) {
+            val currencyManager = CurrencyManager.getInstance(this)
+            currencySymbolState.value = currencyManager.currentSymbol
+        } else {
+            currencySymbolState.value = "₿"
+        }
 
         currentInput.setLength(0)
 

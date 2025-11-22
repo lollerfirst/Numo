@@ -1,5 +1,11 @@
 package com.electricdreams.shellshock.ui.screens
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +38,7 @@ import com.electricdreams.shellshock.ui.theme.CashAppTypography
 import com.electricdreams.shellshock.ui.theme.CashGreen
 import com.electricdreams.shellshock.ui.theme.White
 
+@androidx.compose.animation.ExperimentalAnimationApi
 @Composable
 fun KeypadScreen(
     amount: String,
@@ -51,9 +58,7 @@ fun KeypadScreen(
             .background(CashGreen)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 16.dp) // Minimal padding
+            modifier = Modifier.fillMaxSize()
         ) {
             // Top Bar (QR and Profile)
             Row(
@@ -91,29 +96,50 @@ fun KeypadScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = if (amount.isEmpty()) "$currencySymbol 0" else "$currencySymbol $amount",
-                    style = CashAppTypography.displayLarge,
-                    color = White
-                )
+                // Animated amount display
+                androidx.compose.animation.AnimatedContent(
+                    targetState = if (amount.isEmpty()) "$currencySymbol 0" else "$currencySymbol $amount",
+                    transitionSpec = {
+                        fadeIn(animationSpec = tween(300)) with
+                                fadeOut(animationSpec = tween(300))
+                    },
+                    label = "amountAnimation"
+                ) { displayText ->
+                    Text(
+                        text = displayText,
+                        style = CashAppTypography.displayLarge,
+                        color = White
+                    )
+                }
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                // Currency Selector / Toggle
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(50))
-                        .background(White.copy(alpha = 0.2f))
-                        .clickable(onClick = onToggleCurrency)
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        text = if (isUsdMode) "USD" else "SATS",
-                        style = CashAppTypography.bodyMedium.copy(
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = White
-                    )
+                // Currency Selector / Toggle with animation
+                androidx.compose.animation.AnimatedContent(
+                    targetState = if (isUsdMode) "USD" else "SATS",
+                    transitionSpec = {
+                        (fadeIn(animationSpec = tween(200)) + 
+                         scaleIn(initialScale = 0.8f, animationSpec = tween(200))) with
+                        (fadeOut(animationSpec = tween(200)) + 
+                         scaleOut(targetScale = 0.8f, animationSpec = tween(200)))
+                    },
+                    label = "currencyToggleAnimation"
+                ) { currencyText ->
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(50))
+                            .background(White.copy(alpha = 0.2f))
+                            .clickable(onClick = onToggleCurrency)
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = currencyText,
+                            style = CashAppTypography.bodyMedium.copy(
+                                fontWeight = FontWeight.Medium
+                            ),
+                            color = White
+                        )
+                    }
                 }
             }
 
