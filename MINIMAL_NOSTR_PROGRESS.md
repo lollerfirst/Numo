@@ -20,141 +20,134 @@ Core pieces to implement:
 
 ## Step 1 – Keys + NIP-19 identities (COMPLETED)
 
-**Status:** ✅ Implemented and compiling
-
 **Files:**
 
 - `app/src/main/java/com/electricdreams/shellshock/nostr/Bech32.java`
 - `app/src/main/java/com/electricdreams/shellshock/nostr/Nip19.java`
 - `app/src/main/java/com/electricdreams/shellshock/nostr/NostrKeyPair.java`
 
-Provides:
-
-- Bech32 encode/decode and bit conversion
-- NIP-19 encoders for `nsec`, `npub`, `nprofile`
-- BouncyCastle-based secp256k1 keypair with x-only pubkey + NIP-19 wrappers
-
-Build status: `./gradlew :app:assembleDebug` ✅
-
 ---
 
 ## Step 2 – NIP-01 Events (COMPLETED)
-
-**Status:** ✅ Implemented and compiling
 
 **File:**
 
 - `app/src/main/java/com/electricdreams/shellshock/nostr/NostrEvent.java`
 
-Features:
-
-- Fields: `id`, `pubkey`, `created_at`, `kind`, `tags`, `content`, `sig`.
-- `computeId()`:
-  - Builds `[0, pubkey, created_at, kind, tags, content]` as a Gson `JsonArray`.
-  - Serializes to compact JSON (default Gson, no pretty printing).
-  - Computes `sha256` over UTF-8 bytes and returns lowercase hex.
-- `verify()`:
-  - Checks `id` matches `computeId()`.
-  - Parses `pubkey`, `sig` as hex.
-  - Verifies a BIP-340 Schnorr signature over secp256k1 using BouncyCastle for EC arithmetic.
-
-Build status: `./gradlew :app:assembleDebug` ✅
-
 ---
 
 ## Step 3 – NIP-44 v2 decrypt + conversation key (COMPLETED)
-
-**Status:** ✅ Implemented and compiling
 
 **File:**
 
 - `app/src/main/java/com/electricdreams/shellshock/nostr/Nip44.java`
 
-Features:
-
-- `getConversationKey(byte[] priv32, byte[] pubX32)`:
-  - Lifts x-only pubkey to curve point with even Y using `liftX`.
-  - Computes shared point = `d * P` and takes its x-coordinate (`shared_x`).
-  - Uses `HKDFBytesGenerator(SHA256Digest)` with salt `"nip44-v2"` to derive a 32-byte conversation key from `shared_x`.
-
-- `decrypt(String payloadBase64, byte[] conversationKey)`:
-  - Parses NIP-44 v2 payload: `version (must be 2)`, `nonce(32)`, `ciphertext`, `mac(32)` from base64.
-  - Uses HKDF-expand with SHA-256 and `nonce` as info to derive 76 bytes → `chacha_key(32)`, `chacha_nonce(12)`, `hmac_key(32)`.
-  - Computes `HMAC-SHA256(hmac_key, nonce || ciphertext)` and verifies it equals `mac` (constant-time compare).
-  - Decrypts ciphertext using `ChaCha7539Engine` (12-byte nonce, counter=0).
-  - Removes padding per NIP-44 (2-byte BE length prefix, power-of-two padding) and returns UTF-8 plaintext.
-
-Build status: `./gradlew :app:assembleDebug` ✅
-
 ---
 
 ## Step 4 – NIP-59 unwrap (COMPLETED)
-
-**Status:** ✅ Implemented and compiling
 
 **File:**
 
 - `app/src/main/java/com/electricdreams/shellshock/nostr/Nip59.java`
 
-Features:
-
-- `UnwrappedDm unwrapGiftWrappedDm(NostrEvent giftwrap, byte[] ourPriv32)`:
-  - Validates that the outer event is kind 1059 and passes `giftwrap.verify()`.
-  - Derives first conversation key `conv1 = Nip44.getConversationKey(ourPriv32, gwPub)`.
-  - Decrypts `giftwrap.content` with `conv1` to JSON for a kind 13 `seal` event; parses and verifies it.
-  - Derives second conversation key `conv2 = Nip44.getConversationKey(ourPriv32, seal.pubkey)`.
-  - Decrypts `seal.content` with `conv2` to JSON for an inner kind 14 `rumor` event; parses it.
-  - Ensures `rumor.kind == 14` and `rumor.pubkey` matches `seal.pubkey` (per NIP-17 requirement).
-  - Returns an `UnwrappedDm` holding `giftwrap`, `seal`, and `rumor`, where `rumor.content` is the DM plaintext.
-
-Build status: `./gradlew :app:assembleDebug` ✅
-
 ---
 
 ## Step 5 – WebSocket client (COMPLETED)
-
-**Status:** ✅ Implemented and compiling
 
 **File:**
 
 - `app/src/main/java/com/electricdreams/shellshock/nostr/NostrWebSocketClient.java`
 
-Features:
+---
 
-- Uses OkHttp's `WebSocket` to connect to a list of relay URLs.
-- On `start()`, connects to each relay and, on `onOpen`, sends a `REQ`:
-  - `{"kinds":[1059], "#p":["<our pubkey hex>"]}` with a generated `subscriptionId`.
-- Parses messages from relays:
-  - `EVENT` messages matching our `subscriptionId` are parsed into `NostrEvent` instances and passed to a pluggable `EventHandler`.
-  - `NOTICE`, `CLOSED`, and `EOSE` messages are logged for visibility.
-- Implements simple reconnect logic per relay with exponential backoff (1s → 2s → ... up to 60s) while `running==true`.
-- Supports `start()` / `stop()` lifecycle to begin or halt all relay connections.
+## Step 6 – NostrPaymentListener + redeemFromPRPayload (COMPLETED)
+
+**Files:**
+
+- `app/src/main/java/com/electricdreams/shellshock/nostr/NostrPaymentListener.java`
+- `app/src/main/java/com/electricdreams/shellshock/ndef/CashuPaymentHelper.java` (added `redeemFromPRPayload` + `PaymentRequestPayload`)
+
+Behavior:
+
+- `NostrPaymentListener`:
+  - Subscribes to kind 1059 events with `#p=[ephemeral pubkey]` via `NostrWebSocketClient`.
+  - Unwraps giftwrap → seal → rumor using `Nip59.unwrapGiftWrappedDm`.
+  - Treats `rumor.content` as `PaymentRequestPayload` JSON and calls `CashuPaymentHelper.redeemFromPRPayload`.
+  - On success, stops listening and invokes a success callback with the redeemed token.
+
+- `CashuPaymentHelper.redeemFromPRPayload`:
+  - Parses JSON into `PaymentRequestPayload { mint, unit, proofs, ... }`.
+  - Validates mint/unit/proofs and amount ≥ expectedAmount.
+  - Builds a temporary `Token` from proofs and delegates to existing `redeemToken`.
 
 Build status: `./gradlew :app:assembleDebug` ✅
 
 ---
 
-## Step 6 – NostrPaymentListener (NEXT)
+## Step 7 – Integration into ModernPOSActivity (COMPLETED)
 
-**Planned file(s):**
+**File:**
 
-- `app/src/main/java/com/electricdreams/shellshock/nostr/NostrPaymentListener.java`
+- `app/src/main/java/com/electricdreams/shellshock/ModernPOSActivity.java`
 
-Planned features:
+Changes:
 
-- Wraps a `NostrWebSocketClient` instance.
-- On each incoming event:
-  - Filters for `kind == 1059` and `#p` containing our ephemeral pubkey (already handled at subscription level, but double-check if desired).
-  - Uses `Nip59.unwrapGiftWrappedDm(event, ourPriv32)` to obtain the inner kind 14 rumor.
-  - Treats `rumor.content` as a JSON `PaymentRequestPayload` and calls `CashuPaymentHelper.redeemFromPRPayload(...)`.
-  - On first successful redemption, stops the listener and invokes a success callback with the encoded token.
-  - On errors (decrypt failure, parse failure, redemption errors), logs and continues listening for additional DMs.
+- Added imports and fields:
+  - `NostrKeyPair`, `NostrPaymentListener`
+  - `NOSTR_RELAYS` array with 4 relays
+  - `private NostrPaymentListener nostrListener;`
+
+- In `proceedWithUnifiedPayment(long amount)`:
+  - Still builds HCE PaymentRequest and starts HCE service when available.
+  - **New nostr flow:**
+    - Generates an ephemeral `NostrKeyPair eph = NostrKeyPair.generate()`.
+    - Builds `relayList = Arrays.asList(NOSTR_RELAYS)`.
+    - Derives `nprofile = Nip19.encodeNprofile(eph.getPublicKeyBytes(), relayList)`.
+    - Creates QR PaymentRequest with Nostr transport:
+
+      ```java
+      String qrPaymentRequestLocal = CashuPaymentHelper.createPaymentRequestWithNostr(
+              amount,
+              "Payment of " + amount + " sats",
+              allowedMints,
+              nprofile
+      );
+      ```
+
+    - On success, starts a new `NostrPaymentListener`:
+
+      ```java
+      nostrListener = new NostrPaymentListener(
+              eph.getSecretKeyBytes(),
+              eph.getHexPub(),
+              amount,
+              allowedMints,
+              relayList,
+              token -> runOnUiThread(() -> handlePaymentSuccess(token)),
+              (msg, t) -> Log.e(TAG, "NostrPaymentListener error: " + msg, t)
+      );
+      nostrListener.start();
+      ```
+
+- Nostr listener lifecycle:
+  - On **payment success** (`handlePaymentSuccess`): stops and clears `nostrListener`.
+  - On **payment error** (`handlePaymentError`): stops and clears `nostrListener`.
+  - On **activity destroy** (`onDestroy`): stops and clears `nostrListener`.
+
+Build status: `./gradlew :app:assembleDebug` ✅
 
 ---
 
-## Step 7 – Integration into ModernPOSActivity (LATER)
+## Next steps / Testing
 
-- Create ephemeral `NostrKeyPair` per payment.
-- Generate `nprofile` over the configured relay list and embed it into the NUT-18 PaymentRequest transport.
-- Instantiate and start `NostrPaymentListener` alongside NFC/HCE when starting a unified payment.
-- Stop listener on payment success, error, dialog cancel, or activity destruction.
+- Manual tests:
+  - Confirm QR still displays correctly with embedded `nprofile` transport.
+  - Confirm NFC/HCE path works as before.
+  - Using a test Nostr sender, publish a giftwrapped DM (NIP-17 + NIP-59 + NIP-44) targeting the ephemeral pubkey and verify:
+    - Listener logs receipt.
+    - `redeemFromPRPayload` is called.
+    - On valid payload, `handlePaymentSuccess(token)` is triggered and nostr listener stops.
+
+- Possible future improvements:
+  - Stronger validation on `PaymentRequestPayload` shape (e.g. allowed keys, replay protection).
+  - Timeouts or manual cancel UI for nostr listener.

@@ -470,8 +470,8 @@ public class CashuPaymentHelper {
         return receiveOutputAmounts;
     }
 
-    private static List<Proof> constructAndVerifyProofs(PostSwapResponse response, KeysetItemResponse keyset, 
-                                              List<StringSecret> secrets, List<BigInteger> blindingFactors) {
+    private static List<Proof> constructAndVerifyProofs(PostSwapResponse response, KeysetItemResponse keyset,
+                                                       List<StringSecret> secrets, List<BigInteger> blindingFactors) {
         List<Proof> result = new ArrayList<>();
         for (int i = 0; i < response.signatures.size(); ++i) {
             BlindSignature signature = response.signatures.get(i);
@@ -487,5 +487,65 @@ public class CashuPaymentHelper {
             result.add(new Proof(signature.amount, signature.keysetId, secret, Cashu.pointToHex(C, true), Optional.empty(), Optional.empty()));
         }
         return result;
+    }
+
+    /**
+     * Parse a simple NUT-18-like PaymentRequestPayload JSON and attempt redemption by
+     * constructing a temporary Token and calling redeemToken.
+     */
+    public static String redeemFromPRPayload(String payloadJson,
+                                             long expectedAmount,
+                                             java.util.List<String> allowedMints) throws RedemptionException {
+        if (payloadJson == null) {
+            throw new RedemptionException("PaymentRequestPayload JSON is null");
+        }
+        try {
+            com.google.gson.Gson gson = new com.google.gson.Gson();
+            PaymentRequestPayload payload = gson.fromJson(payloadJson, PaymentRequestPayload.class);
+            if (payload == null) {
+                throw new RedemptionException("Failed to parse PaymentRequestPayload");
+            }
+            if (payload.mint == null || payload.mint.isEmpty()) {
+                throw new RedemptionException("PaymentRequestPayload is missing mint");
+            }
+            if (payload.unit == null || !"sat".equals(payload.unit)) {
+                throw new RedemptionException("Unsupported unit in PaymentRequestPayload: " + payload.unit);
+            }
+            if (payload.proofs == null || payload.proofs.isEmpty()) {
+                throw new RedemptionException("PaymentRequestPayload contains no proofs");
+            }
+            String mintUrl = payload.mint;
+            if (allowedMints != null && !allowedMints.isEmpty() && !allowedMints.contains(mintUrl)) {
+                throw new RedemptionException("Mint " + mintUrl + " not in allowed list");
+            }
+            long totalAmount = payload.proofs.stream().mapToLong(p -> p.amount).sum();
+            if (totalAmount < expectedAmount) {
+                throw new RedemptionException("Insufficient amount in payload proofs: " + totalAmount + " < expected " + expectedAmount);
+            }
+
+            // Build a temporary Token and redeem it using existing logic
+            Token tempToken = new Token(payload.proofs, payload.unit, mintUrl);
+            String encoded = tempToken.encode();
+            return redeemToken(encoded);
+        } catch (com.google.gson.JsonSyntaxException e) {
+            throw new RedemptionException("Invalid JSON for PaymentRequestPayload: " + e.getMessage(), e);
+        } catch (RedemptionException e) {
+            throw e;
+        } catch (Exception e) {
+            String errorMsg = "PaymentRequestPayload redemption failed: " + e.getMessage();
+            Log.e(TAG, errorMsg, e);
+            throw new RedemptionException(errorMsg, e);
+        }
+    }
+
+    /**
+     * Minimal DTO for PaymentRequestPayload JSON as used in Nostr DMs.
+     */
+    public static class PaymentRequestPayload {
+        public String id;      // optional
+        public String memo;    // optional
+        public String mint;    // required
+        public String unit;    // required, expect "sat"
+        public java.util.List<Proof> proofs; // required
     }
 }

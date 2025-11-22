@@ -50,6 +50,8 @@ import java.util.concurrent.CompletableFuture;
 
 import com.electricdreams.shellshock.ndef.NdefHostCardEmulationService;
 import com.electricdreams.shellshock.ndef.CashuPaymentHelper;
+import com.electricdreams.shellshock.nostr.NostrKeyPair;
+import com.electricdreams.shellshock.nostr.NostrPaymentListener;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -61,10 +63,14 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
     private static final String PREFS_NAME = "ShellshockPrefs";
     private static final String KEY_NIGHT_MODE = "nightMode";
 
-    // TODO: Replace with the actual Nostr nprofile of the receiver
-    private static final String NOSTR_NPROFILE =
-            "nprofile1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-    
+    // Nostr relays to use for NIP-17 gift-wrapped DMs
+    private static final String[] NOSTR_RELAYS = new String[] {
+            "wss://relay.primal.net",
+            "wss://relay.damus.io",
+            "wss://nos.lol",
+            "wss://nostr.mom"
+    };
+
     private TextView amountDisplay;
     private TextView fiatAmountDisplay;
     private Button submitButton;
@@ -95,6 +101,9 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
     private MenuItem themeMenuItem;
     private boolean isNightMode = false;
     private android.os.Vibrator vibrator;
+
+    // Nostr listener for QR / DM-based payments
+    private NostrPaymentListener nostrListener;
 
     // Vibration patterns (in milliseconds)
     private static final long[] PATTERN_SUCCESS = {0, 50, 100, 50}; // Two quick pulses
@@ -529,17 +538,47 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
             }
         }
 
+        // --- Nostr QR flow ---
+        // Generate an ephemeral nostr identity for this payment
+        NostrKeyPair eph = NostrKeyPair.generate();
+        String nostrPubHex = eph.getHexPub();
+        byte[] nostrSecret = eph.getSecretKeyBytes();
+
+        java.util.List<String> relayList = java.util.Arrays.asList(NOSTR_RELAYS);
+        String nprofile = com.electricdreams.shellshock.nostr.Nip19.encodeNprofile(
+                eph.getPublicKeyBytes(),
+                relayList
+        );
+
+        Log.d(TAG, "Ephemeral nostr pubkey=" + nostrPubHex + " nprofile=" + nprofile);
+
         // QR-specific PaymentRequest WITH Nostr transport
         String qrPaymentRequestLocal = CashuPaymentHelper.createPaymentRequestWithNostr(
                 amount,
                 "Payment of " + amount + " sats",
                 allowedMints,
-                NOSTR_NPROFILE
+                nprofile
         );
         if (qrPaymentRequestLocal == null) {
             Log.e(TAG, "Failed to create QR payment request with Nostr transport");
         } else {
             Log.d(TAG, "Created QR payment request with Nostr: " + qrPaymentRequestLocal);
+
+            // Start Nostr listener for this ephemeral identity
+            if (nostrListener != null) {
+                nostrListener.stop();
+                nostrListener = null;
+            }
+            nostrListener = new NostrPaymentListener(
+                    nostrSecret,
+                    nostrPubHex,
+                    amount,
+                    allowedMints,
+                    relayList,
+                    token -> runOnUiThread(() -> handlePaymentSuccess(token)),
+                    (msg, t) -> Log.e(TAG, "NostrPaymentListener error: " + msg, t)
+            );
+            nostrListener.start();
         }
 
         final String finalHcePaymentRequest = hcePaymentRequestLocal;
@@ -934,6 +973,13 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
     protected void onDestroy() {
         // Make sure to stop the HCE service when the activity is destroyed
         stopHceService();
+
+        // Stop any active nostr listener when activity is destroyed
+        if (nostrListener != null) {
+            Log.d(TAG, "Stopping NostrPaymentListener in onDestroy");
+            nostrListener.stop();
+            nostrListener = null;
+        }
         
         // Stop the Bitcoin price worker
         if (bitcoinPriceWorker != null) {
@@ -1131,6 +1177,13 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         // Ensure HCE service is cleaned up on error
         resetHceService();
 
+        // Stop any active nostr listener
+        if (nostrListener != null) {
+            Log.d(TAG, "Stopping NostrPaymentListener due to payment error");
+            nostrListener.stop();
+            nostrListener = null;
+        }
+
         mainHandler.post(() -> {
             if (nfcDialog != null && nfcDialog.isShowing()) {
                 nfcDialog.dismiss();
@@ -1202,6 +1255,13 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
 
         // Ensure HCE service is cleaned up on success
         stopHceService();
+
+        // Stop any active nostr listener
+        if (nostrListener != null) {
+            Log.d(TAG, "Stopping NostrPaymentListener due to payment success");
+            nostrListener.stop();
+            nostrListener = null;
+        }
 
         // Play success feedback
         playSuccessFeedback();
