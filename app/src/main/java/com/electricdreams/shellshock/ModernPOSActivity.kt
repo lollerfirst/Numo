@@ -39,6 +39,7 @@ import com.electricdreams.shellshock.SatocashNfcClient
 import com.electricdreams.shellshock.SatocashWallet
 import com.electricdreams.shellshock.ui.components.BottomNavItem
 import com.electricdreams.shellshock.ui.components.CashAppBottomBar
+import com.electricdreams.shellshock.ui.components.PaymentRequestDialog
 import com.electricdreams.shellshock.ui.screens.BalanceScreen
 import com.electricdreams.shellshock.ui.screens.CatalogScreen
 import com.electricdreams.shellshock.ui.screens.HistoryScreen
@@ -446,24 +447,33 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
             return
         }
         
-        // Show dialog with payment request
-        val builder = AlertDialog.Builder(this, R.style.Theme_Shellshock)
-        builder.setTitle("Payment Request")
-        builder.setMessage("Amount: $requestedAmount sats\n\nPayment Request:\n$paymentRequest")
+        // Show Compose dialog with Cash App design
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_Shellshock)
+            .create()
         
-        builder.setPositiveButton("Copy") { dialog, _ ->
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-            val clip = android.content.ClipData.newPlainText("Payment Request", paymentRequest)
-            clipboard.setPrimaryClip(clip)
-            Toast.makeText(this, "Payment request copied to clipboard", Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
-        }
+        dialog.setContentView(
+            androidx.compose.ui.platform.ComposeView(this).apply {
+                setContent {
+                    CashAppTheme(darkTheme = isNightMode) {
+                        PaymentRequestDialog(
+                            amount = requestedAmount,
+                            paymentRequest = paymentRequest,
+                            onCopy = {
+                                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                                val clip = android.content.ClipData.newPlainText("Payment Request", paymentRequest)
+                                clipboard.setPrimaryClip(clip)
+                                Toast.makeText(this@ModernPOSActivity, "Payment request copied to clipboard", Toast.LENGTH_SHORT).show()
+                                dialog.dismiss()
+                            },
+                            onClose = { dialog.dismiss() }
+                        )
+                    }
+                }
+            }
+        )
         
-        builder.setNegativeButton("Close") { dialog, _ ->
-            dialog.dismiss()
-        }
-        
-        builder.create().show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 
     private fun onKeypadButtonClick(label: String) {

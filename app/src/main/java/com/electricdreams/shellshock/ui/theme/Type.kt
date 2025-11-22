@@ -26,7 +26,15 @@ val CashAppTypography = Typography(
         lineHeight = 28.sp,
         letterSpacing = 0.sp
     ),
-    // Row title / primary label / Button labels
+    // Navigation bar title
+    titleSmall = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = 17.sp,
+        lineHeight = 22.sp,
+        letterSpacing = 0.sp
+    ),
+    // Row title / primary label
     titleMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
@@ -57,5 +65,13 @@ val CashAppTypography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.1.sp
+    ),
+    // Section labels (13sp, for "Account & settings" type labels)
+    labelMedium = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 13.sp,
+        lineHeight = 18.sp,
+        letterSpacing = 0.5.sp
     )
 )
