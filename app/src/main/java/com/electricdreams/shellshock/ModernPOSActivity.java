@@ -349,6 +349,14 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
     }
     
     private void toggleInputMode() {
+        // Check if we can switch to USD
+        if (!isUsdInputMode) {
+            if (bitcoinPriceWorker == null || bitcoinPriceWorker.getCurrentPrice() <= 0) {
+                Toast.makeText(this, "Bitcoin price unavailable", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
         // Get current values before toggling
         String inputStr = currentInput.toString();
         long satsValue = 0;
