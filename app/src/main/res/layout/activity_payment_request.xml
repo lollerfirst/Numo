@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/color_bg_white">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:title="Payment Request"
+        app:titleTextColor="@color/color_bg_white" />
+
+    <!-- Content Container -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/margin_screen_horizontal"
+            android:gravity="center">
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/space_xl"
+                android:text="Scan to Pay"
+                android:textAppearance="@style/Text.Title"
+                android:gravity="center" />
+
+            <!-- NFC Card Indicator -->
+            <FrameLayout
+                android:id="@+id/card_container"
+                android:layout_width="200dp"
+                android:layout_height="280dp"
+                android:layout_marginBottom="@dimen/space_2xl"
+                android:background="@drawable/nfc_payment_background_rect">
+
+                <!-- Icons displayed vertically in center -->
+                <LinearLayout
+                    android:id="@+id/payment_icons"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <!-- Contactless icon rotated to point upward -->
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="@dimen/space_xl"
+                        android:contentDescription="Contactless payment"
+                        android:rotation="270"
+                        android:src="@drawable/contactless" />
+
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:contentDescription="Cashu"
+                        android:src="@drawable/cashu" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- QR Code Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/space_l"
+                android:text="or scan QR code"
+                android:textAppearance="@style/Text.Caption"
+                android:gravity="center" />
+
+            <!-- QR Code Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/qr_card"
+                android:layout_width="280dp"
+                android:layout_height="280dp"
+                android:layout_marginBottom="@dimen/space_2xl"
+                app:cardCornerRadius="@dimen/radius_card"
+                app:cardElevation="@dimen/elevation_card">
+
+                <ImageView
+                    android:id="@+id/payment_request_qr"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/payment_request_qr_description"
+                    android:padding="@dimen/space_l"
+                    android:scaleType="fitCenter" />
+            </androidx.cardview.widget.CardView>
+
+            <!-- Payment Amount Info -->
+            <TextView
+                android:id="@+id/payment_amount_display"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/space_l"
+                android:textAppearance="@style/Text.BodyBold"
+                android:gravity="center" />
+
+            <!-- Status Text -->
+            <TextView
+                android:id="@+id/payment_status_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/space_xl"
+                android:text="Waiting for payment..."
+                android:textAppearance="@style/Text.Caption"
+                android:gravity="center" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Button Container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/margin_screen_horizontal"
+        android:background="@color/color_bg_white">
+
+        <!-- Cancel Button -->
+        <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:background="@drawable/bg_button_primary_green"
+            android:text="Cancel"
+            android:textAppearance="@style/Text.Button"
+            android:textColor="@color/color_bg_white" />
+    </LinearLayout>
+
+</LinearLayout>
