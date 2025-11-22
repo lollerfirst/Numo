@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing Scale (4dp base grid) -->
+    <dimen name="space_2xs">2dp</dimen>
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_s">8dp</dimen>
+    <dimen name="space_m">12dp</dimen>
+    <dimen name="space_l">16dp</dimen>
+    <dimen name="space_xl">24dp</dimen>
+    <dimen name="space_2xl">32dp</dimen>
+    <dimen name="space_3xl">48dp</dimen>
+    <dimen name="space_4xl">64dp</dimen>
+    <dimen name="space_5xl">96dp</dimen>
+
+    <!-- Component Heights -->
+    <dimen name="button_height">52dp</dimen>
+    <dimen name="chip_height">36dp</dimen>
+    <dimen name="chip_height_large">40dp</dimen>
+    <dimen name="bottom_nav_height">56dp</dimen>
+    <dimen name="top_bar_height">56dp</dimen>
+    <dimen name="list_row_height">64dp</dimen>
+    <dimen name="keypad_button_min_height">72dp</dimen>
+
+    <!-- Border Radii -->
+    <dimen name="radius_pill">26dp</dimen>
+    <dimen name="radius_chip">18dp</dimen>
+    <dimen name="radius_card">16dp</dimen>
+    <dimen name="radius_search">20dp</dimen>
+    <dimen name="radius_small">8dp</dimen>
+    <dimen name="radius_m">12dp</dimen>
+    <dimen name="radius_l">16dp</dimen>
+
+    <!-- Icon Sizes -->
+    <dimen name="icon_size_small">24dp</dimen>
+    <dimen name="icon_size_medium">40dp</dimen>
+    <dimen name="icon_size_large">48dp</dimen>
+    <dimen name="icon_size_hero">56dp</dimen>
+
+    <!-- Typography Sizes -->
+    <dimen name="text_display_amount">52sp</dimen>
+    <dimen name="text_heading1">24sp</dimen>
+    <dimen name="text_title">17sp</dimen>
+    <dimen name="text_body">15sp</dimen>
+    <dimen name="text_caption">13sp</dimen>
+    <dimen name="text_button">17sp</dimen>
+    <dimen name="text_chip">14sp</dimen>
+    <dimen name="text_section_header">13sp</dimen>
+
+    <!-- Margins -->
+    <dimen name="margin_screen_horizontal">24dp</dimen>
+    <dimen name="margin_screen_vertical">16dp</dimen>
+    <dimen name="margin_content_horizontal">16dp</dimen>
+
+    <!-- Elevation -->
+    <dimen name="elevation_card">2dp</dimen>
+    <dimen name="elevation_dialog">8dp</dimen>
+
+    <!-- Divider -->
+    <dimen name="divider_height">0.5dp</dimen>
+    <dimen name="divider_height_thick">1dp</dimen>
+
+    <!-- Bottom Sheet -->
+    <dimen name="bottom_sheet_handle_width">36dp</dimen>
+    <dimen name="bottom_sheet_handle_height">4dp</dimen>
+</resources>

@@ -1,86 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Full screen container with scrim background -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="8dp">
+    android:background="@color/color_scrim">
 
-    <RelativeLayout
+    <!-- Bottom Sheet Container -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:padding="24dp">
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bg_bottom_sheet"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/space_s"
+        android:paddingBottom="@dimen/space_2xl">
 
-        <!-- NFC indicator container at top - taller than wide like a credit card -->
+        <!-- Handle Bar -->
+        <View
+            android:layout_width="@dimen/bottom_sheet_handle_width"
+            android:layout_height="@dimen/bottom_sheet_handle_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/space_xl"
+            android:background="@drawable/bg_bottom_sheet_handle" />
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/space_xl"
+            android:text="Scan to Pay"
+            android:textAppearance="@style/Text.Title" />
+
+        <!-- NFC Card Indicator -->
         <FrameLayout
             android:id="@+id/card_container"
-            android:layout_width="220dp"
-            android:layout_height="320dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="48dp"
+            android:layout_width="200dp"
+            android:layout_height="280dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/space_2xl"
             android:background="@drawable/nfc_payment_background_rect">
 
-            <!-- Icons displayed vertically in center, contactless icon on top -->
+            <!-- Icons displayed vertically in center -->
             <LinearLayout
                 android:id="@+id/payment_icons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:orientation="vertical"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical">
 
-                <!-- Contactless icon rotated 270 degrees to point directly upward -->
+                <!-- Contactless icon rotated to point upward -->
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:layout_marginBottom="24dp"
-                    android:src="@drawable/contactless"
+                    android:layout_marginBottom="@dimen/space_xl"
+                    android:contentDescription="Contactless payment"
                     android:rotation="270"
-                    android:contentDescription="Contactless payment" />
+                    android:src="@drawable/contactless" />
 
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/cashu"
-                    android:contentDescription="Cashu" />
+                    android:contentDescription="Cashu"
+                    android:src="@drawable/cashu" />
             </LinearLayout>
         </FrameLayout>
 
-        <!-- Large QR code card below the NFC card -->
+        <!-- QR Code Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/space_l"
+            android:text="or scan QR code"
+            android:textAppearance="@style/Text.Caption" />
+
+        <!-- QR Code Card -->
         <androidx.cardview.widget.CardView
             android:id="@+id/qr_card"
-            android:layout_width="280dp"
-            android:layout_height="280dp"
-            android:layout_below="@id/card_container"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp">
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/space_2xl"
+            app:cardCornerRadius="@dimen/radius_card"
+            app:cardElevation="@dimen/elevation_card">
 
             <ImageView
                 android:id="@+id/payment_request_qr"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="0dp"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:contentDescription="@string/payment_request_qr_description" />
+                android:contentDescription="@string/payment_request_qr_description"
+                android:padding="@dimen/space_l"
+                android:scaleType="fitCenter" />
         </androidx.cardview.widget.CardView>
 
-        <!-- Cancel button at bottom -->
+        <!-- Cancel Button - Green Pill -->
         <Button
             android:id="@+id/nfc_cancel_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="48dp"
-            android:backgroundTint="@color/white"
-            android:text="CANCEL"
-            android:textColor="#FF0000"
-            android:textStyle="bold"
-            app:strokeColor="#FF0000"
-            app:strokeWidth="1dp" />
-    </RelativeLayout>
-</androidx.cardview.widget.CardView>
+            android:layout_height="@dimen/button_height"
+            android:layout_marginHorizontal="@dimen/margin_screen_horizontal"
+            android:background="@drawable/bg_button_primary_green"
+            android:text="Cancel"
+            android:textAppearance="@style/Text.Button"
+            android:textColor="@color/color_bg_white" />
+
+    </LinearLayout>
+
+</FrameLayout>

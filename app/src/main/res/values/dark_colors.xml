@@ -10,4 +10,10 @@
     <color name="dark_surfaceColor">#1E1E1E</color>
     <color name="dark_keypadButtonColor">#2C2C2C</color>
     <color name="dark_keypadButtonTextColor">#FFFFFF</color>
+    
+    <!-- Dark theme background colors -->
+    <color name="dark_color_bg_secondary">#2C2C2C</color>
+    
+    <!-- Dark theme icon colors -->
+    <color name="dark_color_icon_secondary">#B3FFFFFF</color>
 </resources>

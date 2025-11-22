@@ -1,32 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Light Theme Colors - Square Terminal Inspired -->
-    <color name="colorPrimary">#1173FE</color>
-    <color name="colorPrimaryDark">#1173FE</color>
-    <color name="colorAccent">#1173FE</color>
-    <color name="textColorPrimary">#000000</color>
-    <color name="textColorSecondary">#666666</color>
-    <color name="windowBackground">#FFFFFF</color>
-    <color name="surfaceColor">#FFFFFF</color>
-    <color name="keypadButtonColor">#FFFFFF</color>
+    <!-- Cash App Brand Colors -->
+    <color name="color_primary_green">#00C244</color>
+    <color name="color_primary_green_light">#5AE48E</color>
+    <color name="color_primary_purple">#8420F4</color>
+    <color name="color_primary_blue">#83E8FC</color>
+    <color name="color_primary_red">#FF4B4B</color>
+
+    <!-- Background Colors -->
+    <color name="color_bg_white">#FFFFFF</color>
+    <color name="color_bg_light">#F6F7F8</color>
+    <color name="color_bg_secondary">#F1F2F6</color>
+    <color name="color_search_bg">#F1F2F6</color>
+    <color name="color_divider">#E5E5EA</color>
+
+    <!-- Text Colors -->
+    <color name="color_text_primary">#111111</color>
+    <color name="color_text_secondary">#6F6F73</color>
+    <color name="color_text_tertiary">#9B9B9F</color>
+    <color name="color_icon_inactive">#C5C5CC</color>
+    <color name="color_icon_secondary">#9B9B9F</color>
+
+    <!-- Chip & Border Colors -->
+    <color name="color_chip_border">#E1E1E5</color>
+
+    <!-- Status & Semantic Colors -->
+    <color name="color_success_green">#00C244</color>
+    <color name="color_warning_red">#FF4B4B</color>
+    <color name="color_info_blue">#83E8FC</color>
+
+    <!-- Overlays -->
+    <color name="color_scrim">#66000000</color>
+
+    <!-- Legacy Compatibility (mapped to new colors) -->
+    <color name="colorPrimary">@color/color_primary_green_light</color>
+    <color name="colorPrimaryDark">@color/color_primary_green</color>
+    <color name="colorAccent">@color/color_primary_green_light</color>
+    <color name="textColorPrimary">@color/color_text_primary</color>
+    <color name="textColorSecondary">@color/color_text_secondary</color>
+    <color name="windowBackground">@color/color_bg_white</color>
+    <color name="surfaceColor">@color/color_bg_white</color>
+    <color name="keypadButtonColor">@color/color_bg_white</color>
     <color name="keypadButtonPressedColor">#F5F5F5</color>
-    <color name="keypadButtonTextColor">#000000</color>
-    <color name="keypadButtonBorder">#E0E0E0</color>
-    <color name="inputBoxStrokeColor">#E0E0E0</color>
-    
-    <!-- Action buttons -->
-    <color name="buttonBackground">#1173FE</color>
-    <color name="buttonText">#FFFFFF</color>
-    
-    <!-- Navigation bar colors -->
+    <color name="keypadButtonTextColor">@color/color_text_primary</color>
+    <color name="keypadButtonBorder">@color/color_divider</color>
+    <color name="inputBoxStrokeColor">@color/color_divider</color>
+    <color name="buttonBackground">@color/color_primary_green_light</color>
+    <color name="buttonText">@color/color_bg_white</color>
     <color name="navigationBarBackground">#F8F9FA</color>
-    <color name="navigationBarDivider">#E0E0E0</color>
+    <color name="navigationBarDivider">@color/color_divider</color>
     <color name="navigationIconTint">#757575</color>
-    
+
     <!-- Default Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    
+
     <!-- Icon Colors -->
     <color name="iconTint">@color/navigationIconTint</color>
 </resources>

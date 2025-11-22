@@ -75,6 +75,18 @@
                 android:resource="@xml/nfc_tech_filter" />
         </activity>
 
+        <!-- Payment Request Activity -->
+        <activity android:name="com.electricdreams.shellshock.PaymentRequestActivity"
+            android:exported="false"
+            android:label="Payment Request"
+            android:theme="@style/Theme.Shellshock"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName="com.electricdreams.shellshock.ModernPOSActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.electricdreams.shellshock.ModernPOSActivity" />
+        </activity>
+
         <activity android:name=".BalanceCheckActivity"
             android:exported="false"
             android:label="Check Balance"

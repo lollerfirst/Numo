@@ -4,82 +4,109 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/windowBackground"
+    android:background="@color/color_bg_white"
     tools:context=".BalanceCheckActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <!-- Custom Toolbar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/toolbar_container"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-        app:title="Check NFC Balance"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="@dimen/top_bar_height"
+        android:background="@color/color_bg_white"
+        android:paddingHorizontal="@dimen/space_m"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:src="@drawable/ic_close"
+            android:tint="@color/color_text_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Check Balance"
+            android:textAppearance="@style/Text.Title"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginHorizontal="@dimen/margin_content_horizontal"
+        android:gravity="center"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_container"
+        app:layout_constraintVertical_bias="0.3">
+
+        <ImageView
+            android:layout_width="@dimen/icon_size_hero"
+            android:layout_height="@dimen/icon_size_hero"
+            android:layout_marginBottom="@dimen/space_xl"
+            android:src="@drawable/ic_balance_check"
+            app:tint="@color/color_primary_green" />
 
         <TextView
             android:id="@+id/title_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="@dimen/space_m"
             android:gravity="center"
-            android:text="NFC Card Balance Check"
-            android:textColor="?android:attr/textColor"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="32dp"
-            android:src="@drawable/ic_balance_check"
-            app:tint="?android:attr/textColor" />
+            android:text="Tap Card"
+            android:textAppearance="@style/Text.Heading1" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="@dimen/space_2xl"
             android:gravity="center"
-            android:text="Tap your NFC card to check balance"
-            android:textColor="?android:attr/textColor"
-            android:textSize="16sp" />
+            android:text="Hold your NFC card near the back of the device to check balance"
+            android:textAppearance="@style/Text.Body" />
 
         <TextView
             android:id="@+id/card_info_display"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="@dimen/space_m"
+            android:background="@drawable/bg_chip_default"
             android:gravity="center"
-            android:padding="16dp"
-            android:background="?attr/colorSurface"
-            android:textColor="?android:attr/textColor"
-            android:textSize="16sp"
+            android:padding="@dimen/space_m"
+            android:textAppearance="@style/Text.BodyBold"
             android:visibility="gone" />
 
         <TextView
             android:id="@+id/balance_display"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:gravity="center"
-            android:padding="16dp"
-            android:background="?attr/colorSurface"
-            android:textSize="24sp"
-            android:textColor="?attr/colorSecondary"
+            android:padding="@dimen/space_m"
+            android:textAppearance="@style/Text.DisplayAmount.Green"
+            android:textSize="32sp"
             android:textStyle="bold"
             android:visibility="gone" />
 
     </LinearLayout>
+
+    <!-- Hidden Toolbar for compatibility -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

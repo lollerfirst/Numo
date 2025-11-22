@@ -78,6 +78,12 @@ public class SettingsActivity extends AppCompatActivity implements MintsAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         
+        // Setup back button
+        View backButton = findViewById(R.id.back_button);
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> finish());
+        }
+        
         // Initialize managers
         currencyManager = CurrencyManager.getInstance(this);
         mintManager = MintManager.getInstance(this);

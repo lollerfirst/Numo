@@ -31,19 +31,26 @@ public class PaymentsHistoryActivity extends AppCompatActivity {
 
     private PaymentsHistoryAdapter adapter;
     private TextView emptyView;
-    private FloatingActionButton clearHistoryButton;
+    private View clearHistoryButton; // Changed from FloatingActionButton to View (ImageButton)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        // Setup toolbar
+        // Setup custom back button
+        View backButton = findViewById(R.id.back_button);
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> onBackPressed());
+        }
+
+        // Setup hidden toolbar for compatibility if needed, or just ignore
         Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Payments History");
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
+            }
         }
 
         // Setup RecyclerView

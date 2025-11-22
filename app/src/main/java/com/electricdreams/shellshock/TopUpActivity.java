@@ -38,7 +38,7 @@ import java.util.concurrent.CompletableFuture;
 public class TopUpActivity extends AppCompatActivity {
 
     private static final String TAG = "TopUpActivity";
-    private TextInputEditText proofTokenEditText;
+    private EditText proofTokenEditText;
     private Button topUpSubmitButton;
     private AlertDialog nfcDialog, rescanDialog, processingDialog;
     private NfcAdapter nfcAdapter;
@@ -56,12 +56,22 @@ public class TopUpActivity extends AppCompatActivity {
         setTheme(R.style.Theme_Shellshock);
         setContentView(R.layout.activity_top_up);
 
-        // Set up the toolbar
+        // Set up back button
+        View backButton = findViewById(R.id.back_button);
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> {
+                NavUtils.navigateUpFromSameTask(this);
+            });
+        }
+
+        // Set up the toolbar (hidden but kept for compatibility if needed)
         Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Top Up");
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setTitle("Top Up");
+            }
         }
 
         rootView = findViewById(android.R.id.content);

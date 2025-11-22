@@ -37,6 +37,12 @@ public class BalanceCheckActivity extends AppCompatActivity {
         Log.d(TAG, "============================================");
         setTheme(R.style.Theme_Shellshock);
         setContentView(R.layout.activity_balance_check);
+        
+        // Setup back button
+        View backButton = findViewById(R.id.back_button);
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> onBackPressed());
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
