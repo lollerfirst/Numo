@@ -111,6 +111,12 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         public static final int PIN_FAILED = 0x63C0;
     }
 
+    private enum AnimationType {
+        NONE,
+        DIGIT_ENTRY,
+        CURRENCY_SWITCH
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Load theme preference before setting content view
@@ -179,7 +185,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
             // Only update the display if we have an active conversion to show
             // This prevents clearing the input during regular price updates
             if (!currentInput.toString().isEmpty()) {
-                updateDisplay();
+                updateDisplay(AnimationType.NONE);
             }
         });
         
@@ -265,7 +271,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
             // Set input to the payment amount from basket and set requested amount
             currentInput = new StringBuilder(String.valueOf(paymentAmount));
             requestedAmount = paymentAmount;
-            updateDisplay();
+            updateDisplay(AnimationType.NONE);
             
             // Automatically proceed with payment
             new Handler().postDelayed(() -> {
@@ -277,7 +283,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
             }, 500); // Small delay to allow UI to update
         } else {
             // Regular flow
-            updateDisplay(); // Make sure first display is correct
+            updateDisplay(AnimationType.NONE); // Make sure first display is correct
         }
     }
 
@@ -326,7 +332,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         
         // Reset amount display
         currentInput.setLength(0);
-        updateDisplay();
+        updateDisplay(AnimationType.NONE);
     }
 
     private void switchToTokenMode() {
@@ -398,7 +404,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         }
         
         // Update the display to show values in the new mode
-        updateDisplay();
+        updateDisplay(AnimationType.CURRENCY_SWITCH);
     }
 
     private void onKeypadButtonClick(String label) {
@@ -427,24 +433,39 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                 }
                 break;
         }
-        updateDisplay();
+        updateDisplay(AnimationType.DIGIT_ENTRY);
     }
     
-    private void animateAmountChange(String newText) {
+    private void animateCurrencySwitch(String newText) {
         // Sleek modern animation: slide up and fade out, then slide up and fade in
         amountDisplay.animate()
             .alpha(0f)
             .translationY(-20f)
-            .setDuration(100)
+            .setDuration(150)
+            .setInterpolator(new android.view.animation.AccelerateInterpolator())
             .withEndAction(() -> {
                 amountDisplay.setText(newText);
                 amountDisplay.setTranslationY(20f);
                 amountDisplay.animate()
                     .alpha(1f)
                     .translationY(0f)
-                    .setDuration(150)
+                    .setDuration(200)
+                    .setInterpolator(new android.view.animation.DecelerateInterpolator())
                     .start();
             })
+            .start();
+    }
+
+    private void animateDigitEntry(String newText) {
+        // Sleek pop animation for digit entry
+        amountDisplay.setText(newText);
+        amountDisplay.setScaleX(0.95f);
+        amountDisplay.setScaleY(0.95f);
+        amountDisplay.animate()
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(100)
+            .setInterpolator(new android.view.animation.OvershootInterpolator(1.5f))
             .start();
     }
 
@@ -457,7 +478,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         }
     }
 
-    private void updateDisplay() {
+    private void updateDisplay(AnimationType animationType) {
         // Get the current value from the input
         String inputStr = currentInput.toString();
         long satsValue = 0;
@@ -487,7 +508,13 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                     String displayFiat = symbol + wholePart + "." + centsPart;
                     
                     if (!amountDisplay.getText().toString().equals(displayFiat)) {
-                        animateAmountChange(displayFiat);
+                        if (animationType == AnimationType.CURRENCY_SWITCH) {
+                            animateCurrencySwitch(displayFiat);
+                        } else if (animationType == AnimationType.DIGIT_ENTRY) {
+                            animateDigitEntry(displayFiat);
+                        } else {
+                            amountDisplay.setText(displayFiat);
+                        }
                     }
                     
                     // Format sats equivalent
@@ -520,7 +547,13 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
             // Format sats amount
             String displayAmount = formatAmount(inputStr);
             if (!amountDisplay.getText().toString().equals(displayAmount)) {
-                animateAmountChange(displayAmount);
+                if (animationType == AnimationType.CURRENCY_SWITCH) {
+                    animateCurrencySwitch(displayAmount);
+                } else if (animationType == AnimationType.DIGIT_ENTRY) {
+                    animateDigitEntry(displayAmount);
+                } else {
+                    amountDisplay.setText(displayAmount);
+                }
             }
             
             // Calculate and display fiat equivalent
