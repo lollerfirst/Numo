@@ -62,7 +62,7 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
     private val currencySymbolState = mutableStateOf("$")
     private val isUsdModeState = mutableStateOf(false)
     private val selectedNavIndex = mutableStateOf(2) // Default to Cash (Keypad) which is index 2
-    private val bottomBarBackgroundColor = mutableStateOf(CashGreen) // Dynamic background for bottom bar
+    private val scaffoldBackgroundColor = mutableStateOf(CashGreen) // Background behind bottom bar
 
     // Screen Data States
     private val historyState = mutableStateOf<List<PaymentHistoryEntry>>(emptyList())
@@ -110,8 +110,8 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
                             selectedIndex = selectedNavIndex.value,
                             onItemSelected = { index -> 
                                 selectedNavIndex.value = index
-                                // Update bottom bar background based on screen
-                                bottomBarBackgroundColor.value = when (index) {
+                                // Update scaffold background based on screen
+                                scaffoldBackgroundColor.value = when (index) {
                                     0 -> Color.White // Home/Activity
                                     1 -> Color.White // Card/Balance
                                     2 -> CashGreen   // Cash/Keypad
@@ -125,11 +125,10 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
                                     1 -> { /* Balance is updated via NFC */ }
                                     3 -> loadCatalog()
                                 }
-                            },
-                            backgroundColor = bottomBarBackgroundColor.value
+                            }
                         )
                     },
-                    containerColor = Color.White
+                    containerColor = scaffoldBackgroundColor.value
                 ) { paddingValues ->
                     Box(modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())) {
                         when (selectedNavIndex.value) {
