@@ -436,16 +436,30 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         updateDisplay(AnimationType.DIGIT_ENTRY);
     }
     
-    private void animateCurrencySwitch(String newText) {
-        // Sleek modern animation: slide up and fade out, then slide up and fade in
+    private void animateCurrencySwitch(String newText, boolean isUp) {
+        // Cancel any running animation
+        amountDisplay.animate().cancel();
+        
+        // Reset properties if needed (though we want to animate from current state)
+        // If we are in a weird state, reset
+        if (amountDisplay.getAlpha() == 0f) {
+            amountDisplay.setAlpha(1f);
+            amountDisplay.setTranslationY(0f);
+        }
+
+        float startTranslation = 0f;
+        float exitTranslation = isUp ? -50f : 50f;
+        float enterStartTranslation = isUp ? 50f : -50f;
+
+        // Animate out
         amountDisplay.animate()
             .alpha(0f)
-            .translationY(-20f)
+            .translationY(exitTranslation)
             .setDuration(150)
             .setInterpolator(new android.view.animation.AccelerateInterpolator())
             .withEndAction(() -> {
                 amountDisplay.setText(newText);
-                amountDisplay.setTranslationY(20f);
+                amountDisplay.setTranslationY(enterStartTranslation);
                 amountDisplay.animate()
                     .alpha(1f)
                     .translationY(0f)
@@ -483,6 +497,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         String inputStr = currentInput.toString();
         long satsValue = 0;
         double fiatValue = 0;
+        String amountDisplayText = "";
         
         if (isUsdInputMode) {
             // Converting from fiat input to sats equivalent
@@ -505,17 +520,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                     // Format fiat amount for display (handling decimal point)
                     String wholePart = String.valueOf(cents / 100);
                     String centsPart = String.format("%02d", cents % 100);
-                    String displayFiat = symbol + wholePart + "." + centsPart;
-                    
-                    if (!amountDisplay.getText().toString().equals(displayFiat)) {
-                        if (animationType == AnimationType.CURRENCY_SWITCH) {
-                            animateCurrencySwitch(displayFiat);
-                        } else if (animationType == AnimationType.DIGIT_ENTRY) {
-                            animateDigitEntry(displayFiat);
-                        } else {
-                            amountDisplay.setText(displayFiat);
-                        }
-                    }
+                    amountDisplayText = symbol + wholePart + "." + centsPart;
                     
                     // Format sats equivalent
                     String satoshiEquivalent = "₿ " + NumberFormat.getNumberInstance(Locale.US).format(satsValue);
@@ -523,20 +528,14 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                 } catch (NumberFormatException e) {
                     CurrencyManager currencyManager = CurrencyManager.getInstance(this);
                     String symbol = currencyManager.getCurrentSymbol();
-                    String zeroText = symbol + "0.00";
-                    if (!amountDisplay.getText().toString().equals(zeroText)) {
-                        amountDisplay.setText(zeroText);
-                    }
+                    amountDisplayText = symbol + "0.00";
                     fiatAmountDisplay.setText("₿ 0");
                     satsValue = 0;
                 }
             } else {
                 CurrencyManager currencyManager = CurrencyManager.getInstance(this);
                 String symbol = currencyManager.getCurrentSymbol();
-                String zeroText = symbol + "0.00";
-                if (!amountDisplay.getText().toString().equals(zeroText)) {
-                    amountDisplay.setText(zeroText);
-                }
+                amountDisplayText = symbol + "0.00";
                 fiatAmountDisplay.setText("₿ 0");
                 satsValue = 0;
             }
@@ -545,16 +544,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
             satsValue = inputStr.isEmpty() ? 0 : Long.parseLong(inputStr);
             
             // Format sats amount
-            String displayAmount = formatAmount(inputStr);
-            if (!amountDisplay.getText().toString().equals(displayAmount)) {
-                if (animationType == AnimationType.CURRENCY_SWITCH) {
-                    animateCurrencySwitch(displayAmount);
-                } else if (animationType == AnimationType.DIGIT_ENTRY) {
-                    animateDigitEntry(displayAmount);
-                } else {
-                    amountDisplay.setText(displayAmount);
-                }
-            }
+            amountDisplayText = formatAmount(inputStr);
             
             // Calculate and display fiat equivalent
             if (bitcoinPriceWorker != null) {
@@ -564,6 +554,20 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
             } else {
                 CurrencyManager currencyManager = CurrencyManager.getInstance(this);
                 fiatAmountDisplay.setText(currencyManager.formatCurrencyAmount(0.0));
+            }
+        }
+        
+        // Update amount display with animation if needed
+        if (!amountDisplay.getText().toString().equals(amountDisplayText)) {
+            if (animationType == AnimationType.CURRENCY_SWITCH) {
+                // Animate UP if going to SATS (default/base), DOWN if going to USD (overlay/fiat)
+                // Or just consistent direction: SATS -> USD (Down), USD -> SATS (Up)
+                boolean animateUp = !isUsdInputMode; 
+                animateCurrencySwitch(amountDisplayText, animateUp);
+            } else if (animationType == AnimationType.DIGIT_ENTRY) {
+                animateDigitEntry(amountDisplayText);
+            } else {
+                amountDisplay.setText(amountDisplayText);
             }
         }
         
