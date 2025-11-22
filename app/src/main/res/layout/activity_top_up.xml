@@ -4,55 +4,107 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/windowBackground"
+    android:background="@color/color_bg_white"
     tools:context=".TopUpActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <!-- Custom Toolbar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/toolbar_container"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-        app:title="Top Up"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="@dimen/top_bar_height"
+        android:background="@color/color_bg_white"
+        android:paddingHorizontal="@dimen/space_m"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/top_up_amount_layout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:hint="Enter Cashu Proof Token"
-        android:textColorHint="?android:attr/textColor"
-        app:hintTextColor="?android:attr/textColor"
-        app:boxStrokeColor="?android:attr/textColor"
-        app:boxStrokeWidth="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/top_up_submit_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:src="@drawable/ic_arrow_back"
+            android:tint="@color/color_text_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/top_up_amount_edit_text"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:maxLines="3"
-            android:textColor="?android:attr/textColor" />
+            android:text="Top Up"
+            android:textAppearance="@style/Text.Title"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/toolbar_divider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_height"
+        android:background="@color/color_divider"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_container" />
+
+    <TextView
+        android:id="@+id/instruction_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_content_horizontal"
+        android:layout_marginTop="@dimen/space_xl"
+        android:text="Enter Cashu Token"
+        android:textAppearance="@style/Text.Heading1"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_divider" />
+
+    <TextView
+        android:id="@+id/sub_instruction_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_content_horizontal"
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="Paste a Cashu token to add funds to the card"
+        android:textAppearance="@style/Text.Body"
+        app:layout_constraintTop_toBottomOf="@id/instruction_text" />
+
+    <EditText
+        android:id="@+id/top_up_amount_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_content_horizontal"
+        android:layout_marginTop="@dimen/space_l"
+        android:background="@drawable/bg_search_bar"
+        android:gravity="top|start"
+        android:hint="cashuA..."
+        android:inputType="textMultiLine"
+        android:minLines="4"
+        android:padding="@dimen/space_m"
+        android:textAppearance="@style/Text.Body"
+        app:layout_constraintTop_toBottomOf="@id/sub_instruction_text" />
+
+    <!-- Hidden TextInputLayout for compatibility if needed, but we'll try to use EditText directly -->
+    <!-- If Java code uses TextInputLayout, we might need to keep it or update Java -->
+    <!-- Checking TopUpActivity.java next -->
 
     <Button
         android:id="@+id/top_up_submit_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:padding="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:layout_marginHorizontal="@dimen/margin_screen_horizontal"
+        android:layout_marginBottom="@dimen/space_xl"
+        android:background="@drawable/bg_button_primary_green"
         android:text="Submit"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:textAppearance="@style/Text.Button"
+        android:textColor="@color/color_bg_white"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Hidden Toolbar for compatibility -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,88 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    android:background="@color/color_bg_white"
+    android:paddingHorizontal="@dimen/margin_content_horizontal"
+    android:paddingVertical="@dimen/space_m">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/item_name"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/Text.BodyBold"
+        app:layout_constraintEnd_toStartOf="@+id/item_total"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="T-Shirt" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+    <TextView
+        android:id="@+id/item_variation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_2xs"
+        android:textAppearance="@style/Text.Caption"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/item_total"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_name"
+        tools:text="Small"
+        tools:visibility="visible" />
 
-            <TextView
-                android:id="@+id/item_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                android:ellipsize="end"
-                android:maxLines="1"
-                tools:text="T-Shirt" />
+    <TextView
+        android:id="@+id/item_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:textAppearance="@style/Text.Caption"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_variation"
+        tools:text="Qty: 2" />
 
-            <TextView
-                android:id="@+id/item_variation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceBody2"
-                android:visibility="gone"
-                tools:text="Small"
-                tools:visibility="visible" />
+    <TextView
+        android:id="@+id/item_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_m"
+        android:textAppearance="@style/Text.Caption"
+        app:layout_constraintBottom_toBottomOf="@+id/item_quantity"
+        app:layout_constraintStart_toEndOf="@+id/item_quantity"
+        app:layout_constraintTop_toTopOf="@+id/item_quantity"
+        tools:text="$24.99" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+    <TextView
+        android:id="@+id/item_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/Text.BodyBold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="$49.98" />
 
-                <TextView
-                    android:id="@+id/item_quantity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:layout_marginEnd="16dp"
-                    tools:text="Qty: 2" />
+    <ImageButton
+        android:id="@+id/remove_item_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Remove item"
+        android:src="@drawable/ic_delete"
+        android:tint="@color/color_icon_secondary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_total" />
 
-                <TextView
-                    android:id="@+id/item_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceBody1"
-                    tools:text="$24.99" />
-            </LinearLayout>
-        </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/space_m"
+        android:background="@color/color_divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/remove_item_button" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="end|center_vertical">
-
-            <TextView
-                android:id="@+id/item_total"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp"
-                tools:text="$49.98" />
-
-            <ImageButton
-                android:id="@+id/remove_item_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Remove item"
-                android:src="@drawable/ic_delete" />
-        </LinearLayout>
-    </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

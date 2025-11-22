@@ -4,52 +4,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/color_bg_white"
     tools:context=".ModernPOSActivity">
 
+    <!-- Amount Display - Large centered -->
     <TextView
         android:id="@+id/amount_display"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="8dp"
-        android:gravity="start"
-        android:text="0"
-        android:textColor="@color/black"
-        android:textSize="42sp"
-        android:fontFamily="sans-serif-light"
+        android:layout_marginStart="@dimen/margin_screen_horizontal"
+        android:layout_marginTop="@dimen/space_5xl"
+        android:layout_marginEnd="@dimen/space_s"
+        android:gravity="center"
+        android:text="₿ 0"
+        android:textAppearance="@style/Text.DisplayAmount"
         app:layout_constraintEnd_toStartOf="@id/currency_switch_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-        
+
     <!-- Currency Switch Button -->
     <ImageButton
         android:id="@+id/currency_switch_button"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="24dp"
+        android:layout_width="@dimen/icon_size_large"
+        android:layout_height="@dimen/icon_size_large"
+        android:layout_marginTop="@dimen/space_5xl"
+        android:layout_marginEnd="@dimen/margin_screen_horizontal"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_switch_currency"
         android:contentDescription="Switch between Sats and USD"
-        android:tint="@color/black"
+        android:src="@drawable/ic_switch_currency"
+        android:tint="@color/color_text_primary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-        
+
+    <!-- Fiat Amount Display - Secondary text below main amount -->
     <TextView
         android:id="@+id/fiat_amount_display"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
-        android:gravity="start"
+        android:layout_marginStart="@dimen/margin_screen_horizontal"
+        android:layout_marginTop="@dimen/space_s"
+        android:layout_marginEnd="@dimen/margin_screen_horizontal"
+        android:gravity="center"
         android:text="$0.00 USD"
-        android:textColor="#707070"
-        android:textSize="18sp"
-        android:fontFamily="sans-serif-light"
-        app:layout_constraintEnd_toStartOf="@id/currency_switch_button"
+        android:textAppearance="@style/Text.Body"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/amount_display" />
 
@@ -62,32 +60,37 @@
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/amount_display">
+        app:layout_constraintTop_toBottomOf="@id/fiat_amount_display">
 
+        <!-- Numeric Keypad - Cash App Style -->
         <GridLayout
             android:id="@+id/keypad"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginVertical="24dp"
+            android:layout_marginHorizontal="@dimen/margin_screen_horizontal"
+            android:layout_marginTop="@dimen/space_4xl"
+            android:layout_marginBottom="@dimen/space_l"
+            android:alignmentMode="alignBounds"
             android:columnCount="3"
             android:rowCount="4"
             android:useDefaultMargins="false"
-            android:alignmentMode="alignBounds"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/submit_button"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Charge Button - Green Pill -->
         <Button
             android:id="@+id/submit_button"
             android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="24dp"
-            android:text="Charge"
-            android:textSize="16sp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginHorizontal="@dimen/margin_screen_horizontal"
+            android:layout_marginBottom="@dimen/space_xl"
+            android:background="@drawable/bg_button_primary_green"
             android:enabled="false"
+            android:text="Charge"
+            android:textAppearance="@style/Text.Button"
+            android:textColor="@color/color_bg_white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -99,30 +102,30 @@
         android:id="@+id/token_scroll_container"
         android:layout_width="0dp"
         android:layout_height="120dp"
-        android:layout_margin="24dp"
-        android:background="@color/white"
-        android:visibility="gone"
+        android:layout_margin="@dimen/margin_screen_horizontal"
+        android:background="@color/color_bg_white"
         android:elevation="1dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/amount_display">
-        
+        app:layout_constraintTop_toBottomOf="@id/fiat_amount_display">
+
         <!-- Fixed height text view with ellipsize to handle text overflow -->
         <TextView
             android:id="@+id/token_display"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp"
-            android:gravity="start"
-            android:clickable="true"
-            android:focusable="true"
             android:background="?attr/selectableItemBackground"
+            android:clickable="true"
             android:ellipsize="end"
+            android:focusable="true"
+            android:fontFamily="monospace"
+            android:gravity="start"
             android:maxLines="4"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:fontFamily="monospace" />
-            
+            android:padding="@dimen/space_l"
+            android:textColor="@color/color_text_primary"
+            android:textSize="16sp" />
+
     </FrameLayout>
 
     <!-- Token Action Buttons Container -->
@@ -130,69 +133,62 @@
         android:id="@+id/token_actions_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="@dimen/margin_screen_horizontal"
+        android:layout_marginTop="@dimen/space_l"
         android:orientation="vertical"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/token_scroll_container">
 
-        <!-- First row of buttons -->
-        <LinearLayout
+        <!-- Open With Button -->
+        <Button
+            android:id="@+id/open_with_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="@dimen/button_height"
+            android:background="@drawable/bg_button_secondary_outlined"
+            android:drawablePadding="@dimen/space_s"
+            android:drawableStart="@drawable/ic_open_with"
+            android:text="Open With"
+            android:textAppearance="@style/Text.Button"
+            android:textColor="@color/color_text_primary" />
 
-            <Button
-                android:id="@+id/open_with_button"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="Open With"
-                android:textSize="16sp"
-                android:backgroundTint="@color/white"
-                android:textColor="@color/black"
-                android:drawableStart="@drawable/ic_open_with"
-                android:drawablePadding="8dp"
-                app:strokeColor="@color/keypadButtonBorder"
-                app:strokeWidth="1dp" />
-        </LinearLayout>
-
-        <!-- Second row - Reset button -->
+        <!-- Reset Button -->
         <Button
             android:id="@+id/reset_button"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="16dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/space_l"
+            android:background="@drawable/bg_button_secondary_outlined"
             android:text="New Transaction"
-            android:textSize="16sp"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/black"
-            app:strokeColor="@color/keypadButtonBorder"
-            app:strokeWidth="1dp" />
+            android:textAppearance="@style/Text.Button"
+            android:textColor="@color/color_text_primary" />
 
     </LinearLayout>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Navigation - Cash App Style -->
     <LinearLayout
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/navigationBarBackground"
+        android:background="@color/color_bg_white"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <!-- Top Divider -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/navigationBarDivider" />
+            android:layout_height="@dimen/divider_height"
+            android:background="@color/color_divider" />
 
+        <!-- Navigation Icons Row -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:baselineAligned="false">
+            android:layout_height="@dimen/bottom_nav_height"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
+            <!-- More Options -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -204,12 +200,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_more_vert"
-                    android:tint="@color/navigationIconTint"
                     android:contentDescription="More Options"
-                    android:padding="16dp"/>
+                    android:padding="@dimen/space_l"
+                    android:src="@drawable/ic_more_vert"
+                    android:tint="@color/color_text_secondary" />
             </LinearLayout>
 
+            <!-- History -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -221,12 +218,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_history"
-                    android:tint="@color/navigationIconTint"
                     android:contentDescription="Transaction History"
-                    android:padding="16dp"/>
+                    android:padding="@dimen/space_l"
+                    android:src="@drawable/ic_history"
+                    android:tint="@color/color_text_secondary" />
             </LinearLayout>
-            
+
+            <!-- Catalog -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -238,12 +236,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_catalog"
-                    android:tint="@color/navigationIconTint"
                     android:contentDescription="Item Catalog"
-                    android:padding="16dp"/>
+                    android:padding="@dimen/space_l"
+                    android:src="@drawable/ic_catalog"
+                    android:tint="@color/color_text_secondary" />
             </LinearLayout>
-            
+
+            <!-- Settings -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -255,10 +254,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_settings"
-                    android:tint="@color/navigationIconTint"
                     android:contentDescription="Settings"
-                    android:padding="16dp"/>
+                    android:padding="@dimen/space_l"
+                    android:src="@drawable/ic_settings"
+                    android:tint="@color/color_text_secondary" />
             </LinearLayout>
         </LinearLayout>
 

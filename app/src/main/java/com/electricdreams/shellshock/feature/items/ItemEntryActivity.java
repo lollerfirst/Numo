@@ -23,10 +23,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import android.widget.EditText;
 import com.electricdreams.shellshock.R;
 import com.electricdreams.shellshock.core.model.Item;
 import com.electricdreams.shellshock.core.util.ItemManager;
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,15 +41,15 @@ public class ItemEntryActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 1001;
     private static final int REQUEST_PICK_IMAGE = 1002;
 
-    private TextInputEditText nameInput;
-    private TextInputEditText variationInput;
-    private TextInputEditText priceInput;
-    private TextInputEditText skuInput;
-    private TextInputEditText descriptionInput;
-    private TextInputEditText categoryInput;
-    private TextInputEditText quantityInput;
+    private EditText nameInput;
+    private EditText variationInput;
+    private EditText priceInput;
+    private EditText skuInput;
+    private EditText descriptionInput;
+    private EditText categoryInput;
+    private EditText quantityInput;
     private CheckBox alertCheckbox;
-    private TextInputEditText alertThresholdInput;
+    private EditText alertThresholdInput;
     private ImageView itemImageView;
     private ImageView imagePlaceholder;
     private Button addImageButton;
@@ -101,6 +101,7 @@ public class ItemEntryActivity extends AppCompatActivity {
 
         Button cancelButton = findViewById(R.id.item_cancel_button);
         Button saveButton = findViewById(R.id.item_save_button);
+        View backButton = findViewById(R.id.back_button);
 
         // Set up image buttons
         addImageButton.setOnClickListener(v -> showImageSourceDialog());
@@ -120,15 +121,18 @@ public class ItemEntryActivity extends AppCompatActivity {
 
         // Load item data if in edit mode
         if (isEditMode) {
-            setTitle("Edit Item");
+            // setTitle("Edit Item"); // Toolbar handles title
             loadItemData();
         } else {
-            setTitle("Add Item");
+            // setTitle("Add Item"); // Toolbar handles title
         }
 
         // Set up button listeners
         cancelButton.setOnClickListener(v -> finish());
         saveButton.setOnClickListener(v -> saveItem());
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> finish());
+        }
     }
 
     private void loadItemData() {

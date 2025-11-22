@@ -4,16 +4,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/color_bg_white"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <!-- Custom Toolbar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/toolbar_container"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="Basket" />
+        android:layout_height="@dimen/top_bar_height"
+        android:background="@color/color_bg_white"
+        android:paddingHorizontal="@dimen/space_m">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:src="@drawable/ic_arrow_back"
+            android:tint="@color/color_text_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Basket"
+            android:textAppearance="@style/Text.Title"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/toolbar_divider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_height"
+        android:background="@color/color_divider" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -24,8 +54,8 @@
             android:id="@+id/basket_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="8dp"
             android:clipToPadding="false"
+            android:paddingVertical="@dimen/space_s"
             tools:listitem="@layout/item_basket" />
 
         <TextView
@@ -34,59 +64,58 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="Basket is empty"
-            android:textSize="18sp"
+            android:textAppearance="@style/Text.BodyBold"
             android:visibility="gone" />
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/color_bg_white"
+        android:elevation="8dp"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="?attr/colorSurface"
-        android:elevation="4dp">
+        android:padding="@dimen/space_m">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="@dimen/space_s"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Items:"
-                android:textAppearance="?attr/textAppearanceBody1" />
+                android:textAppearance="@style/Text.Body" />
 
             <TextView
                 android:id="@+id/basket_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceBody1"
-                android:textStyle="bold"
+                android:textAppearance="@style/Text.BodyBold"
                 tools:text="3" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="@dimen/space_m"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Total:"
-                android:textAppearance="?attr/textAppearanceHeadline6" />
+                android:textAppearance="@style/Text.Heading1" />
 
             <TextView
                 android:id="@+id/basket_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                android:textStyle="bold"
+                android:textAppearance="@style/Text.Heading1"
+                android:textColor="@color/color_primary_green"
                 tools:text="$24.99" />
         </LinearLayout>
 
@@ -97,30 +126,32 @@
 
             <Button
                 android:id="@+id/clear_basket_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Clear Basket"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_marginEnd="8dp" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_s"
+                android:text="Clear"
+                android:textAppearance="@style/Text.Button"
+                android:textColor="@color/color_warning_red" />
 
             <Button
                 android:id="@+id/continue_shopping_button"
+                style="@style/Widget.Button.Secondary.Outlined"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_s"
                 android:layout_weight="1"
-                android:text="Continue Shopping"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp" />
+                android:text="Add More" />
 
             <Button
                 android:id="@+id/checkout_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@drawable/bg_button_primary_green"
                 android:text="Checkout"
-                android:layout_marginStart="8dp" />
+                android:textAppearance="@style/Text.Button"
+                android:textColor="@color/color_bg_white" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

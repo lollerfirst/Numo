@@ -1,39 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Base Theme -->
     <style name="Theme.Shellshock" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/buttonBackground</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
-        <item name="colorOnPrimary">@color/buttonText</item>
+        <item name="colorPrimary">@color/color_primary_green_light</item>
+        <item name="colorPrimaryVariant">@color/color_primary_green</item>
+        <item name="colorOnPrimary">@color/color_bg_white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/buttonBackground</item>
-        <item name="colorSecondaryVariant">@color/buttonBackground</item>
-        <item name="colorOnSecondary">@color/buttonText</item>
+        <item name="colorSecondary">@color/color_primary_green_light</item>
+        <item name="colorSecondaryVariant">@color/color_primary_green</item>
+        <item name="colorOnSecondary">@color/color_bg_white</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">@color/color_bg_white</item>
+        <item name="android:windowLightStatusBar">true</item>
         <!-- Text colors -->
-        <item name="android:textColor">@color/textColorPrimary</item>
+        <item name="android:textColor">@color/color_text_primary</item>
         <!-- Background colors -->
-        <item name="android:windowBackground">@color/windowBackground</item>
-        <item name="android:colorBackground">@color/windowBackground</item>
+        <item name="android:windowBackground">@color/color_bg_white</item>
+        <item name="android:colorBackground">@color/color_bg_white</item>
         <!-- Surface colors -->
-        <item name="colorSurface">@color/surfaceColor</item>
-        <item name="colorOnSurface">@color/textColorPrimary</item>
-        <!-- Custom attributes -->
-        <item name="keypadButtonColor">@color/keypadButtonColor</item>
-        <item name="keypadButtonTextColor">@color/keypadButtonTextColor</item>
-        <item name="keypadButtonPressedColor">@color/keypadButtonPressedColor</item>
-        <item name="inputBoxStrokeColor">@color/inputBoxStrokeColor</item>
-        <!-- Toolbar theme -->
-        <item name="toolbarStyle">@style/Widget.App.Toolbar.Light</item>
+        <item name="colorSurface">@color/color_bg_white</item>
+        <item name="colorOnSurface">@color/color_text_primary</item>
         <!-- Icon tint -->
-        <item name="colorControlNormal">@color/iconTint</item>
+        <item name="colorControlNormal">@color/color_text_secondary</item>
     </style>
 
+    <!-- Text Styles - Cash App Typography -->
+    
+    <style name="Text" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+    </style>
+
+    <!-- Display Amount: Large monetary values -->
+    <style name="Text.DisplayAmount">
+        <item name="android:textSize">@dimen/text_display_amount</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:gravity">center</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="Text.DisplayAmount.Green">
+        <item name="android:textColor">@color/color_primary_green_light</item>
+    </style>
+
+    <!-- Heading 1: Large titles -->
+    <style name="Text.Heading1">
+        <item name="android:textSize">@dimen/text_heading1</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="lineHeight">30sp</item>
+    </style>
+
+    <!-- Title: Top bar titles -->
+    <style name="Text.Title">
+        <item name="android:textSize">@dimen/text_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:gravity">center</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="lineHeight">22sp</item>
+    </style>
+
+    <!-- Section Header: PENDING, COMPLETED, etc. -->
+    <style name="Text.SectionHeader">
+        <item name="android:textSize">@dimen/text_section_header</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_text_tertiary</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.03</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Body: General paragraphs and descriptions -->
+    <style name="Text.Body">
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:textColor">@color/color_text_secondary</item>
+        <item name="lineHeight">20sp</item>
+    </style>
+
+    <!-- Body Bold: Labels and emphasized text -->
+    <style name="Text.BodyBold">
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="lineHeight">20sp</item>
+    </style>
+
+    <!-- Caption: Timestamps, subtitles -->
+    <style name="Text.Caption">
+        <item name="android:textSize">@dimen/text_caption</item>
+        <item name="android:textColor">@color/color_text_tertiary</item>
+        <item name="lineHeight">18sp</item>
+    </style>
+
+    <!-- Button Text -->
+    <style name="Text.Button">
+        <item name="android:textSize">@dimen/text_button</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Chip Text -->
+    <style name="Text.Chip">
+        <item name="android:textSize">@dimen/text_chip</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Link Text -->
+    <style name="Text.Link">
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/color_primary_green</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Widget Styles -->
+    
+    <!-- Primary Green Button -->
+    <style name="Widget.Button.Primary.Green" parent="Widget.MaterialComponents.Button">
+        <item name="android:background">@drawable/bg_button_primary_green</item>
+        <item name="android:textColor">@color/color_bg_white</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:paddingStart">@dimen/space_xl</item>
+        <item name="android:paddingEnd">@dimen/space_xl</item>
+        <item name="android:textAppearance">@style/Text.Button</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <!-- Primary Blue Button -->
+    <style name="Widget.Button.Primary.Blue" parent="Widget.MaterialComponents.Button">
+        <item name="android:background">@drawable/bg_button_primary_blue</item>
+        <item name="android:textColor">@color/color_bg_white</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:paddingStart">@dimen/space_xl</item>
+        <item name="android:paddingEnd">@dimen/space_xl</item>
+        <item name="android:textAppearance">@style/Text.Button</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <!-- Secondary Outlined Button -->
+    <style name="Widget.Button.Secondary.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:background">@drawable/bg_button_secondary_outlined</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:paddingStart">@dimen/space_xl</item>
+        <item name="android:paddingEnd">@dimen/space_xl</item>
+        <item name="android:textAppearance">@style/Text.Button</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <!-- Legacy Toolbar Style -->
     <style name="Widget.App.Toolbar.Light" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="titleTextColor">@color/textColorPrimary</item>
-        <item name="subtitleTextColor">@color/textColorSecondary</item>
-        <item name="colorControlNormal">@color/iconTint</item>
+        <item name="android:background">@color/color_bg_white</item>
+        <item name="titleTextColor">@color/color_text_primary</item>
+        <item name="subtitleTextColor">@color/color_text_secondary</item>
+        <item name="colorControlNormal">@color/color_text_primary</item>
     </style>
 </resources>

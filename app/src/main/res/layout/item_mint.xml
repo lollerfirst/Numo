@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+    android:background="@color/color_bg_white"
+    android:paddingHorizontal="@dimen/margin_content_horizontal"
+    android:paddingVertical="@dimen/space_m">
 
     <TextView
         android:id="@+id/mint_url_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="@dimen/space_m"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textColor="@color/black"
-        android:textSize="16sp"
+        android:textAppearance="@style/Text.Body"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/remove_mint_button"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,14 +22,23 @@
 
     <ImageButton
         android:id="@+id/remove_mint_button"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Remove mint"
         android:src="@drawable/ic_delete"
-        android:tint="#FF0000"
+        android:tint="@color/color_icon_secondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/space_m"
+        android:background="@color/color_divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mint_url_text"
+        app:layout_goneMarginTop="@dimen/space_m" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

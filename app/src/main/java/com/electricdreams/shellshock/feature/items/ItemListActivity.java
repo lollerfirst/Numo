@@ -60,16 +60,26 @@ public class ItemListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
 
-        // Set up toolbar
+        // Set up back button
+        View backButton = findViewById(R.id.back_button);
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> finish());
+        }
+
+        // Set up toolbar (if present)
         Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.item_list_title);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setTitle(R.string.item_list_title);
+            }
+        }
 
         // Initialize views
         recyclerView = findViewById(R.id.items_recycler_view);
         emptyView = findViewById(R.id.empty_view);
-        FloatingActionButton fabAddItem = findViewById(R.id.fab_add_item);
+        ImageButton fabAddItem = findViewById(R.id.fab_add_item);
 
         // Get item manager instance
         itemManager = ItemManager.getInstance(this);
@@ -82,7 +92,7 @@ public class ItemListActivity extends AppCompatActivity {
         // Set up empty view
         updateEmptyViewVisibility();
 
-        // Set up add item FAB
+        // Set up add item button
         fabAddItem.setOnClickListener(v -> {
             Intent intent = new Intent(ItemListActivity.this, ItemEntryActivity.class);
             addItemLauncher.launch(intent);
