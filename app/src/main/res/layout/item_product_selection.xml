@@ -95,12 +95,14 @@
 
         <ImageButton
             android:id="@+id/decrease_quantity_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:padding="8dp"
             android:background="@drawable/bg_chip_outlined"
             android:src="@drawable/ic_minus"
             android:tint="@color/color_text_primary"
-            android:padding="8dp"
             android:scaleType="fitCenter" />
 
         <TextView
@@ -113,12 +115,14 @@
 
         <ImageButton
             android:id="@+id/increase_quantity_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:padding="8dp"
             android:background="@drawable/bg_chip_outlined"
             android:src="@drawable/ic_plus"
             android:tint="@color/color_text_primary"
-            android:padding="8dp"
             android:scaleType="fitCenter" />
 
     </LinearLayout>
