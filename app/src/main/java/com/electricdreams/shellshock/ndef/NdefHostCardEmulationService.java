@@ -252,7 +252,7 @@ public class NdefHostCardEmulationService extends HostApduService {
             Log.i(TAG, "Delegating to NDEF processor");
             byte[] response = ndefProcessor.processCommandApdu(commandApdu);
             
-            if (response != NdefProcessor.NDEF_RESPONSE_ERROR) {
+            if (response != NdefConstants.NDEF_RESPONSE_ERROR) {
                 Log.i(TAG, "NDEF processor handled command successfully");
                 Log.i(TAG, "Response: " + bytesToHex(response));
                 return response;
