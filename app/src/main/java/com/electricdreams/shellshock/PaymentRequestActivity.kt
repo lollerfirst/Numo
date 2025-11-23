@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.electricdreams.shellshock.core.model.Amount
 import com.electricdreams.shellshock.core.model.Amount.Currency
 import com.electricdreams.shellshock.core.util.MintManager
+import com.electricdreams.shellshock.core.worker.BitcoinPriceWorker
+import com.electricdreams.shellshock.core.util.CurrencyManager
 import com.electricdreams.shellshock.ndef.CashuPaymentHelper
 import com.electricdreams.shellshock.ndef.NdefHostCardEmulationService
 import com.electricdreams.shellshock.nostr.NostrKeyPair
@@ -29,12 +31,13 @@ class PaymentRequestActivity : AppCompatActivity() {
 
     private lateinit var qrImageView: ImageView
     private lateinit var largeAmountDisplay: TextView
+    private lateinit var convertedAmountDisplay: TextView
     private lateinit var statusText: TextView
     private lateinit var closeButton: android.view.View
     private lateinit var shareButton: android.view.View
-    private lateinit var loadingSpinner: android.view.View
 
     private var paymentAmount: Long = 0
+    private var bitcoinPriceWorker: BitcoinPriceWorker? = null
     private var hcePaymentRequest: String? = null
     private var qrPaymentRequest: String? = null
     private var nostrListener: NostrPaymentListener? = null
@@ -46,10 +49,13 @@ class PaymentRequestActivity : AppCompatActivity() {
         // Initialize views
         qrImageView = findViewById(R.id.payment_request_qr)
         largeAmountDisplay = findViewById(R.id.large_amount_display)
+        convertedAmountDisplay = findViewById(R.id.converted_amount_display)
         statusText = findViewById(R.id.payment_status_text)
         closeButton = findViewById(R.id.close_button)
         shareButton = findViewById(R.id.share_button)
-        loadingSpinner = findViewById(R.id.loading_spinner)
+
+        // Initialize Bitcoin price worker
+        bitcoinPriceWorker = BitcoinPriceWorker.getInstance(this)
 
         // Get payment amount from intent
         paymentAmount = intent.getLongExtra(EXTRA_PAYMENT_AMOUNT, 0)
@@ -68,6 +74,9 @@ class PaymentRequestActivity : AppCompatActivity() {
         // Display amount (without "Pay" prefix since it's in the label above)
         largeAmountDisplay.text = formattedAmountString
 
+        // Calculate and display converted amount
+        updateConvertedAmount(formattedAmountString)
+
         // Set up buttons
         closeButton.setOnClickListener {
             Log.d(TAG, "Payment cancelled by user")
@@ -82,6 +91,41 @@ class PaymentRequestActivity : AppCompatActivity() {
 
         // Initialize payment request
         initializePaymentRequest()
+    }
+
+    private fun updateConvertedAmount(formattedAmountString: String) {
+        // Check if the formatted amount is BTC (satoshis) or fiat
+        val isBtcAmount = formattedAmountString.startsWith("₿")
+        
+        val hasBitcoinPrice = (bitcoinPriceWorker?.getCurrentPrice() ?: 0.0) > 0
+        
+        if (!hasBitcoinPrice) {
+            convertedAmountDisplay.visibility = android.view.View.GONE
+            return
+        }
+        
+        if (isBtcAmount) {
+            // Main amount is BTC, show fiat conversion
+            val fiatValue = bitcoinPriceWorker?.satoshisToFiat(paymentAmount) ?: 0.0
+            if (fiatValue > 0) {
+                val formattedFiat = bitcoinPriceWorker?.formatFiatAmount(fiatValue)
+                    ?: CurrencyManager.getInstance(this).formatCurrencyAmount(fiatValue)
+                convertedAmountDisplay.text = formattedFiat
+                convertedAmountDisplay.visibility = android.view.View.VISIBLE
+            } else {
+                convertedAmountDisplay.visibility = android.view.View.GONE
+            }
+        } else {
+            // Main amount is fiat, show BTC conversion
+            // paymentAmount is always in satoshis, so we can use it directly
+            if (paymentAmount > 0) {
+                val formattedBtc = Amount(paymentAmount, Currency.BTC).toString()
+                convertedAmountDisplay.text = formattedBtc
+                convertedAmountDisplay.visibility = android.view.View.VISIBLE
+            } else {
+                convertedAmountDisplay.visibility = android.view.View.GONE
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -274,9 +318,6 @@ class PaymentRequestActivity : AppCompatActivity() {
     private fun handlePaymentSuccess(token: String) {
         Log.d(TAG, "Payment successful! Token: $token")
         
-        // Hide loading spinner
-        loadingSpinner.visibility = android.view.View.GONE
-        
         statusText.text = "Payment successful!"
 
         val resultIntent = Intent().apply {
@@ -291,9 +332,6 @@ class PaymentRequestActivity : AppCompatActivity() {
     private fun handlePaymentError(errorMessage: String) {
         Log.e(TAG, "Payment error: $errorMessage")
         
-        // Hide loading spinner
-        loadingSpinner.visibility = android.view.View.GONE
-        
         statusText.text = "Payment failed: $errorMessage"
         Toast.makeText(this, "Payment failed: $errorMessage", Toast.LENGTH_LONG).show()
 
@@ -306,9 +344,6 @@ class PaymentRequestActivity : AppCompatActivity() {
 
     private fun cancelPayment() {
         Log.d(TAG, "Payment cancelled")
-        
-        // Hide loading spinner
-        loadingSpinner.visibility = android.view.View.GONE
         
         setResult(Activity.RESULT_CANCELED)
         cleanupAndFinish()

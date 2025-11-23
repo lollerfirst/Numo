@@ -64,7 +64,7 @@ class ThemeSettingsActivity : AppCompatActivity() {
 
     private fun getCurrentTheme(): String {
         return getSharedPreferences("app_prefs", MODE_PRIVATE)
-            .getString(PREF_THEME, THEME_OBSIDIAN) ?: THEME_OBSIDIAN
+            .getString(PREF_THEME, THEME_GREEN) ?: THEME_GREEN
     }
 
     private fun setSelectedTheme(theme: String) {
@@ -73,7 +73,7 @@ class ThemeSettingsActivity : AppCompatActivity() {
             THEME_GREEN -> radioGreen.isChecked = true
             THEME_WHITE -> radioWhite.isChecked = true
             THEME_OBSIDIAN -> radioObsidian.isChecked = true
-            else -> radioObsidian.isChecked = true
+            else -> radioGreen.isChecked = true
         }
     }
 
