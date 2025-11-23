@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_bg_white"
-    tools:context=".SettingsActivity">
+    android:background="@color/color_bg_white">
 
     <!-- Top App Bar -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,7 +44,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/save_button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_bar">
 
         <LinearLayout
@@ -55,156 +53,104 @@
             android:orientation="vertical"
             android:paddingBottom="32dp">
 
-            <!-- Currency Section -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="4dp"
-                android:text="PREFERRED CURRENCY"
-                android:textAppearance="@style/Text.SectionHeader" />
-
-            <RadioGroup
-                android:id="@+id/currency_radio_group"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <!-- USD -->
-                <RadioButton
-                    android:id="@+id/radio_usd"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:button="@null"
-                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
-                    android:drawableTint="@color/color_primary_green"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="24dp"
-                    android:text="US Dollar (USD)"
-                    android:textAppearance="@style/Text.BodyBold" />
-
-                <!-- EUR -->
-                <RadioButton
-                    android:id="@+id/radio_eur"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:button="@null"
-                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
-                    android:drawableTint="@color/color_primary_green"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="24dp"
-                    android:text="Euro (EUR)"
-                    android:textAppearance="@style/Text.BodyBold" />
-
-                <!-- GBP -->
-                <RadioButton
-                    android:id="@+id/radio_gbp"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:button="@null"
-                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
-                    android:drawableTint="@color/color_primary_green"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="24dp"
-                    android:text="British Pound (GBP)"
-                    android:textAppearance="@style/Text.BodyBold" />
-
-                <!-- JPY -->
-                <RadioButton
-                    android:id="@+id/radio_jpy"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:button="@null"
-                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
-                    android:drawableTint="@color/color_primary_green"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="24dp"
-                    android:text="Japanese Yen (JPY)"
-                    android:textAppearance="@style/Text.BodyBold" />
-            </RadioGroup>
-
-            <!-- Mints Section -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginBottom="4dp"
-                android:text="ALLOWED MINTS"
-                android:textAppearance="@style/Text.SectionHeader" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/mints_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
-
-            <!-- Add Mint -->
+            <!-- Settings Items -->
             <LinearLayout
+                android:id="@+id/currency_settings_item"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal">
+                android:layout_height="64dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp">
 
-                <EditText
-                    android:id="@+id/new_mint_edit_text"
+                <TextView
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_search_field"
-                    android:hint="Add mint URL"
-                    android:inputType="textUri"
-                    android:paddingHorizontal="16dp"
-                    android:textAppearance="@style/Text.Body"
-                    android:textSize="15sp" />
+                    android:text="Fiat Currency"
+                    android:textAppearance="@style/Text.BodyBold" />
 
-                <Button
-                    android:id="@+id/add_mint_button"
-                    style="@style/Widget.Button.Secondary.Outlined"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="8dp"
-                    android:minHeight="40dp"
-                    android:text="Add" />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_arrow_back"
+                    android:rotation="180"
+                    app:tint="@color/color_icon_secondary" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/reset_mints_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="24dp"
-                android:background="?attr/selectableItemBackground"
-                android:padding="8dp"
-                android:text="Reset to Defaults"
-                android:textAppearance="@style/Text.Link" />
-
-            <!-- Items Section -->
-            <include
-                android:id="@+id/items_section"
-                layout="@layout/section_items_settings"
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp" />
+                android:layout_height="1dp"
+                android:layout_marginStart="24dp"
+                android:background="@color/color_divider" />
+
+            <LinearLayout
+                android:id="@+id/mints_settings_item"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Cashu Mints"
+                    android:textAppearance="@style/Text.BodyBold" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_arrow_back"
+                    android:rotation="180"
+                    app:tint="@color/color_icon_secondary" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="24dp"
+                android:background="@color/color_divider" />
+
+            <LinearLayout
+                android:id="@+id/items_settings_item"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Items"
+                    android:textAppearance="@style/Text.BodyBold" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_arrow_back"
+                    android:rotation="180"
+                    app:tint="@color/color_icon_secondary" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="24dp"
+                android:background="@color/color_divider" />
 
         </LinearLayout>
     </ScrollView>
-
-    <!-- Save Button -->
-    <Button
-        android:id="@+id/save_button"
-        style="@style/Widget.Button.Primary.Green"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginBottom="24dp"
-        android:text="Save Changes"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
