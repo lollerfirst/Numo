@@ -837,6 +837,9 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                     requestedAmount = 0;
                     currentInput.setLength(0);
                     
+                    // Reset the display to show 0
+                    updateDisplay(AnimationType.NONE);
+                    
                     // Play success feedback
                     playSuccessFeedback();
                     
@@ -1129,6 +1132,9 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
             if (processingDialog != null && processingDialog.isShowing()) {
                 processingDialog.dismiss();
             }
+            
+            // Reset the display to show 0
+            updateDisplay(AnimationType.NONE);
             
             // Launch PaymentReceivedActivity to show beautiful success screen
             Intent successIntent = new Intent(this, PaymentReceivedActivity.class);
