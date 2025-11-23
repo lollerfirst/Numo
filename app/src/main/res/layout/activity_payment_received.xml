@@ -98,7 +98,7 @@
 
     </FrameLayout>
 
-    <!-- Close button at bottom (full width, secondary style) -->
+    <!-- Close button at bottom (full width, grey background) -->
     <Button
         android:id="@+id/close_button"
         android:layout_width="match_parent"

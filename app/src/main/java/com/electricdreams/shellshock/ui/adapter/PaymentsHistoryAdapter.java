@@ -51,7 +51,7 @@ public class PaymentsHistoryAdapter extends RecyclerView.Adapter<PaymentsHistory
         // Format amount
         long amount = entry.getAmount();
         String sign = amount >= 0 ? "+" : "";
-        holder.amountText.setText(String.format(Locale.getDefault(), "%s $%d", sign, Math.abs(amount)));
+        holder.amountText.setText(String.format(Locale.getDefault(), "%s ₿%d", sign, Math.abs(amount)));
         
         // Set date
         holder.dateText.setText(dateFormat.format(entry.getDate()));

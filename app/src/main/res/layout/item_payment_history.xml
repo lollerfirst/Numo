@@ -22,7 +22,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_dollar_white"
+            android:src="@drawable/ic_bitcoin"
             app:tint="@color/color_text_primary" />
     </FrameLayout>
 
