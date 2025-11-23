@@ -33,6 +33,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.electricdreams.shellshock.core.cashu.CashuWalletManager
 import com.electricdreams.shellshock.core.model.Amount
 import com.electricdreams.shellshock.core.util.CurrencyManager
 import com.electricdreams.shellshock.core.util.MintManager
@@ -85,6 +86,7 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
         )
 
         super.onCreate(savedInstanceState)
+        CashuWalletManager.init(this)
         setContentView(R.layout.activity_modern_pos)
 
         val paymentAmount = intent.getLongExtra("EXTRA_PAYMENT_AMOUNT", 0L)
