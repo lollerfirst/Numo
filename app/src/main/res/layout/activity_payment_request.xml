@@ -50,7 +50,7 @@
         android:id="@+id/large_amount_display"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="4dp"
         android:text="₿ 0"
         android:textColor="@color/color_text_primary"
         android:textSize="48sp"
@@ -60,19 +60,22 @@
         app:autoSizeMinTextSize="24sp"
         app:autoSizeMaxTextSize="48sp"
         app:autoSizeStepGranularity="2sp"
-        app:layout_constraintBottom_toTopOf="@id/loading_spinner"
+        app:layout_constraintBottom_toTopOf="@id/converted_amount_display"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/pay_label" />
 
-    <!-- Loading Spinner -->
-    <ProgressBar
-        android:id="@+id/loading_spinner"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+    <!-- Converted Amount Display -->
+    <TextView
+        android:id="@+id/converted_amount_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:indeterminateTint="@color/color_primary_green"
-        android:visibility="visible"
+        android:text=""
+        android:textColor="@color/color_text_secondary"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/qr_card"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -88,7 +91,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/large_amount_display"
+        app:layout_constraintTop_toBottomOf="@id/converted_amount_display"
         app:layout_constraintBottom_toTopOf="@id/icons_container"
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintVertical_bias="0.5">
