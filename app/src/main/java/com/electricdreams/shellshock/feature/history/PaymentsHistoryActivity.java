@@ -44,9 +44,11 @@ public class PaymentsHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        // Setup Profile Icon for Menu
-        View profileIcon = findViewById(R.id.profile_icon);
-        profileIcon.setOnClickListener(this::showProfileMenu);
+        // Setup Back Button
+        View backButton = findViewById(R.id.back_button);
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> finish());
+        }
 
         // Setup RecyclerView
         RecyclerView recyclerView = findViewById(R.id.history_recycler_view);
@@ -60,19 +62,6 @@ public class PaymentsHistoryActivity extends AppCompatActivity {
 
         // Load and display history
         loadHistory();
-    }
-
-    private void showProfileMenu(View v) {
-        PopupMenu popup = new PopupMenu(this, v);
-        popup.getMenu().add("Clear History");
-        popup.setOnMenuItemClickListener(item -> {
-            if (item.getTitle().equals("Clear History")) {
-                showClearHistoryConfirmation();
-                return true;
-            }
-            return false;
-        });
-        popup.show();
     }
 
     private void showTransactionDetails(PaymentHistoryEntry entry, int position) {
