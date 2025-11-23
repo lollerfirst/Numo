@@ -1,10 +1,4 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24"
-    android:tint="@android:color/white">
-    <path
-        android:fillColor="@android:color/white"
-        android:pathData="M17.06,11.57C17.65,10.88 18,9.98 18,9C18,6.79 16.21,5 14,5L14,3L12,3L12,5L10,5L10,3L8,3L8,5L5,5L5,7L6.5,7C7.05,7 7.5,7.45 7.5,8L7.5,16C7.5,16.55 7.05,17 6.5,17L5,17L5,19L8,19L8,21L10,21L10,19L12,19L12,21L14,21L14,19C16.21,19 18,17.21 18,15C18,13.36 17.04,11.95 17.06,11.57ZM10,7L14,7C15.1,7 16,7.9 16,9C16,10.1 15.1,11 14,11L10,11L10,7ZM14,17L10,17L10,13L14,13C15.1,13 16,13.9 16,15C16,16.1 15.1,17 14,17Z"/>
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <path android:fillColor="@android:color/white" android:pathData="M19 5H5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3zm-8 10H7a1 1 0 0 1 0-2h4a1 1 0 0 1 0 2zm6 0h-2a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2zm3-6H4V8a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1z" />
 </vector>

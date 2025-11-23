@@ -46,9 +46,8 @@ import com.electricdreams.shellshock.ndef.NdefHostCardEmulationService
 class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback {
 
     private lateinit var amountDisplay: TextView
-    private lateinit var fiatAmountDisplay: TextView
+    private lateinit var secondaryAmountDisplay: TextView
     private lateinit var submitButton: Button
-    private lateinit var currencyText: TextView
     private lateinit var switchCurrencyButton: View
     private lateinit var inputModeContainer: ConstraintLayout
 
@@ -92,9 +91,8 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
         Log.d(TAG, "Created ModernPOSActivity with payment amount from basket: $paymentAmount")
 
         amountDisplay = findViewById(R.id.amount_display)
-        fiatAmountDisplay = findViewById(R.id.fiat_amount_display)
+        secondaryAmountDisplay = findViewById(R.id.secondary_amount_display)
         submitButton = findViewById(R.id.submit_button)
-        currencyText = findViewById(R.id.currency_text)
         val keypad: GridLayout = findViewById(R.id.keypad)
         switchCurrencyButton = findViewById(R.id.currency_switch_button)
         inputModeContainer = findViewById(R.id.input_mode_container)
@@ -127,7 +125,9 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
 
         window.setBackgroundDrawableResource(R.color.color_primary_green)
 
-        switchCurrencyButton.setOnClickListener { toggleInputMode() }
+        // Set up currency toggle - click the entire container
+        val secondaryAmountContainer = findViewById<View>(R.id.secondary_amount_container)
+        secondaryAmountContainer.setOnClickListener { toggleInputMode() }
 
         findViewById<ImageButton>(R.id.action_more_options).setOnClickListener { showOverflowMenu(it) }
         findViewById<ImageButton>(R.id.action_history).setOnClickListener {
@@ -203,6 +203,7 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
     }
 
     private fun toggleInputMode() {
+        // Check if we can switch to USD (need price data)
         if (!isUsdInputMode) {
             val price = bitcoinPriceWorker?.getCurrentPrice() ?: 0.0
             if (price <= 0) {
@@ -211,44 +212,8 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
             }
         }
 
-        val inputStr = currentInput.toString()
-        var satsValue = 0L
-        var fiatValue = 0.0
-
-        if (isUsdInputMode) {
-            if (inputStr.isNotEmpty()) {
-                try {
-                    val cents = inputStr.toLong()
-                    fiatValue = cents / 100.0
-                    val price = bitcoinPriceWorker?.getCurrentPrice() ?: 0.0
-                    if (price > 0) {
-                        val btcAmount = fiatValue / price
-                        satsValue = (btcAmount * 100_000_000).toLong()
-                    }
-                } catch (_: NumberFormatException) {
-                    satsValue = 0
-                    fiatValue = 0.0
-                }
-            }
-        } else {
-            satsValue = if (inputStr.isEmpty()) 0 else inputStr.toLong()
-            fiatValue = bitcoinPriceWorker?.satoshisToFiat(satsValue) ?: 0.0
-        }
-
+        // Simply toggle the display mode - currentInput always stores sats
         isUsdInputMode = !isUsdInputMode
-        currentInput.clear()
-
-        if (isUsdInputMode) {
-            if (fiatValue > 0) {
-                val cents = (fiatValue * 100).toLong()
-                currentInput.append(cents.toString())
-            }
-        } else {
-            if (satsValue > 0) {
-                currentInput.append(satsValue.toString())
-            }
-        }
-
         updateDisplay(AnimationType.CURRENCY_SWITCH)
     }
 
@@ -258,10 +223,9 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
             "C" -> currentInput.clear()
             "<" -> if (currentInput.isNotEmpty()) currentInput.setLength(currentInput.length - 1)
             else -> {
-                if (isUsdInputMode) {
-                    if (currentInput.length < 7) currentInput.append(label)
-                } else {
-                    if (currentInput.length < 9) currentInput.append(label)
+                // Always store in sats (9 digit limit for ~21M BTC max)
+                if (currentInput.length < 9) {
+                    currentInput.append(label)
                 }
             }
         }
@@ -315,6 +279,58 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
             .start()
     }
 
+    private fun animateSecondaryCurrencySwitch(newText: String, isUp: Boolean) {
+        secondaryAmountDisplay.animate().cancel()
+        switchCurrencyButton.animate().cancel()
+        
+        if (secondaryAmountDisplay.alpha == 0f) {
+            secondaryAmountDisplay.alpha = 1f
+            secondaryAmountDisplay.translationY = 0f
+        }
+        if (switchCurrencyButton.alpha == 0f) {
+            switchCurrencyButton.alpha = 1f
+            switchCurrencyButton.translationY = 0f
+        }
+        
+        val exitTranslation = if (isUp) -30f else 30f
+        val enterStartTranslation = if (isUp) 30f else -30f
+        
+        // Animate both text and icon together
+        secondaryAmountDisplay.animate()
+            .alpha(0f)
+            .translationY(exitTranslation)
+            .setDuration(150)
+            .setInterpolator(android.view.animation.AccelerateInterpolator())
+            .withEndAction {
+                secondaryAmountDisplay.text = newText
+                secondaryAmountDisplay.translationY = enterStartTranslation
+                secondaryAmountDisplay.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setDuration(200)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator())
+                    .start()
+            }
+            .start()
+            
+        // Animate icon with same timing
+        switchCurrencyButton.animate()
+            .alpha(0f)
+            .translationY(exitTranslation)
+            .setDuration(150)
+            .setInterpolator(android.view.animation.AccelerateInterpolator())
+            .withEndAction {
+                switchCurrencyButton.translationY = enterStartTranslation
+                switchCurrencyButton.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setDuration(200)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator())
+                    .start()
+            }
+            .start()
+    }
+
     private fun formatAmount(amount: String): String = try {
         val value = if (amount.isEmpty()) 0L else amount.toLong()
         Amount(value, Amount.Currency.BTC).toString()
@@ -324,47 +340,49 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
 
     private fun updateDisplay(animationType: AnimationType) {
         val inputStr = currentInput.toString()
-        var satsValue = 0L
-        var fiatValue = 0.0
+        // currentInput always contains sats
+        val satsValue = if (inputStr.isEmpty()) 0 else inputStr.toLong()
         var amountDisplayText: String
+        var secondaryDisplayText: String
+        
+        // Check if we have Bitcoin price data
+        val hasBitcoinPrice = (bitcoinPriceWorker?.getCurrentPrice() ?: 0.0) > 0
 
         if (isUsdInputMode) {
-            if (inputStr.isNotEmpty()) {
-                try {
-                    val cents = inputStr.toLong()
-                    fiatValue = cents / 100.0
-                    val price = bitcoinPriceWorker?.getCurrentPrice() ?: 0.0
-                    if (price > 0) {
-                        val btcAmount = fiatValue / price
-                        satsValue = (btcAmount * 100_000_000).toLong()
-                    }
-                    val currencyCode = CurrencyManager.getInstance(this).getCurrentCurrency()
-                    val currency = Amount.Currency.fromCode(currencyCode)
-                    amountDisplayText = Amount(cents, currency).toString()
-                    fiatAmountDisplay.text = Amount(satsValue, Amount.Currency.BTC).toString()
-                } catch (_: NumberFormatException) {
-                    val currencyCode = CurrencyManager.getInstance(this).getCurrentCurrency()
-                    val currency = Amount.Currency.fromCode(currencyCode)
-                    amountDisplayText = Amount(0, currency).toString()
-                    fiatAmountDisplay.text = Amount(0, Amount.Currency.BTC).toString()
-                    satsValue = 0
-                }
-            } else {
-                val currencyCode = CurrencyManager.getInstance(this).getCurrentCurrency()
-                val currency = Amount.Currency.fromCode(currencyCode)
-                amountDisplayText = Amount(0, currency).toString()
-                fiatAmountDisplay.text = Amount(0, Amount.Currency.BTC).toString()
-                satsValue = 0
-            }
+            // Display mode: show fiat as primary, sats as secondary
+            val fiatValue = bitcoinPriceWorker?.satoshisToFiat(satsValue) ?: 0.0
+            val currencyCode = CurrencyManager.getInstance(this).getCurrentCurrency()
+            val currency = Amount.Currency.fromCode(currencyCode)
+            val cents = (fiatValue * 100).toLong()
+            
+            amountDisplayText = Amount(cents, currency).toString()
+            secondaryDisplayText = Amount(satsValue, Amount.Currency.BTC).toString()
         } else {
-            satsValue = if (inputStr.isEmpty()) 0 else inputStr.toLong()
+            // Display mode: show sats as primary, fiat as secondary
             amountDisplayText = formatAmount(inputStr)
-            fiatValue = bitcoinPriceWorker?.satoshisToFiat(satsValue) ?: 0.0
-            val formattedFiat = bitcoinPriceWorker?.formatFiatAmount(fiatValue)
-                ?: CurrencyManager.getInstance(this).formatCurrencyAmount(0.0)
-            fiatAmountDisplay.text = formattedFiat
+            
+            if (hasBitcoinPrice) {
+                // Show fiat conversion with swap icon
+                val fiatValue = bitcoinPriceWorker?.satoshisToFiat(satsValue) ?: 0.0
+                secondaryDisplayText = bitcoinPriceWorker?.formatFiatAmount(fiatValue)
+                    ?: CurrencyManager.getInstance(this).formatCurrencyAmount(0.0)
+                switchCurrencyButton.visibility = View.VISIBLE
+            } else {
+                // No price data - just show "BTC" without swap icon
+        secondaryDisplayText = "BTC"
+                switchCurrencyButton.visibility = View.GONE
+            }
         }
 
+        // Update secondary amount display with animation when switching currencies
+        if (animationType == AnimationType.CURRENCY_SWITCH) {
+            // Animate secondary display in opposite direction of main display
+            animateSecondaryCurrencySwitch(secondaryDisplayText, isUsdInputMode)
+        } else {
+            secondaryAmountDisplay.text = secondaryDisplayText
+        }
+
+        // Update main amount display
         if (amountDisplay.text.toString() != amountDisplayText) {
             when (animationType) {
                 AnimationType.CURRENCY_SWITCH -> animateCurrencySwitch(amountDisplayText, !isUsdInputMode)
@@ -374,7 +392,8 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
         }
 
         if (satsValue > 0) {
-            submitButton.text = "Charge " + Amount(satsValue, Amount.Currency.BTC).toString()
+            // Use the main amount text which is already in the correct currency
+            submitButton.text = "Charge $amountDisplayText"
             submitButton.isEnabled = true
             requestedAmount = satsValue
         } else {
@@ -382,13 +401,14 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
             submitButton.isEnabled = false
             requestedAmount = 0
         }
-
-        currencyText.text = if (isUsdInputMode) "USD" else "BTC"
     }
 
     private fun showPaymentMethodDialog(amount: Long) {
         val intent = Intent(this, PaymentRequestActivity::class.java).apply {
             putExtra(PaymentRequestActivity.EXTRA_PAYMENT_AMOUNT, amount)
+            // Pass the formatted amount string so it displays in the currency the user entered
+            val formattedAmount = amountDisplay.text.toString()
+            putExtra(PaymentRequestActivity.EXTRA_FORMATTED_AMOUNT, formattedAmount)
         }
         startActivityForResult(intent, REQUEST_CODE_PAYMENT)
     }
@@ -547,12 +567,16 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
                 val token = data.getStringExtra(PaymentRequestActivity.RESULT_EXTRA_TOKEN)
                 val amount = data.getLongExtra(PaymentRequestActivity.RESULT_EXTRA_AMOUNT, 0L)
                 if (token != null && amount > 0) {
+                    // Calculate what the user "entered" based on display mode
                     val (entryUnit, enteredAmount) = if (isUsdInputMode) {
-                        val inputStr = currentInput.toString()
-                        if (inputStr.isNotEmpty()) {
-                            try { "USD" to inputStr.toLong() } catch (_: NumberFormatException) { "USD" to amount }
-                        } else { "USD" to amount }
-                    } else { "sat" to amount }
+                        // User was viewing in USD, so calculate the fiat cents value
+                        val fiatValue = bitcoinPriceWorker?.satoshisToFiat(amount) ?: 0.0
+                        val cents = (fiatValue * 100).toLong()
+                        "USD" to cents
+                    } else {
+                        // User was viewing in sats
+                        "sat" to amount
+                    }
                     val bitcoinPrice = bitcoinPriceWorker?.getCurrentPrice()?.takeIf { it > 0 }
                     requestedAmount = 0
                     currentInput.clear()

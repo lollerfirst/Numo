@@ -59,9 +59,12 @@ class PaymentRequestActivity : AppCompatActivity() {
             return
         }
 
-        // Display payment amount
-        val formattedAmount = Amount(paymentAmount, Currency.BTC).toString()
-        largeAmountDisplay.text = "Pay $formattedAmount"
+        // Get formatted amount string if provided, otherwise format as BTC
+        val formattedAmountString = intent.getStringExtra(EXTRA_FORMATTED_AMOUNT)
+            ?: Amount(paymentAmount, Currency.BTC).toString()
+        
+        // Display amount (without "Pay" prefix since it's in the label above)
+        largeAmountDisplay.text = formattedAmountString
 
         // Set up buttons
         closeButton.setOnClickListener {
@@ -337,6 +340,7 @@ class PaymentRequestActivity : AppCompatActivity() {
         private const val TAG = "PaymentRequestActivity"
 
         const val EXTRA_PAYMENT_AMOUNT = "payment_amount"
+        const val EXTRA_FORMATTED_AMOUNT = "formatted_amount"
         const val RESULT_EXTRA_TOKEN = "payment_token"
         const val RESULT_EXTRA_AMOUNT = "payment_amount"
 

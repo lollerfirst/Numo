@@ -163,7 +163,7 @@
         
         <activity android:name="com.electricdreams.shellshock.feature.settings.MintsSettingsActivity"
             android:exported="false"
-            android:label="Cashu Mints"
+            android:label="Mints"
             android:theme="@style/Theme.Shellshock"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:parentActivityName=".feature.settings.SettingsActivity">
