@@ -876,8 +876,14 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                     // Play success feedback
                     playSuccessFeedback();
                     
-                    // Add to payment history
-                    PaymentsHistoryActivity.addToHistory(this, token, amount);
+                    // Determine entry unit based on current input mode
+                    String entryUnit = isUsdInputMode ? "USD" : "sat";
+                    
+                    // Extract mint URL from token
+                    String mintUrl = extractMintUrlFromToken(token);
+                    
+                    // Add to payment history with comprehensive information
+                    PaymentsHistoryActivity.addToHistory(this, token, amount, "sat", entryUnit, mintUrl, null);
                     
                     // Launch PaymentReceivedActivity to show beautiful success screen
                     Intent successIntent = new Intent(this, PaymentReceivedActivity.class);
@@ -1156,7 +1162,14 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         // Play success feedback
         playSuccessFeedback();
 
-        PaymentsHistoryActivity.addToHistory(this, token, amount);
+        // Determine entry unit based on current input mode
+        String entryUnit = isUsdInputMode ? "USD" : "sat";
+        
+        // Extract mint URL from token
+        String mintUrl = extractMintUrlFromToken(token);
+        
+        // Add to payment history with comprehensive information
+        PaymentsHistoryActivity.addToHistory(this, token, amount, "sat", entryUnit, mintUrl, null);
 
         mainHandler.post(() -> {
             if (rescanDialog != null && rescanDialog.isShowing()) {
@@ -1499,5 +1512,22 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                 });
             }
         }).start();
+    }
+    
+    /**
+     * Extract mint URL from a cashu token
+     * @param tokenString The cashu token string
+     * @return The mint URL or null if extraction fails
+     */
+    private String extractMintUrlFromToken(String tokenString) {
+        try {
+            if (tokenString != null && !tokenString.isEmpty()) {
+                com.cashujdk.nut00.Token token = com.cashujdk.nut00.Token.decode(tokenString);
+                return token.mint;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to extract mint URL from token: " + e.getMessage());
+        }
+        return null;
     }
 }

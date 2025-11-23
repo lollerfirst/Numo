@@ -1,15 +1,11 @@
 package com.electricdreams.shellshock.feature.history;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,20 +17,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.electricdreams.shellshock.R;
 import com.electricdreams.shellshock.core.data.model.PaymentHistoryEntry;
 import com.electricdreams.shellshock.ui.adapter.PaymentsHistoryAdapter;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public class PaymentsHistoryActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "PaymentHistory";
     private static final String KEY_HISTORY = "history";
+    private static final int REQUEST_TRANSACTION_DETAIL = 1001;
 
     private PaymentsHistoryAdapter adapter;
     private TextView emptyView;
@@ -64,57 +58,30 @@ public class PaymentsHistoryActivity extends AppCompatActivity {
         loadHistory();
     }
 
-    private void showTransactionDetails(PaymentHistoryEntry entry, int position) {
-        BottomSheetDialog sheet = new BottomSheetDialog(this);
-        sheet.setContentView(R.layout.dialog_transaction_details);
-
-        TextView amountText = sheet.findViewById(R.id.detail_amount);
-        TextView dateText = sheet.findViewById(R.id.detail_date);
-        TextView tokenText = sheet.findViewById(R.id.detail_token);
-        Button copyButton = sheet.findViewById(R.id.btn_copy);
-        Button openWithButton = sheet.findViewById(R.id.btn_open_with);
-        Button deleteButton = sheet.findViewById(R.id.btn_delete);
-
-        if (amountText != null) {
-            long amount = entry.getAmount();
-            String sign = amount >= 0 ? "+" : "";
-            amountText.setText(String.format(Locale.getDefault(), "%s $%d", sign, Math.abs(amount)));
-        }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         
-        if (dateText != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy HH:mm", Locale.getDefault());
-            dateText.setText(dateFormat.format(entry.getDate()));
+        if (requestCode == REQUEST_TRANSACTION_DETAIL && resultCode == RESULT_OK && data != null) {
+            int positionToDelete = data.getIntExtra("position_to_delete", -1);
+            if (positionToDelete >= 0) {
+                deletePaymentFromHistory(positionToDelete);
+            }
         }
+    }
 
-        if (tokenText != null) {
-            tokenText.setText(entry.getToken());
-        }
-
-        if (copyButton != null) {
-            copyButton.setOnClickListener(v -> {
-                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("Payment", entry.getToken());
-                clipboard.setPrimaryClip(clip);
-                Toast.makeText(this, "Payment copied to clipboard", Toast.LENGTH_SHORT).show();
-                sheet.dismiss();
-            });
-        }
-
-        if (openWithButton != null) {
-            openWithButton.setOnClickListener(v -> {
-                openPaymentWithApp(entry.getToken());
-                sheet.dismiss();
-            });
-        }
-
-        if (deleteButton != null) {
-            deleteButton.setOnClickListener(v -> {
-                sheet.dismiss();
-                showDeleteConfirmation(entry, position);
-            });
-        }
-
-        sheet.show();
+    private void showTransactionDetails(PaymentHistoryEntry entry, int position) {
+        Intent intent = new Intent(this, TransactionDetailActivity.class);
+        intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_TOKEN, entry.getToken());
+        intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_AMOUNT, entry.getAmount());
+        intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_DATE, entry.getDate().getTime());
+        intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_UNIT, entry.getUnit());
+        intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_ENTRY_UNIT, entry.getEntryUnit());
+        intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_MINT_URL, entry.getMintUrl());
+        intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_PAYMENT_REQUEST, entry.getPaymentRequest());
+        intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_POSITION, position);
+        
+        startActivityForResult(intent, REQUEST_TRANSACTION_DETAIL);
     }
 
     private void openPaymentWithApp(String token) {
@@ -200,13 +167,34 @@ public class PaymentsHistoryActivity extends AppCompatActivity {
         return getPaymentHistory(this);
     }
 
-    public static void addToHistory(Context context, String token, long amount) {
+    /**
+     * Add a payment to history with comprehensive information
+     * @param context Application context
+     * @param token The cashu token
+     * @param amount The amount in smallest unit
+     * @param unit The unit of the cashu token (e.g., "sat")
+     * @param entryUnit The unit with which it was entered (e.g., "USD", "sat")
+     * @param mintUrl The mint URL from which the token was received
+     * @param paymentRequest The payment request used (can be null)
+     */
+    public static void addToHistory(Context context, String token, long amount, 
+                                   String unit, String entryUnit, String mintUrl, String paymentRequest) {
         List<PaymentHistoryEntry> history = getPaymentHistory(context);
-        history.add(new PaymentHistoryEntry(token, amount, new java.util.Date()));
+        history.add(new PaymentHistoryEntry(token, amount, new java.util.Date(), 
+                                           unit, entryUnit, mintUrl, paymentRequest));
         
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(KEY_HISTORY, new Gson().toJson(history));
         editor.apply();
+    }
+
+    /**
+     * Legacy method for backward compatibility
+     * @deprecated Use {@link #addToHistory(Context, String, long, String, String, String, String)} instead
+     */
+    @Deprecated
+    public static void addToHistory(Context context, String token, long amount) {
+        addToHistory(context, token, amount, "sat", "sat", null, null);
     }
 }

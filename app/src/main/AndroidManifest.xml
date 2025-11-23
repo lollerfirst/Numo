@@ -128,6 +128,17 @@
                 android:value=".ModernPOSActivity" />
         </activity>
         
+        <activity android:name="com.electricdreams.shellshock.feature.history.TransactionDetailActivity"
+            android:exported="false"
+            android:label="Transaction Details"
+            android:theme="@style/Theme.Shellshock"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName=".feature.history.PaymentsHistoryActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".feature.history.PaymentsHistoryActivity" />
+        </activity>
+        
         <activity android:name="com.electricdreams.shellshock.feature.settings.SettingsActivity"
             android:exported="false"
             android:label="Settings"
