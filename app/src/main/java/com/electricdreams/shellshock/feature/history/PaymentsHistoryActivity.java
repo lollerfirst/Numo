@@ -77,6 +77,10 @@ public class PaymentsHistoryActivity extends AppCompatActivity {
         intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_DATE, entry.getDate().getTime());
         intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_UNIT, entry.getUnit());
         intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_ENTRY_UNIT, entry.getEntryUnit());
+        intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_ENTERED_AMOUNT, entry.getEnteredAmount());
+        if (entry.getBitcoinPrice() != null) {
+            intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_BITCOIN_PRICE, entry.getBitcoinPrice());
+        }
         intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_MINT_URL, entry.getMintUrl());
         intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_PAYMENT_REQUEST, entry.getPaymentRequest());
         intent.putExtra(TransactionDetailActivity.EXTRA_TRANSACTION_POSITION, position);
@@ -171,17 +175,21 @@ public class PaymentsHistoryActivity extends AppCompatActivity {
      * Add a payment to history with comprehensive information
      * @param context Application context
      * @param token The cashu token
-     * @param amount The amount in smallest unit
+     * @param amount The amount in smallest unit (sats)
      * @param unit The unit of the cashu token (e.g., "sat")
      * @param entryUnit The unit with which it was entered (e.g., "USD", "sat")
+     * @param enteredAmount The amount as it was entered (cents for fiat, sats for BTC)
+     * @param bitcoinPrice The Bitcoin price at time of payment (can be null)
      * @param mintUrl The mint URL from which the token was received
      * @param paymentRequest The payment request used (can be null)
      */
     public static void addToHistory(Context context, String token, long amount, 
-                                   String unit, String entryUnit, String mintUrl, String paymentRequest) {
+                                   String unit, String entryUnit, long enteredAmount, 
+                                   Double bitcoinPrice, String mintUrl, String paymentRequest) {
         List<PaymentHistoryEntry> history = getPaymentHistory(context);
         history.add(new PaymentHistoryEntry(token, amount, new java.util.Date(), 
-                                           unit, entryUnit, mintUrl, paymentRequest));
+                                           unit, entryUnit, enteredAmount, bitcoinPrice, 
+                                           mintUrl, paymentRequest));
         
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -191,10 +199,10 @@ public class PaymentsHistoryActivity extends AppCompatActivity {
 
     /**
      * Legacy method for backward compatibility
-     * @deprecated Use {@link #addToHistory(Context, String, long, String, String, String, String)} instead
+     * @deprecated Use {@link #addToHistory(Context, String, long, String, String, long, Double, String, String)} instead
      */
     @Deprecated
     public static void addToHistory(Context context, String token, long amount) {
-        addToHistory(context, token, amount, "sat", "sat", null, null);
+        addToHistory(context, token, amount, "sat", "sat", amount, null, null, null);
     }
 }

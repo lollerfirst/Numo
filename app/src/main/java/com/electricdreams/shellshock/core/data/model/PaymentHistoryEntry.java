@@ -24,6 +24,12 @@ public class PaymentHistoryEntry {
     @SerializedName("entryUnit")
     private final String entryUnit; // Unit with which it was entered (e.g., "USD", "sat")
 
+    @SerializedName("enteredAmount")
+    private final long enteredAmount; // Amount as it was entered (cents for fiat, sats for BTC)
+
+    @SerializedName("bitcoinPrice")
+    private final Double bitcoinPrice; // Bitcoin price at time of payment (can be null)
+
     @SerializedName("mintUrl")
     private final String mintUrl; // Mint from which it was received
 
@@ -37,16 +43,21 @@ public class PaymentHistoryEntry {
      * @param date The date/time the payment was received
      * @param unit The unit of the cashu token (e.g., "sat")
      * @param entryUnit The unit with which the amount was entered (e.g., "USD", "sat")
+     * @param enteredAmount The amount as it was entered (cents for fiat, sats for BTC)
+     * @param bitcoinPrice The Bitcoin price at time of payment (can be null)
      * @param mintUrl The mint URL from which the token was received
      * @param paymentRequest The payment request used (can be null)
      */
     public PaymentHistoryEntry(String token, long amount, Date date, String unit, 
-                              String entryUnit, String mintUrl, String paymentRequest) {
+                              String entryUnit, long enteredAmount, Double bitcoinPrice,
+                              String mintUrl, String paymentRequest) {
         this.token = token;
         this.amount = amount;
         this.date = date;
         this.unit = unit != null ? unit : "sat";
         this.entryUnit = entryUnit != null ? entryUnit : "sat";
+        this.enteredAmount = enteredAmount;
+        this.bitcoinPrice = bitcoinPrice;
         this.mintUrl = mintUrl;
         this.paymentRequest = paymentRequest;
     }
@@ -55,7 +66,7 @@ public class PaymentHistoryEntry {
      * Legacy constructor for backward compatibility
      */
     public PaymentHistoryEntry(String token, long amount, Date date) {
-        this(token, amount, date, "sat", "sat", extractMintFromToken(token), null);
+        this(token, amount, date, "sat", "sat", amount, null, extractMintFromToken(token), null);
     }
 
     /**
@@ -91,6 +102,14 @@ public class PaymentHistoryEntry {
 
     public String getEntryUnit() {
         return entryUnit;
+    }
+
+    public long getEnteredAmount() {
+        return enteredAmount;
+    }
+
+    public Double getBitcoinPrice() {
+        return bitcoinPrice;
     }
 
     public String getMintUrl() {

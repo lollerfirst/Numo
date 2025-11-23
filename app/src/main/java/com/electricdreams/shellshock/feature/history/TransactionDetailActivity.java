@@ -33,6 +33,8 @@ public class TransactionDetailActivity extends AppCompatActivity {
     public static final String EXTRA_TRANSACTION_DATE = "transaction_date";
     public static final String EXTRA_TRANSACTION_UNIT = "transaction_unit";
     public static final String EXTRA_TRANSACTION_ENTRY_UNIT = "transaction_entry_unit";
+    public static final String EXTRA_TRANSACTION_ENTERED_AMOUNT = "transaction_entered_amount";
+    public static final String EXTRA_TRANSACTION_BITCOIN_PRICE = "transaction_bitcoin_price";
     public static final String EXTRA_TRANSACTION_MINT_URL = "transaction_mint_url";
     public static final String EXTRA_TRANSACTION_PAYMENT_REQUEST = "transaction_payment_request";
     public static final String EXTRA_TRANSACTION_POSITION = "transaction_position";
@@ -52,6 +54,9 @@ public class TransactionDetailActivity extends AppCompatActivity {
         long dateMillis = intent.getLongExtra(EXTRA_TRANSACTION_DATE, System.currentTimeMillis());
         String unit = intent.getStringExtra(EXTRA_TRANSACTION_UNIT);
         String entryUnit = intent.getStringExtra(EXTRA_TRANSACTION_ENTRY_UNIT);
+        long enteredAmount = intent.getLongExtra(EXTRA_TRANSACTION_ENTERED_AMOUNT, amount);
+        double bitcoinPriceValue = intent.getDoubleExtra(EXTRA_TRANSACTION_BITCOIN_PRICE, -1.0);
+        Double bitcoinPrice = bitcoinPriceValue > 0 ? bitcoinPriceValue : null;
         String mintUrl = intent.getStringExtra(EXTRA_TRANSACTION_MINT_URL);
         String paymentRequest = intent.getStringExtra(EXTRA_TRANSACTION_PAYMENT_REQUEST);
         position = intent.getIntExtra(EXTRA_TRANSACTION_POSITION, -1);
@@ -63,6 +68,8 @@ public class TransactionDetailActivity extends AppCompatActivity {
             new java.util.Date(dateMillis),
             unit,
             entryUnit,
+            enteredAmount,
+            bitcoinPrice,
             mintUrl,
             paymentRequest
         );

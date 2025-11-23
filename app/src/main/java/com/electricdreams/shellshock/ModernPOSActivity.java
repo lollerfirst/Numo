@@ -207,7 +207,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
             "1", "2", "3",
             "4", "5", "6",
             "7", "8", "9",
-            "C", "0", "◀"
+            "C", "0", "<"
         };
 
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -215,23 +215,8 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
         // Update keypad button creation to use weight for equal sizing
         for (String label : buttonLabels) {
             Button button = (Button) inflater.inflate(R.layout.keypad_button_green_screen, keypad, false);
-            
-            if (label.equals("◀")) {
-                button.setText("");
-                // Remove padding to ensure icon is centered
-                button.setPadding( 140, 0, 0, 0);
-                button.setCompoundDrawablePadding(0);
-                
-                Drawable icon = ContextCompat.getDrawable(this, R.drawable.ic_chevron_back);
-                if (icon != null) {
-                    icon = DrawableCompat.wrap(icon);
-                    DrawableCompat.setTint(icon, ContextCompat.getColor(this, R.color.color_bg_white));
-                    button.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
-                }
-            } else {
-                button.setText(label);
-            }
-            
+
+            button.setText(label);
             button.setOnClickListener(v -> onKeypadButtonClick(label));
             
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
@@ -371,7 +356,7 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
             case "C":
                 currentInput.setLength(0);
                 break;
-            case "◀":
+            case "<":
                 if (currentInput.length() > 0) {
                     currentInput.setLength(currentInput.length() - 1);
                 }
@@ -866,6 +851,30 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                 if (token != null && amount > 0) {
                     Log.d(TAG, "Payment completed successfully! Token: " + token);
                     
+                    // Capture entered amount before resetting
+                    long enteredAmount;
+                    String entryUnit;
+                    if (isUsdInputMode) {
+                        // In USD mode, calculate the fiat amount that was entered
+                        entryUnit = "USD";
+                        if (bitcoinPriceWorker != null && bitcoinPriceWorker.getCurrentPrice() > 0) {
+                            double fiatValue = bitcoinPriceWorker.satoshisToFiat(amount);
+                            enteredAmount = (long)(fiatValue * 100); // Convert to cents
+                        } else {
+                            enteredAmount = amount; // Fallback to sats if no price available
+                        }
+                    } else {
+                        // In SAT mode, entered amount is the same as amount
+                        entryUnit = "sat";
+                        enteredAmount = amount;
+                    }
+                    
+                    // Get current Bitcoin price
+                    Double bitcoinPrice = null;
+                    if (bitcoinPriceWorker != null && bitcoinPriceWorker.getCurrentPrice() > 0) {
+                        bitcoinPrice = bitcoinPriceWorker.getCurrentPrice();
+                    }
+                    
                     // Reset the input state
                     requestedAmount = 0;
                     currentInput.setLength(0);
@@ -876,14 +885,12 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                     // Play success feedback
                     playSuccessFeedback();
                     
-                    // Determine entry unit based on current input mode
-                    String entryUnit = isUsdInputMode ? "USD" : "sat";
-                    
                     // Extract mint URL from token
                     String mintUrl = extractMintUrlFromToken(token);
                     
                     // Add to payment history with comprehensive information
-                    PaymentsHistoryActivity.addToHistory(this, token, amount, "sat", entryUnit, mintUrl, null);
+                    PaymentsHistoryActivity.addToHistory(this, token, amount, "sat", entryUnit, 
+                                                        enteredAmount, bitcoinPrice, mintUrl, null);
                     
                     // Launch PaymentReceivedActivity to show beautiful success screen
                     Intent successIntent = new Intent(this, PaymentReceivedActivity.class);
@@ -1149,6 +1156,31 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
 
     private void handlePaymentSuccess(String token) {
         long amount = requestedAmount;
+        
+        // Capture entered amount before resetting
+        long enteredAmount;
+        String entryUnit;
+        if (isUsdInputMode) {
+            // In USD mode, calculate the fiat amount that was entered
+            entryUnit = "USD";
+            if (bitcoinPriceWorker != null && bitcoinPriceWorker.getCurrentPrice() > 0) {
+                double fiatValue = bitcoinPriceWorker.satoshisToFiat(amount);
+                enteredAmount = (long)(fiatValue * 100); // Convert to cents
+            } else {
+                enteredAmount = amount; // Fallback to sats if no price available
+            }
+        } else {
+            // In SAT mode, entered amount is the same as amount
+            entryUnit = "sat";
+            enteredAmount = amount;
+        }
+        
+        // Get current Bitcoin price
+        Double bitcoinPrice = null;
+        if (bitcoinPriceWorker != null && bitcoinPriceWorker.getCurrentPrice() > 0) {
+            bitcoinPrice = bitcoinPriceWorker.getCurrentPrice();
+        }
+        
         requestedAmount = 0;
         currentInput.setLength(0);
 
@@ -1161,15 +1193,13 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
 
         // Play success feedback
         playSuccessFeedback();
-
-        // Determine entry unit based on current input mode
-        String entryUnit = isUsdInputMode ? "USD" : "sat";
         
         // Extract mint URL from token
         String mintUrl = extractMintUrlFromToken(token);
         
         // Add to payment history with comprehensive information
-        PaymentsHistoryActivity.addToHistory(this, token, amount, "sat", entryUnit, mintUrl, null);
+        PaymentsHistoryActivity.addToHistory(this, token, amount, "sat", entryUnit, 
+                                            enteredAmount, bitcoinPrice, mintUrl, null);
 
         mainHandler.post(() -> {
             if (rescanDialog != null && rescanDialog.isShowing()) {

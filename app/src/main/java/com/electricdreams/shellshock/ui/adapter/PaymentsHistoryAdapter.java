@@ -48,16 +48,36 @@ public class PaymentsHistoryAdapter extends RecyclerView.Adapter<PaymentsHistory
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         PaymentHistoryEntry entry = entries.get(position);
         
-        // Format amount
-        long amount = entry.getAmount();
-        String sign = amount >= 0 ? "+" : "";
-        holder.amountText.setText(String.format(Locale.getDefault(), "%s ₿%d", sign, Math.abs(amount)));
+        // Display amount in the unit it was entered
+        String formattedAmount;
+        if (entry.getEntryUnit() != null && !entry.getEntryUnit().equals("sat")) {
+            // Display in fiat currency (USD, EUR, etc.)
+            com.electricdreams.shellshock.core.model.Amount.Currency entryCurrency = 
+                com.electricdreams.shellshock.core.model.Amount.Currency.fromCode(entry.getEntryUnit());
+            com.electricdreams.shellshock.core.model.Amount entryAmount = 
+                new com.electricdreams.shellshock.core.model.Amount(entry.getEnteredAmount(), entryCurrency);
+            formattedAmount = entryAmount.toString();
+        } else {
+            // Display in sats
+            long amount = entry.getAmount();
+            com.electricdreams.shellshock.core.model.Amount satAmount = 
+                new com.electricdreams.shellshock.core.model.Amount(amount, 
+                    com.electricdreams.shellshock.core.model.Amount.Currency.BTC);
+            formattedAmount = satAmount.toString();
+        }
+        
+        // Add + sign for positive amounts
+        if (entry.getAmount() >= 0) {
+            formattedAmount = "+" + formattedAmount;
+        }
+        
+        holder.amountText.setText(formattedAmount);
         
         // Set date
         holder.dateText.setText(dateFormat.format(entry.getDate()));
         
         // Set title based on amount (simple logic for now)
-        if (amount > 0) {
+        if (entry.getAmount() > 0) {
             holder.titleText.setText("Cash In");
         } else {
             holder.titleText.setText("Cash Out");
