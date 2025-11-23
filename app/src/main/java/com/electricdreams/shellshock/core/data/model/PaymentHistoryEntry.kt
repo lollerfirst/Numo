@@ -18,11 +18,13 @@ data class PaymentHistoryEntry(
     @SerializedName("date")
     val date: Date,
 
+    // Backing fields can be null (for safety with old/Java callers),
+    // public getters always normalize to non-null with sensible defaults.
     @SerializedName("unit")
-    val unit: String = "sat", // Unit of the cashu token (e.g., "sat")
+    private val rawUnit: String? = "sat", // Unit of the cashu token (e.g., "sat")
 
     @SerializedName("entryUnit")
-    val entryUnit: String = "sat", // Unit with which it was entered (e.g., "USD", "sat")
+    private val rawEntryUnit: String? = "sat", // Unit with which it was entered (e.g., "USD", "sat")
 
     @SerializedName("enteredAmount")
     val enteredAmount: Long, // Amount as it was entered (cents for fiat, sats for BTC)
@@ -37,6 +39,12 @@ data class PaymentHistoryEntry(
     val paymentRequest: String? = null, // The payment request it was received with (optional)
 ) {
 
+    /** Public, non-null view of the token unit. */
+    fun getUnit(): String = rawUnit ?: "sat"
+
+    /** Public, non-null view of the entry unit. */
+    fun getEntryUnit(): String = rawEntryUnit ?: "sat"
+
     /**
      * Legacy-like secondary constructor for backward compatibility.
      */
@@ -44,8 +52,8 @@ data class PaymentHistoryEntry(
         token = token,
         amount = amount,
         date = date,
-        unit = "sat",
-        entryUnit = "sat",
+        rawUnit = "sat",
+        rawEntryUnit = "sat",
         enteredAmount = amount,
         bitcoinPrice = null,
         mintUrl = extractMintFromToken(token),
