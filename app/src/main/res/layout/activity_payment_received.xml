@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_bg_white"
+    android:clipChildren="false"
     tools:context=".PaymentReceivedActivity">
 
     <!-- Close Icon Button (X) at top left -->
@@ -40,6 +41,7 @@
         android:id="@+id/center_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:clipChildren="false"
         app:layout_constraintBottom_toTopOf="@+id/close_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,6 +50,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clipChildren="false"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -63,10 +66,11 @@
                 android:textSize="28sp"
                 android:textStyle="bold" />
 
-            <!-- Animated checkmark container -->
+            <!-- Animated checkmark container with clipChildren disabled -->
             <FrameLayout
                 android:layout_width="120dp"
-                android:layout_height="120dp">
+                android:layout_height="120dp"
+                android:clipChildren="false">
 
                 <!-- Green circle background -->
                 <ImageView
@@ -104,7 +108,7 @@
         android:background="@drawable/bg_button_secondary_pill"
         android:text="Close"
         android:textAllCaps="false"
-        android:textColor="@color/color_text_primary"
+        android:textColor="@color/color_bg_white"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent" />

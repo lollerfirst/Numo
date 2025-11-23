@@ -157,26 +157,26 @@ class PaymentReceivedActivity : AppCompatActivity() {
         val circleAnimatorSet = AnimatorSet()
         circleAnimatorSet.playTogether(circleScaleX, circleScaleY, circleFadeIn)
         
-        // Animate white checkmark icon slightly after circle starts
+        // Animate white checkmark icon with same timing as circle for cohesive effect
         checkmarkIcon.alpha = 0f
         checkmarkIcon.scaleX = 0f
         checkmarkIcon.scaleY = 0f
         checkmarkIcon.visibility = View.VISIBLE
         
         val iconScaleX = ObjectAnimator.ofFloat(checkmarkIcon, "scaleX", 0f, 1f).apply {
-            duration = 400
+            duration = 500  // Match circle duration
             startDelay = 150  // Start slightly after circle
-            interpolator = OvershootInterpolator(2.5f)  // More bounce for the icon
+            interpolator = OvershootInterpolator(2f)  // Match circle interpolator
         }
         
         val iconScaleY = ObjectAnimator.ofFloat(checkmarkIcon, "scaleY", 0f, 1f).apply {
-            duration = 400
+            duration = 500  // Match circle duration
             startDelay = 150
-            interpolator = OvershootInterpolator(2.5f)
+            interpolator = OvershootInterpolator(2f)  // Match circle interpolator
         }
         
         val iconFadeIn = ObjectAnimator.ofFloat(checkmarkIcon, "alpha", 0f, 1f).apply {
-            duration = 250
+            duration = 300  // Match circle fade duration
             startDelay = 150
         }
         
