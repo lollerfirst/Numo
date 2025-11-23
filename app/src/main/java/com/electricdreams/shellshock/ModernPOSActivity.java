@@ -912,11 +912,11 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
                     // Add to payment history
                     PaymentsHistoryActivity.addToHistory(this, token, amount);
                     
-                    // Show the token in the UI
-                    switchToTokenMode();
-                    tokenDisplay.setText(token);
-                    openWithButton.setVisibility(View.VISIBLE);
-                    Toast.makeText(this, "Payment successful!", Toast.LENGTH_SHORT).show();
+                    // Launch PaymentReceivedActivity to show beautiful success screen
+                    Intent successIntent = new Intent(this, PaymentReceivedActivity.class);
+                    successIntent.putExtra(PaymentReceivedActivity.EXTRA_TOKEN, token);
+                    successIntent.putExtra(PaymentReceivedActivity.EXTRA_AMOUNT, amount);
+                    startActivity(successIntent);
                 } else {
                     Log.e(TAG, "Invalid payment result data");
                     Toast.makeText(this, "Payment completed but data was invalid", Toast.LENGTH_SHORT).show();
@@ -1200,10 +1200,12 @@ public class ModernPOSActivity extends AppCompatActivity implements SatocashWall
             if (processingDialog != null && processingDialog.isShowing()) {
                 processingDialog.dismiss();
             }
-            switchToTokenMode();
-            tokenDisplay.setText(token);
-            openWithButton.setVisibility(View.VISIBLE);
-            Toast.makeText(this, "Payment successful!", Toast.LENGTH_SHORT).show();
+            
+            // Launch PaymentReceivedActivity to show beautiful success screen
+            Intent successIntent = new Intent(this, PaymentReceivedActivity.class);
+            successIntent.putExtra(PaymentReceivedActivity.EXTRA_TOKEN, token);
+            successIntent.putExtra(PaymentReceivedActivity.EXTRA_AMOUNT, amount);
+            startActivity(successIntent);
         });
     }
 

@@ -87,6 +87,18 @@
                 android:value="com.electricdreams.shellshock.ModernPOSActivity" />
         </activity>
 
+        <!-- Payment Received Activity -->
+        <activity android:name="com.electricdreams.shellshock.PaymentReceivedActivity"
+            android:exported="false"
+            android:label="Payment Received"
+            android:theme="@style/Theme.Shellshock"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName="com.electricdreams.shellshock.ModernPOSActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.electricdreams.shellshock.ModernPOSActivity" />
+        </activity>
+
         <activity android:name=".BalanceCheckActivity"
             android:exported="false"
             android:label="Check Balance"
