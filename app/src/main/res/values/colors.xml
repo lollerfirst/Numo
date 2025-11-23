@@ -57,4 +57,9 @@
 
     <!-- Icon Colors -->
     <color name="iconTint">@color/navigationIconTint</color>
+
+    <!-- Button States -->
+    <color name="button_primary_green_inactive">#7AEDA8</color> <!-- Brighter inactive state -->
+    <color name="button_primary_green_active">#4DD87A</color> <!-- Slightly darker active state -->
+    <color name="button_primary_green_border">#00C244</color> <!-- Border color (darker primary green) -->
 </resources>
