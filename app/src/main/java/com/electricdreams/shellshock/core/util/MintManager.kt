@@ -3,6 +3,8 @@ package com.electricdreams.shellshock.core.util
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import java.net.URI
+import java.util.Locale
 
 /**
  * Manages allowed mints for Cashu tokens.
@@ -141,13 +143,41 @@ class MintManager private constructor(context: Context) {
     /**
      * Normalize mint URL to ensure consistent format:
      * - Trim whitespace
-     * - Remove trailing slash if present
+     * - Ensure https:// when protocol missing
+     * - Lowercase host while leaving path/query untouched
+     * - Remove trailing slash for stable comparisons
      */
     private fun normalizeMintUrl(url: String): String {
         var normalized = url.trim()
-        if (normalized.endsWith("/")) {
-            normalized = normalized.substring(0, normalized.length - 1)
+        if (!normalized.contains("://")) {
+            normalized = "https://$normalized"
         }
-        return normalized
+
+        val sanitized = try {
+            val uri = URI(normalized)
+            val scheme = uri.scheme ?: "https"
+            val host = uri.host ?: return normalized.removeSuffix("/")
+            val userInfo = uri.userInfo?.let { "$it@" } ?: ""
+            val portSegment = if (uri.port != -1) ":${uri.port}" else ""
+            val path = uri.rawPath ?: ""
+            val query = uri.rawQuery?.let { "?$it" } ?: ""
+            val fragment = uri.rawFragment?.let { "#$it" } ?: ""
+
+            buildString {
+                append(scheme)
+                append("://")
+                append(userInfo)
+                append(host.lowercase(Locale.ROOT))
+                append(portSegment)
+                append(path)
+                append(query)
+                append(fragment)
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to fully normalize mint URL: $url", e)
+            normalized
+        }
+
+        return sanitized.removeSuffix("/")
     }
 }
