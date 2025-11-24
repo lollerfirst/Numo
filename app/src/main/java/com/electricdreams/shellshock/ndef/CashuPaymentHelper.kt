@@ -279,41 +279,14 @@ object CashuPaymentHelper {
                 receiveOptions = receiveOptions,
             )
 
-            val amountReceived: org.cashudevkit.Amount
+            // Receive into wallet
             runBlocking {
-                amountReceived = wallet.receive(cdkToken, mmReceive)
+                wallet.receive(cdkToken, mmReceive)
             }
 
-            // Prepare send back out
-            val outAmount: org.cashudevkit.Amount = amountReceived
-
-            val sendOptions = org.cashudevkit.SendOptions(
-                memo = null,
-                conditions = null,
-                amountSplitTarget = org.cashudevkit.SplitTarget.None,
-                sendKind = org.cashudevkit.SendKind.OfflineExact,
-                includeFee = false,
-                maxProofs = null,
-                metadata = emptyMap(),
-            )
-            val mmSend = org.cashudevkit.MultiMintSendOptions(
-                allowTransfer = false,
-                maxTransferAmount = null,
-                allowedMints = emptyList(),
-                excludedMints = emptyList(),
-                sendOptions = sendOptions,
-            )
-
-            val outTokenString = runBlocking {
-                val prepared: org.cashudevkit.PreparedSend =
-                    wallet.prepareSend(mintUrl, outAmount, mmSend)
-                val outToken: org.cashudevkit.Token =
-                    prepared.confirm("redeemed via CDK")
-                outToken.encode()
-            }
-
-            Log.d(TAG, "Token redemption via CDK successful")
-            return outTokenString
+            Log.d(TAG, "Token received via CDK successfully")
+            // Return the original token instead of sending a new one
+            return tokenString ?: error("tokenString is null")
         } catch (e: RedemptionException) {
             throw e
         } catch (e: Exception) {
