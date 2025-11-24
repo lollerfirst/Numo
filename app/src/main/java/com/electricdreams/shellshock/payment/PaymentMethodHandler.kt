@@ -77,6 +77,18 @@ class PaymentMethodHandler(
                         Toast.makeText(activity, "Payment failed: $errorMessage", Toast.LENGTH_LONG).show()
                     }
                 }
+
+                override fun onNfcReadingStarted() {
+                    activity.runOnUiThread {
+                        onStatusUpdate("NFC reading started...")
+                    }
+                }
+
+                override fun onNfcReadingStopped() {
+                    activity.runOnUiThread {
+                        onStatusUpdate("NFC reading stopped")
+                    }
+                }
             })
             onStatusUpdate("Waiting for payment...\n\nHold your phone against the paying device")
         } catch (e: Exception) {

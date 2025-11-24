@@ -35,6 +35,7 @@ class PaymentRequestActivity : AppCompatActivity() {
     private lateinit var statusText: TextView
     private lateinit var closeButton: android.view.View
     private lateinit var shareButton: android.view.View
+    private lateinit var nfcReadingOverlay: android.view.View
 
     private var paymentAmount: Long = 0
     private var bitcoinPriceWorker: BitcoinPriceWorker? = null
@@ -53,6 +54,7 @@ class PaymentRequestActivity : AppCompatActivity() {
         statusText = findViewById(R.id.payment_status_text)
         closeButton = findViewById(R.id.close_button)
         shareButton = findViewById(R.id.share_button)
+        nfcReadingOverlay = findViewById(R.id.nfc_reading_overlay)
 
         // Initialize Bitcoin price worker
         bitcoinPriceWorker = BitcoinPriceWorker.getInstance(this)
@@ -245,6 +247,20 @@ class PaymentRequestActivity : AppCompatActivity() {
                         runOnUiThread {
                             Log.e(TAG, "NDEF Payment error callback: $errorMessage")
                             handlePaymentError("NDEF Payment failed: $errorMessage")
+                        }
+                    }
+
+                    override fun onNfcReadingStarted() {
+                        runOnUiThread {
+                            Log.d(TAG, "NFC reading started - showing overlay")
+                            nfcReadingOverlay.visibility = android.view.View.VISIBLE
+                        }
+                    }
+
+                    override fun onNfcReadingStopped() {
+                        runOnUiThread {
+                            Log.d(TAG, "NFC reading stopped - hiding overlay")
+                            nfcReadingOverlay.visibility = android.view.View.GONE
                         }
                     }
                 })

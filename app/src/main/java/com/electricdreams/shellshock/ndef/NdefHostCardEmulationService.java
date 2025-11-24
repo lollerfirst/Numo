@@ -4,7 +4,9 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.nfc.cardemulation.HostApduService;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Vibrator;
 import android.content.Intent;
 import android.util.Log;
@@ -47,12 +49,20 @@ public class NdefHostCardEmulationService extends HostApduService {
     // Singleton instance for access from activities
     private static NdefHostCardEmulationService instance;
     
+    // NFC reading state tracking
+    private boolean isNfcReading = false;
+    private Handler nfcTimeoutHandler;
+    private Runnable nfcTimeoutRunnable;
+    private static final long NFC_TIMEOUT_MS = 2000; // 2 seconds
+    
     /**
      * Callback interface for Cashu payments
      */
     public interface CashuPaymentCallback {
         void onCashuTokenReceived(String token);
         void onCashuPaymentError(String errorMessage);
+        void onNfcReadingStarted();
+        void onNfcReadingStopped();
     }
     
     /**
@@ -68,6 +78,16 @@ public class NdefHostCardEmulationService extends HostApduService {
         super.onCreate();
         Log.i(TAG, "=== NdefHostCardEmulationService created ===");
         
+        // Initialize NFC timeout handler
+        nfcTimeoutHandler = new Handler(Looper.getMainLooper());
+        nfcTimeoutRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG, "NFC reading timeout - no APDU received for " + NFC_TIMEOUT_MS + "ms");
+                stopNfcReading();
+            }
+        };
+        
         try {
             // Create the NDEF processor
             ndefProcessor = new NdefProcessor(new NdefProcessor.NdefMessageCallback() {
@@ -77,6 +97,9 @@ public class NdefHostCardEmulationService extends HostApduService {
                         // Log all NDEF messages at the INFO level to ensure visibility
                         Log.i(TAG, "========== RECEIVED NDEF MESSAGE ==========");
                         Log.i(TAG, "Message content: " + message);
+                        
+                        // Stop NFC reading indicator since we received the complete message
+                        stopNfcReading();
                         
                         // First try to extract a Cashu token from the message
                         String cashuToken = CashuPaymentHelper.extractCashuToken(message);
@@ -207,6 +230,11 @@ public class NdefHostCardEmulationService extends HostApduService {
         Log.i(TAG, "=== HCE Service onDestroy called ===");
         super.onDestroy();
         
+        // Clean up NFC reading timeout
+        if (nfcTimeoutHandler != null) {
+            nfcTimeoutHandler.removeCallbacks(nfcTimeoutRunnable);
+        }
+        
         // Clean up MediaPlayer resources
         if (mediaPlayer != null) {
             try {
@@ -246,6 +274,12 @@ public class NdefHostCardEmulationService extends HostApduService {
                     }
                 }
                 Log.i(TAG, "Command: " + description);
+            }
+            
+            // Start/reset NFC reading indicator when we receive APDU commands
+            // Only track reading if we have a payment callback set (meaning we're expecting a payment)
+            if (paymentCallback != null) {
+                startOrResetNfcReading();
             }
             
             // Try to process with the NDEF processor
@@ -311,6 +345,10 @@ public class NdefHostCardEmulationService extends HostApduService {
     public void clearPaymentRequest() {
         Log.i(TAG, "Clearing payment request");
         this.expectedAmount = 0;
+        
+        // Stop NFC reading if active
+        stopNfcReading();
+        
         if (ndefProcessor != null) {
             ndefProcessor.setMessageToSend("");
             // Disable write mode when clearing payment request
@@ -465,6 +503,44 @@ public class NdefHostCardEmulationService extends HostApduService {
             }
         } catch (Exception e) {
             Log.e(TAG, "Error triggering vibration: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Start or reset the NFC reading indicator
+     * Called when an APDU command is received
+     */
+    private void startOrResetNfcReading() {
+        // If not currently reading, notify callback that we've started
+        if (!isNfcReading) {
+            Log.i(TAG, "NFC reading started");
+            isNfcReading = true;
+            if (paymentCallback != null) {
+                paymentCallback.onNfcReadingStarted();
+            }
+        }
+        
+        // Reset the timeout - cancel any pending timeout and schedule a new one
+        nfcTimeoutHandler.removeCallbacks(nfcTimeoutRunnable);
+        nfcTimeoutHandler.postDelayed(nfcTimeoutRunnable, NFC_TIMEOUT_MS);
+    }
+    
+    /**
+     * Stop the NFC reading indicator
+     * Called when the NDEF message is received or timeout occurs
+     */
+    private void stopNfcReading() {
+        if (isNfcReading) {
+            Log.i(TAG, "NFC reading stopped");
+            isNfcReading = false;
+            
+            // Cancel any pending timeout
+            nfcTimeoutHandler.removeCallbacks(nfcTimeoutRunnable);
+            
+            // Notify callback
+            if (paymentCallback != null) {
+                paymentCallback.onNfcReadingStopped();
+            }
         }
     }
 }
