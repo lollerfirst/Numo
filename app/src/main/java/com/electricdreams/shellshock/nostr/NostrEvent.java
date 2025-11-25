@@ -106,7 +106,10 @@ public final class NostrEvent {
             }
             boolean ok = verifySchnorr(pubBytes, msg, sigBytes);
             if (!ok) {
-                Log.w(TAG, "Schnorr verify failed for kind=" + kind + " id=" + id + " pubkey=" + pubkey);
+                // Strict: a failing signature means the event MUST be rejected.
+                Log.w(TAG, "Schnorr verify FAILED for kind=" + kind + " id=" + id + " pubkey=" + pubkey);
+            } else {
+                Log.d(TAG, "Schnorr verify SUCCESS for kind=" + kind + " id=" + id);
             }
             return ok;
         } catch (Exception e) {
@@ -116,6 +119,26 @@ public final class NostrEvent {
     }
 
     // --- Helpers ---
+
+    // BIP340 tagged hash for challenge: hash_BIP0340/challenge(x)
+    // = SHA256(SHA256(tag) || SHA256(tag) || x) with tag = "BIP0340/challenge".
+    private static final byte[] TAG_BIP340_CHALLENGE =
+            "BIP0340/challenge".getBytes(java.nio.charset.StandardCharsets.US_ASCII);
+    private static final byte[] TAG_BIP340_CHALLENGE_HASH = sha256(TAG_BIP340_CHALLENGE);
+    private static final byte[] TAG_BIP340_CHALLENGE_PREFIX;
+
+    static {
+        TAG_BIP340_CHALLENGE_PREFIX = new byte[64];
+        System.arraycopy(TAG_BIP340_CHALLENGE_HASH, 0, TAG_BIP340_CHALLENGE_PREFIX, 0, 32);
+        System.arraycopy(TAG_BIP340_CHALLENGE_HASH, 0, TAG_BIP340_CHALLENGE_PREFIX, 32, 32);
+    }
+
+    private static byte[] taggedHashBip340Challenge(byte[] x) {
+        byte[] buf = new byte[64 + x.length];
+        System.arraycopy(TAG_BIP340_CHALLENGE_PREFIX, 0, buf, 0, 64);
+        System.arraycopy(x, 0, buf, 64, x.length);
+        return sha256(buf);
+    }
 
     private static byte[] sha256(byte[] data) {
         try {
@@ -154,7 +177,7 @@ public final class NostrEvent {
      */
     private static boolean verifySchnorr(byte[] pub, byte[] msg, byte[] sig) {
         if (pub.length != 32 || msg.length != 32 || sig.length != 64) {
-            Log.w(TAG, "verifySchnorr: wrong lengths pub=" + pub.length + " msg=" + msg.length + " sig=" + sig.length);
+            Log.w(TAG, "verifySchnorr: wrong lengths pub=" + pub.length + " msg=" + msg.length + " sig=" + sig.length + " (strict fail)");
             return false;
         }
 
@@ -162,14 +185,14 @@ public final class NostrEvent {
         BigInteger px = new BigInteger(1, pub);
         BigInteger p = SECP256K1_PARAMS.getCurve().getField().getCharacteristic();
         if (px.signum() <= 0 || px.compareTo(p) >= 0) {
-            Log.w(TAG, "verifySchnorr: pubkey x out of range");
+            Log.w(TAG, "verifySchnorr: pubkey x out of range (strict fail)");
             return false;
         }
 
         // Lift x to a curve point with even Y (BIP-340) using BouncyCastle's decodePoint
         ECPoint P = liftX(px);
         if (P == null) {
-            Log.w(TAG, "verifySchnorr: liftX returned null");
+            Log.w(TAG, "verifySchnorr: liftX returned null (strict fail)");
             return false;
         }
 
@@ -182,36 +205,38 @@ public final class NostrEvent {
         BigInteger n = SECP256K1.getN();
 
         if (r.signum() <= 0 || r.compareTo(p) >= 0) {
-            Log.w(TAG, "verifySchnorr: r out of range");
+            Log.w(TAG, "verifySchnorr: r out of range (strict fail)");
             return false;
         }
         if (s.signum() <= 0 || s.compareTo(n) >= 0) {
-            Log.w(TAG, "verifySchnorr: s out of range");
+            Log.w(TAG, "verifySchnorr: s out of range (strict fail)");
             return false;
         }
 
-        // e = int(hash(bytes(r) || pub || msg)) mod n
+        // e = int(hash_BIP0340/challenge(bytes(r) || pub || msg)) mod n
         byte[] rPubMsg = new byte[32 + pub.length + msg.length];
         System.arraycopy(rBytes, 0, rPubMsg, 0, 32);
         System.arraycopy(pub, 0, rPubMsg, 32, pub.length);
         System.arraycopy(msg, 0, rPubMsg, 32 + pub.length, msg.length);
 
-        BigInteger e = new BigInteger(1, sha256(rPubMsg)).mod(n);
+        byte[] eBytes = taggedHashBip340Challenge(rPubMsg);
+        BigInteger e = new BigInteger(1, eBytes).mod(n);
         if (e.signum() == 0) {
-            Log.w(TAG, "verifySchnorr: e == 0");
+            Log.w(TAG, "verifySchnorr: e == 0 (strict fail)");
             return false;
         }
 
         // R = s*G - e*P
         ECPoint R = SECP256K1.getG().multiply(s).subtract(P.multiply(e)).normalize();
         if (R.isInfinity()) {
-            Log.w(TAG, "verifySchnorr: R is infinity");
+            Log.w(TAG, "verifySchnorr: R is infinity (strict fail)");
             return false;
         }
 
         // Check that R has even y and x(R) == r
         if (R.getAffineYCoord().toBigInteger().testBit(0)) {
-            Log.w(TAG, "verifySchnorr: R.y is odd");
+            Log.w(TAG, "verifySchnorr: R.y is odd (strict fail)");
+            return false;
         }
         BigInteger xR = R.getAffineXCoord().toBigInteger();
         return xR.equals(r);

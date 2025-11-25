@@ -44,7 +44,9 @@ public final class Nip59 {
             throw new IllegalArgumentException("expected kind 1059 giftwrap, got kind=" + giftwrap.kind);
         }
         if (!giftwrap.verify()) {
-            android.util.Log.w("Nip59", "Giftwrap Schnorr verification failed; continuing anyway");
+            // Strict: a giftwrap with an invalid signature MUST NOT be used.
+            android.util.Log.w("Nip59", "Giftwrap Schnorr verification FAILED; aborting unwrap");
+            throw new IllegalArgumentException("giftwrap Schnorr verification failed");
         }
         if (giftwrap.pubkey == null || giftwrap.content == null) {
             throw new IllegalArgumentException("giftwrap missing pubkey or content");
@@ -66,7 +68,9 @@ public final class Nip59 {
             throw new IllegalArgumentException("expected kind 13 seal, got kind=" + seal.kind);
         }
         if (!seal.verify()) {
-            android.util.Log.w("Nip59", "Seal Schnorr verification failed; continuing anyway");
+            // Strict: a seal with an invalid signature MUST NOT be used.
+            android.util.Log.w("Nip59", "Seal Schnorr verification FAILED; aborting unwrap");
+            throw new IllegalArgumentException("seal Schnorr verification failed");
         }
         if (seal.pubkey == null || seal.content == null) {
             throw new IllegalArgumentException("seal missing pubkey or content");
