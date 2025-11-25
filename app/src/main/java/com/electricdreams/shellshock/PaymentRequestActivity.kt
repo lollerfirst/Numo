@@ -13,7 +13,7 @@ import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.ImageButton
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -43,7 +43,7 @@ class PaymentRequestActivity : AppCompatActivity() {
     private lateinit var shareButton: View
     private lateinit var nfcAnimationContainer: View
     private lateinit var nfcAnimationWebView: WebView
-    private lateinit var animationCloseButton: ImageButton
+    private lateinit var animationCloseButton: Button
 
     private var paymentAmount: Long = 0
     private var bitcoinPriceWorker: BitcoinPriceWorker? = null
@@ -172,13 +172,10 @@ class PaymentRequestActivity : AppCompatActivity() {
         // Load the animation HTML
         nfcAnimationWebView.loadUrl("file:///android_asset/nfc_animation.html")
         
-        // Setup close button for animation overlay
+        // Setup close button for animation overlay - just close the activity
         animationCloseButton.setOnClickListener {
-            hideAnimationOverlay()
-            // If we have a pending token, process it
-            pendingToken?.let { token ->
-                processPaymentToken(token)
-            }
+            pendingToken = null
+            cleanupAndFinish()
         }
     }
 
@@ -192,21 +189,27 @@ class PaymentRequestActivity : AppCompatActivity() {
         }
     }
 
-    private fun hideAnimationOverlay() {
-        nfcAnimationContainer.visibility = View.GONE
-        animationCloseButton.visibility = View.GONE
-        
-        // Reset the animation
-        if (webViewReady) {
-            nfcAnimationWebView.evaluateJavascript("reset()", null)
-        }
-    }
-
     private fun showAnimationSuccess(amountText: String) {
         if (webViewReady) {
             val escapedAmount = amountText.replace("'", "\\'")
             nfcAnimationWebView.evaluateJavascript("showSuccess('$escapedAmount')", null)
+            
+            // Play success sound and vibration
+            playSuccessFeedback()
         }
+    }
+
+    private fun playSuccessFeedback() {
+        // Play success sound
+        try {
+            val mediaPlayer = android.media.MediaPlayer.create(this, R.raw.success_sound)
+            mediaPlayer?.setOnCompletionListener { it.release() }
+            mediaPlayer?.start()
+        } catch (_: Exception) {}
+        
+        // Vibrate
+        val vibrator = getSystemService(android.content.Context.VIBRATOR_SERVICE) as android.os.Vibrator?
+        vibrator?.vibrate(longArrayOf(0, 50, 100, 50), -1)
     }
 
     private fun showAnimationError(message: String) {
@@ -450,12 +453,6 @@ class PaymentRequestActivity : AppCompatActivity() {
             // Animation wasn't shown (e.g., QR payment), just finish
             cleanupAndFinish()
         }
-    }
-
-    private fun processPaymentToken(token: String) {
-        // Clear pending token and finish
-        pendingToken = null
-        cleanupAndFinish()
     }
 
     private fun handlePaymentError(errorMessage: String) {
