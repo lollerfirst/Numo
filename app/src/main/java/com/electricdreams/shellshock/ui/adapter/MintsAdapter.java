@@ -3,6 +3,7 @@ package com.electricdreams.shellshock.ui.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,8 @@ import kotlin.coroutines.EmptyCoroutineContext;
  * Adapter for the list of allowed mints in settings
  */
 public class MintsAdapter extends RecyclerView.Adapter<MintsAdapter.MintViewHolder> {
+    
+    private static final String TAG = "MintsAdapter";
     
     private List<String> mints;
     private final MintRemoveListener removeListener;
@@ -303,23 +306,31 @@ public class MintsAdapter extends RecyclerView.Adapter<MintsAdapter.MintViewHold
             
             // Get icon URL from mint info
             String iconUrl = mintManager.getMintIconUrl(mintUrl);
+            Log.d(TAG, "loadMintIcon for " + mintUrl + " -> iconUrl: " + iconUrl);
+            
             if (iconUrl == null || iconUrl.isEmpty()) {
                 // No icon URL available, keep default
+                Log.d(TAG, "No icon URL for " + mintUrl + ", using default");
                 return;
             }
             
             // Check if icon is already cached
             File cachedIcon = MintIconCache.INSTANCE.getCachedIconFile(mintUrl);
-            if (cachedIcon != null) {
+            if (cachedIcon != null && cachedIcon.exists()) {
                 // Load from cache immediately
+                Log.d(TAG, "Loading icon from cache: " + cachedIcon.getAbsolutePath());
                 Bitmap bitmap = BitmapFactory.decodeFile(cachedIcon.getAbsolutePath());
                 if (bitmap != null) {
                     mintIcon.setImageBitmap(bitmap);
+                    Log.d(TAG, "Loaded icon from cache for " + mintUrl);
+                    return;
+                } else {
+                    Log.w(TAG, "Failed to decode cached icon for " + mintUrl);
                 }
-                return;
             }
             
             // Download icon asynchronously using Thread
+            Log.d(TAG, "Downloading icon for " + mintUrl + " from " + iconUrl);
             new Thread(() -> {
                 try {
                     File iconFile = kotlinx.coroutines.BuildersKt.runBlocking(
@@ -327,15 +338,20 @@ public class MintsAdapter extends RecyclerView.Adapter<MintsAdapter.MintViewHold
                         (scope, continuation) -> MintIconCache.INSTANCE.downloadAndCacheIcon(mintUrl, iconUrl, continuation)
                     );
                     
-                    if (iconFile != null) {
+                    if (iconFile != null && iconFile.exists()) {
                         Bitmap bitmap = BitmapFactory.decodeFile(iconFile.getAbsolutePath());
                         if (bitmap != null) {
+                            Log.d(TAG, "Downloaded and loaded icon for " + mintUrl);
                             // Update UI on main thread
                             itemView.post(() -> mintIcon.setImageBitmap(bitmap));
+                        } else {
+                            Log.w(TAG, "Failed to decode downloaded icon for " + mintUrl);
                         }
+                    } else {
+                        Log.w(TAG, "Download returned null/non-existent file for " + mintUrl);
                     }
                 } catch (Exception e) {
-                    // Silently fail - icon will remain as default
+                    Log.e(TAG, "Error downloading icon for " + mintUrl + ": " + e.getMessage());
                 }
             }).start();
         }

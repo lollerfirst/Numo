@@ -47,6 +47,9 @@ class MintsSettingsActivity : AppCompatActivity(),
 
         findViewById<View?>(R.id.back_button)?.setOnClickListener { finish() }
 
+        // Initialize the mint icon cache
+        MintIconCache.initialize(this)
+        
         mintManager = MintManager.getInstance(this)
 
         mintsRecyclerView = findViewById(R.id.mints_recycler_view)
