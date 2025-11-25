@@ -140,7 +140,6 @@ class ItemEntryActivity : AppCompatActivity() {
         confirmButton.setOnClickListener {
             currentItem?.let { item ->
                 itemManager.removeItem(item.id!!)
-                Toast.makeText(this, "Item deleted", Toast.LENGTH_SHORT).show()
                 setResult(RESULT_OK)
                 dialog.dismiss()
                 finish()
@@ -355,7 +354,6 @@ class ItemEntryActivity : AppCompatActivity() {
             }
         }
 
-        Toast.makeText(this, if (isEditMode) "Item updated" else "Item added", Toast.LENGTH_SHORT).show()
         setResult(RESULT_OK)
         finish()
     }

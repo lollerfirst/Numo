@@ -65,7 +65,6 @@ class MintsSettingsActivity : AppCompatActivity(), MintsAdapter.MintRemoveListen
         if (added) {
             mintsAdapter.updateMints(mintManager.getAllowedMints())
             newMintEditText.setText("")
-            Toast.makeText(this, "Mint added", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "Mint already in the list", Toast.LENGTH_SHORT).show()
         }
@@ -80,7 +79,6 @@ class MintsSettingsActivity : AppCompatActivity(), MintsAdapter.MintRemoveListen
     override fun onMintRemoved(mintUrl: String) {
         if (mintManager.removeMint(mintUrl)) {
             mintsAdapter.updateMints(mintManager.getAllowedMints())
-            Toast.makeText(this, "Mint removed", Toast.LENGTH_SHORT).show()
         }
     }
 }

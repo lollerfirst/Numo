@@ -64,6 +64,8 @@ class PaymentRequestActivity : AppCompatActivity() {
     private lateinit var closeButton: View
     private lateinit var shareButton: View
     private lateinit var nfcReadingOverlay: android.view.View
+    private lateinit var lightningLoadingSpinner: View
+    private lateinit var lightningLogoCard: View
 
     private var paymentAmount: Long = 0
     private var bitcoinPriceWorker: BitcoinPriceWorker? = null
@@ -100,6 +102,8 @@ class PaymentRequestActivity : AppCompatActivity() {
         statusText = findViewById(R.id.payment_status_text)
         closeButton = findViewById(R.id.close_button)
         shareButton = findViewById(R.id.share_button)
+        lightningLoadingSpinner = findViewById(R.id.lightning_loading_spinner)
+        lightningLogoCard = findViewById(R.id.lightning_logo_card)
 
         // Set up tab listeners
         setupTabs()
@@ -314,9 +318,8 @@ class PaymentRequestActivity : AppCompatActivity() {
             setupNostrPayment(nostrSecret, nostrPubHex, relayList)
         }
 
-        // Start Lightning flow in parallel with Nostr/HCE
-        // The invoice QR itself is only shown when Lightning tab is selected.
-        startLightningMintFlow()
+        // Lightning flow is started only when user switches to Lightning tab
+        // (see selectLightningTab() method)
     }
 
     private fun startLightningMintFlow() {
@@ -358,8 +361,13 @@ class PaymentRequestActivity : AppCompatActivity() {
                     try {
                         val qrBitmap = generateQrBitmap(bolt11, 512)
                         lightningQrImageView.setImageBitmap(qrBitmap)
+                        // Hide loading spinner and show the bolt icon
+                        lightningLoadingSpinner.visibility = View.GONE
+                        lightningLogoCard.visibility = View.VISIBLE
                     } catch (e: Exception) {
                         Log.e(TAG, "Error generating Lightning QR bitmap: ${e.message}", e)
+                        // Still hide spinner on error
+                        lightningLoadingSpinner.visibility = View.GONE
                     }
                 }
 

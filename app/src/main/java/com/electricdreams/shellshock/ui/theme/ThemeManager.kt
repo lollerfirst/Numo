@@ -23,7 +23,7 @@ class ThemeManager(
         submitButton: Button
     ) {
         val prefs = activity.getSharedPreferences("app_prefs", AppCompatActivity.MODE_PRIVATE)
-        val theme = prefs.getString("app_theme", "obsidian") ?: "obsidian"
+        val theme = prefs.getString("app_theme", "green") ?: "green"
         val isDarkMode = prefs.getBoolean(KEY_DARK_MODE, false)
         
         // Get the actual root ConstraintLayout from the content view

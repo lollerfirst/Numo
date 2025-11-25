@@ -39,7 +39,6 @@ class AmountDisplayManager(
         if (!isUsdInputMode) {
             val price = bitcoinPriceWorker?.getCurrentPrice() ?: 0.0
             if (price <= 0) {
-                Toast.makeText(context, "Bitcoin price unavailable", Toast.LENGTH_SHORT).show()
                 return false
             }
         }

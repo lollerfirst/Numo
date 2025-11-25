@@ -107,7 +107,6 @@ class NfcPaymentProcessor(
             rescanDialog?.dismiss()
             savedPin = null
             waitingForRescan = false
-            Toast.makeText(activity, "Payment canceled", Toast.LENGTH_SHORT).show()
         }
         
         rescanDialog = builder.create().apply {

@@ -154,11 +154,7 @@ class ModernPOSActivity : AppCompatActivity(), SatocashWallet.OperationFeedback 
                 val amount = data.getLongExtra(PaymentRequestActivity.RESULT_EXTRA_AMOUNT, 0L)
                 if (token != null && amount > 0) {
                     uiCoordinator.handlePaymentSuccess(token, amount)
-                } else {
-                    android.widget.Toast.makeText(this, "Payment completed but data was invalid", android.widget.Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                android.widget.Toast.makeText(this, "Payment cancelled", android.widget.Toast.LENGTH_SHORT).show()
             }
         }
     }

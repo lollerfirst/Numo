@@ -110,20 +110,32 @@
                 android:scaleType="fitCenter"
                 android:visibility="invisible" />
 
-            <!-- Center Logo Overlay for Lightning -->
-            <androidx.cardview.widget.CardView
+            <!-- Loading spinner for Lightning invoice generation -->
+            <ProgressBar
+                android:id="@+id/lightning_loading_spinner"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_gravity="center"
-                app:cardBackgroundColor="@color/color_bg_white"
+                android:indeterminate="true"
+                android:visibility="visible" />
+
+            <!-- Center Logo Overlay for Lightning -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/lightning_logo_card"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@android:color/white"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="0dp">
+                app:cardElevation="0dp"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_lightning" />
+                    android:src="@drawable/ic_lightning_black"
+                    app:tint="@android:color/black" />
             </androidx.cardview.widget.CardView>
         </FrameLayout>
 
@@ -219,19 +231,6 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
-            android:id="@+id/lightning_tab"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:minWidth="96dp"
-            android:gravity="center"
-            android:paddingHorizontal="16dp"
-            android:text="Lightning"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="@color/color_bg_white"
-            android:background="@drawable/bg_button_primary_green" />
-
-        <TextView
             android:id="@+id/cashu_tab"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
@@ -239,6 +238,19 @@
             android:gravity="center"
             android:paddingHorizontal="16dp"
             android:text="Cashu"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/color_bg_white"
+            android:background="@drawable/bg_button_primary_green" />
+
+        <TextView
+            android:id="@+id/lightning_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:minWidth="96dp"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
+            android:text="Lightning"
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/color_text_secondary"
