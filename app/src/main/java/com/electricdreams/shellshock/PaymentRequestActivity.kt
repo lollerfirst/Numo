@@ -191,14 +191,20 @@ class PaymentRequestActivity : AppCompatActivity() {
     }
 
     private fun createPendingPayment() {
-        val entryUnit = if (formattedAmountString.startsWith("₿")) "sat" else 
-            CurrencyManager.getInstance(this).getCurrentCurrency()
+        // Parse the formatted amount string to extract the exact entered amount
+        // This avoids precision loss from sats→fiat→sats round-trip conversion
+        val parsedAmount = Amount.parse(formattedAmountString)
         
-        val enteredAmount = if (entryUnit == "sat") {
-            paymentAmount
+        val entryUnit: String
+        val enteredAmount: Long
+        
+        if (parsedAmount != null) {
+            entryUnit = if (parsedAmount.currency == Currency.BTC) "sat" else parsedAmount.currency.name
+            enteredAmount = parsedAmount.value
         } else {
-            val fiatValue = bitcoinPriceWorker?.satoshisToFiat(paymentAmount) ?: 0.0
-            (fiatValue * 100).toLong() // Convert to cents
+            // Fallback if parsing fails (shouldn't happen with valid formatted amounts)
+            entryUnit = "sat"
+            enteredAmount = paymentAmount
         }
 
         val bitcoinPrice = bitcoinPriceWorker?.getCurrentPrice()?.takeIf { it > 0 }
