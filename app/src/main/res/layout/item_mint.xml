@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mint_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="6dp"
     app:cardBackgroundColor="@color/color_bg_card"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
     app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,106 +17,154 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Mint icon avatar -->
-        <ImageView
+        <!-- Mint icon avatar with circular clipping -->
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/mint_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="12dp"
-            android:background="@drawable/bg_circle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@color/color_bg_surface"
             android:contentDescription="Mint icon"
-            android:padding="6dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_bitcoin"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Circle" />
 
-        <!-- Lightning indicator (radio button) -->
-        <RadioButton
-            android:id="@+id/lightning_mint_radio"
+        <!-- Content container - all text aligned to right of icon -->
+        <LinearLayout
+            android:id="@+id/content_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@id/mint_icon"
+            app:layout_constraintEnd_toStartOf="@id/actions_container"
+            app:layout_constraintStart_toEndOf="@id/mint_icon"
+            app:layout_constraintTop_toTopOf="@id/mint_icon">
+
+            <!-- Top row: Lightning indicator + Mint name -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Lightning indicator (radio button) -->
+                <RadioButton
+                    android:id="@+id/lightning_mint_radio"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:button="@null"
+                    android:contentDescription="Select as Lightning mint"
+                    android:drawableStart="@drawable/ic_lightning_small"
+                    android:drawablePadding="0dp"
+                    android:gravity="center" />
+
+                <!-- Mint name -->
+                <TextView
+                    android:id="@+id/mint_name_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Minibits" />
+
+            </LinearLayout>
+
+            <!-- Mint URL - aligned with title -->
+            <TextView
+                android:id="@+id/mint_url_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginStart="28dp"
+                android:ellipsize="end"
+                android:fontFamily="monospace"
+                android:maxLines="1"
+                android:textColor="@color/color_text_tertiary"
+                android:textSize="11sp"
+                tools:text="mint.minibits.cash/Bitcoin" />
+
+        </LinearLayout>
+
+        <!-- Actions container (remove button) -->
+        <FrameLayout
+            android:id="@+id/actions_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:button="@null"
-            android:contentDescription="Select as Lightning mint"
-            android:drawableStart="@drawable/ic_lightning_small"
-            android:drawablePadding="0dp"
-            android:minWidth="28dp"
-            android:minHeight="28dp"
-            android:padding="4dp"
-            app:layout_constraintStart_toEndOf="@id/mint_icon"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Mint name (from mint info, or host if no name) -->
-        <TextView
-            android:id="@+id/mint_name_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textAppearance="@style/Text.Body"
-            android:textColor="@color/color_text_primary"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/lightning_mint_radio"
-            app:layout_constraintEnd_toStartOf="@id/remove_mint_button"
-            app:layout_constraintStart_toEndOf="@id/lightning_mint_radio"
-            app:layout_constraintTop_toTopOf="@id/lightning_mint_radio" />
+            <ImageButton
+                android:id="@+id/remove_mint_button"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Remove mint"
+                android:padding="6dp"
+                android:src="@drawable/ic_delete"
+                app:tint="@color/color_icon_secondary" />
 
-        <!-- Mint URL (fixed-width font, grey) -->
-        <TextView
-            android:id="@+id/mint_url_text"
+        </FrameLayout>
+
+        <!-- Divider -->
+        <View
+            android:id="@+id/divider"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:ellipsize="end"
-            android:fontFamily="monospace"
-            android:maxLines="1"
-            android:textColor="@color/color_text_secondary"
-            android:textSize="12sp"
+            android:layout_height="1dp"
+            android:layout_marginTop="14dp"
+            android:background="@color/color_divider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/lightning_mint_radio" />
+            app:layout_constraintTop_toBottomOf="@id/mint_icon" />
 
         <!-- Balance row -->
         <LinearLayout
             android:id="@+id/balance_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/mint_url_text">
+            app:layout_constraintTop_toBottomOf="@id/divider">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Balance:"
-                android:textAppearance="@style/Text.Caption"
+                android:text="Balance"
                 android:textColor="@color/color_text_secondary"
-                android:textSize="13sp" />
-
-            <TextView
-                android:id="@+id/mint_balance_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1"
-                android:text="Loading..."
-                android:textAppearance="@style/Text.Body"
-                android:textColor="@color/color_text_primary"
                 android:textSize="14sp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
             <!-- Loading indicator -->
             <ProgressBar
                 android:id="@+id/balance_loading"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
+                android:layout_marginEnd="8dp"
                 android:indeterminate="true"
                 android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/mint_balance_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="₿21,000" />
 
         </LinearLayout>
 
@@ -123,32 +172,19 @@
         <Button
             android:id="@+id/withdraw_button"
             style="@style/Widget.Button.Secondary.Outlined"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:minHeight="0dp"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="8dp"
+            android:layout_marginTop="12dp"
+            android:minHeight="44dp"
             android:text="Withdraw"
-            android:textSize="14sp"
+            android:textSize="15sp"
+            android:visibility="gone"
+            app:cornerRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/balance_container" />
-
-        <!-- Remove button -->
-        <ImageButton
-            android:id="@+id/remove_mint_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Remove mint"
-            android:minWidth="36dp"
-            android:minHeight="36dp"
-            android:padding="6dp"
-            android:src="@drawable/ic_delete"
-            android:tint="@color/color_icon_secondary"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/balance_container"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.electricdreams.shellshock.R
 import com.electricdreams.shellshock.core.cashu.CashuWalletManager
+import com.electricdreams.shellshock.core.util.MintIconCache
 import com.electricdreams.shellshock.core.util.MintManager
 import com.electricdreams.shellshock.ui.adapter.MintsAdapter
 import kotlinx.coroutines.Dispatchers
@@ -66,8 +67,8 @@ class MintsSettingsActivity : AppCompatActivity(),
         )
         mintsRecyclerView.adapter = mintsAdapter
         
-        // Fetch mint info for all mints (in case not already stored)
-        fetchAllMintInfo()
+        // Check for mints that need refresh (older than 24 hours) or have no info
+        refreshStaleMintsInfo()
 
         addMintButton.setOnClickListener { addNewMint() }
         resetMintsButton.setOnClickListener { resetMintsToDefaults() }
@@ -101,6 +102,33 @@ class MintsSettingsActivity : AppCompatActivity(),
         }
     }
 
+    /**
+     * Refresh mint info for mints that are stale (older than 24 hours) or have no info.
+     * Also downloads/refreshes icons for any mints with icon URLs.
+     */
+    private fun refreshStaleMintsInfo() {
+        lifecycleScope.launch {
+            val mintsToRefresh = mintManager.getMintsNeedingRefresh()
+            
+            if (mintsToRefresh.isEmpty()) {
+                Log.d(TAG, "All mint info is fresh, no refresh needed")
+                return@launch
+            }
+            
+            Log.d(TAG, "Refreshing mint info for ${mintsToRefresh.size} mints")
+            
+            for (mintUrl in mintsToRefresh) {
+                fetchAndStoreMintInfo(mintUrl, forceIconRefresh = true)
+            }
+            
+            // Refresh adapter to show updated names and icons
+            mintsAdapter.notifyDataSetChanged()
+        }
+    }
+
+    /**
+     * Fetch mint info for all mints that don't have info stored yet.
+     */
     private fun fetchAllMintInfo() {
         lifecycleScope.launch {
             for (mintUrl in mintManager.getAllowedMints()) {
@@ -114,13 +142,36 @@ class MintsSettingsActivity : AppCompatActivity(),
         }
     }
 
-    private suspend fun fetchAndStoreMintInfo(mintUrl: String) {
+    /**
+     * Fetch and store mint info for a single mint.
+     * Also downloads the mint icon if available.
+     * 
+     * @param mintUrl The mint URL to fetch info for
+     * @param forceIconRefresh If true, re-download the icon even if cached
+     */
+    private suspend fun fetchAndStoreMintInfo(mintUrl: String, forceIconRefresh: Boolean = false) {
         withContext(Dispatchers.IO) {
             val info = CashuWalletManager.fetchMintInfo(mintUrl)
             if (info != null) {
                 val json = CashuWalletManager.mintInfoToJson(info)
                 mintManager.setMintInfo(mintUrl, json)
-                Log.d(TAG, "Stored mint info for $mintUrl: name=${info.name}")
+                
+                // Update the refresh timestamp
+                mintManager.setMintRefreshTimestamp(mintUrl)
+                
+                Log.d(TAG, "Stored mint info for $mintUrl: name=${info.name}, iconUrl=${info.iconUrl}")
+                
+                // Download and cache the icon if available
+                val iconUrl = info.iconUrl
+                if (!iconUrl.isNullOrEmpty()) {
+                    if (forceIconRefresh) {
+                        // Force re-download
+                        MintIconCache.downloadAndCacheIcon(mintUrl, iconUrl)
+                    } else {
+                        // Only download if not already cached
+                        MintIconCache.getOrDownloadIcon(mintUrl, iconUrl)
+                    }
+                }
             } else {
                 Log.w(TAG, "Could not fetch mint info for $mintUrl")
             }

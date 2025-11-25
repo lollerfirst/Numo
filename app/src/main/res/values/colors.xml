@@ -11,6 +11,7 @@
     <color name="color_bg_white">#FFFFFF</color>
     <color name="color_bg_light">#F6F7F8</color>
     <color name="color_bg_secondary">#F1F2F6</color>
+    <color name="color_bg_surface">#F2F2F7</color>
     <color name="color_bg_card">#FFFFFF</color>
     <color name="color_search_bg">#F1F2F6</color>
     <color name="color_divider">#E5E5EA</color>

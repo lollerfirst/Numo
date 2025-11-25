@@ -6,8 +6,8 @@ import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.electricdreams.shellshock.R;
 import com.electricdreams.shellshock.core.util.MintIconCache;
 import com.electricdreams.shellshock.core.util.MintManager;
+import com.google.android.material.imageview.ShapeableImageView;
 
 import java.io.File;
 import java.util.HashMap;
@@ -199,7 +200,7 @@ public class MintsAdapter extends RecyclerView.Adapter<MintsAdapter.MintViewHold
      * ViewHolder for mint items
      */
     class MintViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView mintIcon;
+        private final ShapeableImageView mintIcon;
         private final TextView mintNameText;
         private final TextView mintUrlText;
         private final TextView mintBalanceText;

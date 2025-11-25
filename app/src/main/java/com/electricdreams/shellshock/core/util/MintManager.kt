@@ -24,6 +24,8 @@ class MintManager private constructor(context: Context) {
         private const val KEY_MINTS = "allowedMints"
         private const val KEY_PREFERRED_LIGHTNING_MINT = "preferredLightningMint"
         private const val KEY_MINT_INFO_PREFIX = "mintInfo_"
+        private const val KEY_MINT_REFRESH_PREFIX = "mintRefresh_"
+        private const val REFRESH_INTERVAL_MS = 24 * 60 * 60 * 1000L // 24 hours
 
         // Default mints
         private val DEFAULT_MINTS: Set<String> = setOf(
@@ -268,6 +270,50 @@ class MintManager private constructor(context: Context) {
             }
         }
         return null
+    }
+
+    /**
+     * Set the last refresh timestamp for a mint.
+     */
+    fun setMintRefreshTimestamp(mintUrl: String, timestamp: Long = System.currentTimeMillis()) {
+        val normalized = normalizeMintUrl(mintUrl)
+        preferences.edit().putLong(KEY_MINT_REFRESH_PREFIX + normalized, timestamp).apply()
+        Log.d(TAG, "Updated refresh timestamp for $normalized")
+    }
+
+    /**
+     * Get the last refresh timestamp for a mint.
+     * @return The timestamp in milliseconds, or 0 if never refreshed.
+     */
+    fun getMintRefreshTimestamp(mintUrl: String): Long {
+        val normalized = normalizeMintUrl(mintUrl)
+        return preferences.getLong(KEY_MINT_REFRESH_PREFIX + normalized, 0L)
+    }
+
+    /**
+     * Check if a mint's info needs to be refreshed (older than 24 hours).
+     * @return true if the mint info should be refreshed, false otherwise.
+     */
+    fun needsRefresh(mintUrl: String): Boolean {
+        val lastRefresh = getMintRefreshTimestamp(mintUrl)
+        if (lastRefresh == 0L) {
+            // Never refreshed
+            return true
+        }
+        val now = System.currentTimeMillis()
+        val needsUpdate = (now - lastRefresh) > REFRESH_INTERVAL_MS
+        if (needsUpdate) {
+            Log.d(TAG, "Mint $mintUrl needs refresh (last: ${(now - lastRefresh) / (1000 * 60 * 60)}h ago)")
+        }
+        return needsUpdate
+    }
+
+    /**
+     * Get list of mints that need to be refreshed (info older than 24 hours).
+     * @return List of mint URLs that need refreshing.
+     */
+    fun getMintsNeedingRefresh(): List<String> {
+        return allowedMints.filter { needsRefresh(it) }
     }
 
     /**
