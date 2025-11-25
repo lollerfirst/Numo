@@ -7,17 +7,33 @@
     android:paddingHorizontal="@dimen/margin_content_horizontal"
     android:paddingVertical="@dimen/space_m">
 
+    <RadioButton
+        android:id="@+id/lightning_mint_radio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@null"
+        android:contentDescription="Select as Lightning mint"
+        android:drawableStart="@drawable/ic_lightning_small"
+        android:drawablePadding="0dp"
+        android:minWidth="32dp"
+        android:minHeight="32dp"
+        android:padding="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/mint_url_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_s"
         android:layout_marginEnd="@dimen/space_m"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/Text.Body"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/remove_mint_button"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/lightning_mint_radio"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton

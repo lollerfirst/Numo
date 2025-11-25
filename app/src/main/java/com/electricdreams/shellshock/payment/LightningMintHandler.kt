@@ -30,8 +30,14 @@ import kotlin.coroutines.resumeWithException
  * - Creating a mint quote for a Lightning invoice
  * - Subscribing to quote state updates via WebSocket
  * - Minting proofs once the invoice is paid
+ *
+ * @param preferredMint Optional preferred mint URL for Lightning payments. If null or invalid,
+ *                      falls back to the first allowed mint.
+ * @param allowedMints List of allowed mint URLs (used as fallback if preferredMint is invalid)
+ * @param uiScope Coroutine scope for UI callbacks
  */
 class LightningMintHandler(
+    private val preferredMint: String?,
     private val allowedMints: List<String>,
     private val uiScope: CoroutineScope
 ) {
@@ -86,14 +92,25 @@ class LightningMintHandler(
             return
         }
 
-        if (allowedMints.isEmpty()) {
+        if (allowedMints.isEmpty() && preferredMint == null) {
             Log.w(TAG, "No allowed mints configured, cannot request Lightning mint quote")
             callback.onError("No mints configured")
             return
         }
 
-        // For now pick the first allowed mint; could be randomized/rotated later
-        val mintUrlStr = allowedMints.first()
+        // Use preferred mint if set and valid, otherwise fall back to first allowed mint
+        val mintUrlStr = if (preferredMint != null && (allowedMints.isEmpty() || allowedMints.contains(preferredMint))) {
+            preferredMint
+        } else {
+            allowedMints.firstOrNull() ?: run {
+                Log.e(TAG, "No valid mint available for Lightning")
+                callback.onError("No mints configured")
+                return
+            }
+        }
+        
+        Log.d(TAG, "Using mint for Lightning: $mintUrlStr (preferred: $preferredMint)")
+        
         val mintUrl = try {
             MintUrl(mintUrlStr)
         } catch (t: Throwable) {

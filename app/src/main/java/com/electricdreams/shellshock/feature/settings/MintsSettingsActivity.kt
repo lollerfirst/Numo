@@ -14,7 +14,9 @@ import com.electricdreams.shellshock.R
 import com.electricdreams.shellshock.core.util.MintManager
 import com.electricdreams.shellshock.ui.adapter.MintsAdapter
 
-class MintsSettingsActivity : AppCompatActivity(), MintsAdapter.MintRemoveListener {
+class MintsSettingsActivity : AppCompatActivity(), 
+    MintsAdapter.MintRemoveListener,
+    MintsAdapter.LightningMintSelectedListener {
 
     private lateinit var mintsRecyclerView: RecyclerView
     private lateinit var mintsAdapter: MintsAdapter
@@ -38,7 +40,12 @@ class MintsSettingsActivity : AppCompatActivity(), MintsAdapter.MintRemoveListen
 
         mintsRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        mintsAdapter = MintsAdapter(mintManager.getAllowedMints(), this)
+        mintsAdapter = MintsAdapter(
+            mintManager.getAllowedMints(), 
+            this,
+            this,
+            mintManager.getPreferredLightningMint()
+        )
         mintsRecyclerView.adapter = mintsAdapter
 
         addMintButton.setOnClickListener { addNewMint() }
@@ -73,12 +80,22 @@ class MintsSettingsActivity : AppCompatActivity(), MintsAdapter.MintRemoveListen
     private fun resetMintsToDefaults() {
         mintManager.resetToDefaults()
         mintsAdapter.updateMints(mintManager.getAllowedMints())
+        mintsAdapter.setPreferredLightningMint(mintManager.getPreferredLightningMint())
         Toast.makeText(this, "Mints reset to defaults", Toast.LENGTH_SHORT).show()
     }
 
     override fun onMintRemoved(mintUrl: String) {
         if (mintManager.removeMint(mintUrl)) {
             mintsAdapter.updateMints(mintManager.getAllowedMints())
+            // Update preferred Lightning mint in adapter (may have changed if removed mint was preferred)
+            mintsAdapter.setPreferredLightningMint(mintManager.getPreferredLightningMint())
+        }
+    }
+
+    override fun onLightningMintSelected(mintUrl: String) {
+        if (mintManager.setPreferredLightningMint(mintUrl)) {
+            mintsAdapter.setPreferredLightningMint(mintUrl)
+            Toast.makeText(this, "Lightning payments will use this mint", Toast.LENGTH_SHORT).show()
         }
     }
 }

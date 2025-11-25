@@ -4,9 +4,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.electricdreams.shellshock.R;
@@ -20,6 +22,8 @@ public class MintsAdapter extends RecyclerView.Adapter<MintsAdapter.MintViewHold
     
     private List<String> mints;
     private final MintRemoveListener removeListener;
+    private final LightningMintSelectedListener lightningListener;
+    private String preferredLightningMint;
     
     /**
      * Interface for handling mint removal
@@ -28,9 +32,32 @@ public class MintsAdapter extends RecyclerView.Adapter<MintsAdapter.MintViewHold
         void onMintRemoved(String mintUrl);
     }
     
+    /**
+     * Interface for handling Lightning mint selection
+     */
+    public interface LightningMintSelectedListener {
+        void onLightningMintSelected(String mintUrl);
+    }
+    
     public MintsAdapter(List<String> mints, MintRemoveListener listener) {
+        this(mints, listener, null, null);
+    }
+    
+    public MintsAdapter(List<String> mints, MintRemoveListener removeListener, 
+                       @Nullable LightningMintSelectedListener lightningListener,
+                       @Nullable String preferredLightningMint) {
         this.mints = mints;
-        this.removeListener = listener;
+        this.removeListener = removeListener;
+        this.lightningListener = lightningListener;
+        this.preferredLightningMint = preferredLightningMint;
+    }
+    
+    /**
+     * Set the preferred Lightning mint URL
+     */
+    public void setPreferredLightningMint(@Nullable String mintUrl) {
+        this.preferredLightningMint = mintUrl;
+        notifyDataSetChanged();
     }
     
     @NonNull
@@ -66,15 +93,34 @@ public class MintsAdapter extends RecyclerView.Adapter<MintsAdapter.MintViewHold
     class MintViewHolder extends RecyclerView.ViewHolder {
         private final TextView mintUrlText;
         private final ImageButton removeButton;
+        private final RadioButton lightningRadio;
         
         public MintViewHolder(@NonNull View itemView) {
             super(itemView);
             mintUrlText = itemView.findViewById(R.id.mint_url_text);
             removeButton = itemView.findViewById(R.id.remove_mint_button);
+            lightningRadio = itemView.findViewById(R.id.lightning_mint_radio);
         }
         
         public void bind(String mintUrl) {
             mintUrlText.setText(mintUrl);
+            
+            // Set up Lightning mint radio button
+            boolean isPreferred = mintUrl.equals(preferredLightningMint);
+            lightningRadio.setChecked(isPreferred);
+            
+            lightningRadio.setOnClickListener(v -> {
+                if (lightningListener != null) {
+                    lightningListener.onLightningMintSelected(mintUrl);
+                }
+            });
+            
+            // Also allow clicking the whole row to select as Lightning mint
+            itemView.setOnClickListener(v -> {
+                if (lightningListener != null) {
+                    lightningListener.onLightningMintSelected(mintUrl);
+                }
+            });
             
             // Set up remove button
             removeButton.setOnClickListener(v -> {

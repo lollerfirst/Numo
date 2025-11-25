@@ -19,6 +19,7 @@ class MintManager private constructor(context: Context) {
         private const val TAG = "MintManager"
         private const val PREFS_NAME = "MintPreferences"
         private const val KEY_MINTS = "allowedMints"
+        private const val KEY_PREFERRED_LIGHTNING_MINT = "preferredLightningMint"
 
         // Default mints
         private val DEFAULT_MINTS: Set<String> = setOf(
@@ -27,6 +28,9 @@ class MintManager private constructor(context: Context) {
             "https://mint.cubabitcoin.org",
             "https://mint.coinos.io",
         )
+        
+        // Default Lightning mint (first of the default mints)
+        private const val DEFAULT_LIGHTNING_MINT = "https://mint.minibits.cash/Bitcoin"
 
         @Volatile
         private var instance: MintManager? = null
@@ -48,10 +52,20 @@ class MintManager private constructor(context: Context) {
     private var allowedMints: MutableSet<String> =
         HashSet(preferences.getStringSet(KEY_MINTS, DEFAULT_MINTS) ?: DEFAULT_MINTS)
 
+    private var preferredLightningMint: String? =
+        preferences.getString(KEY_PREFERRED_LIGHTNING_MINT, null)
+
     private var listener: MintChangeListener? = null
 
     init {
         Log.d(TAG, "Initialized with ${allowedMints.size} allowed mints")
+        // Ensure preferred Lightning mint is valid (exists in allowed mints)
+        val preferred = preferredLightningMint
+        if (preferred == null || !allowedMints.contains(preferred)) {
+            // Set to first allowed mint or default
+            preferredLightningMint = allowedMints.firstOrNull() ?: DEFAULT_LIGHTNING_MINT
+            savePreferredLightningMint()
+        }
     }
 
     /** Set a listener to be notified when allowed mints change. */
@@ -61,6 +75,49 @@ class MintManager private constructor(context: Context) {
 
     /** Get the list of allowed mints. */
     fun getAllowedMints(): List<String> = ArrayList(allowedMints)
+
+    /**
+     * Get the preferred mint for Lightning payments.
+     * Falls back to the first allowed mint if not set.
+     */
+    fun getPreferredLightningMint(): String? {
+        val preferred = preferredLightningMint
+        // Return preferred if it's still in the allowed list
+        if (preferred != null && allowedMints.contains(preferred)) {
+            return preferred
+        }
+        // Otherwise return the first allowed mint
+        return allowedMints.firstOrNull()
+    }
+
+    /**
+     * Set the preferred mint for Lightning payments.
+     * @param mintUrl The mint URL to set as preferred. Must be in the allowed list.
+     * @return true if the preference was set, false if the mint is not in the allowed list.
+     */
+    fun setPreferredLightningMint(mintUrl: String?): Boolean {
+        var url = mintUrl?.trim()
+        if (url.isNullOrEmpty()) {
+            Log.e(TAG, "Cannot set empty mint URL as preferred Lightning mint")
+            return false
+        }
+
+        url = normalizeMintUrl(url)
+        if (!allowedMints.contains(url)) {
+            Log.e(TAG, "Cannot set preferred Lightning mint: $url is not in the allowed list")
+            return false
+        }
+
+        preferredLightningMint = url
+        savePreferredLightningMint()
+        Log.d(TAG, "Set preferred Lightning mint to: $url")
+        return true
+    }
+
+    /** Save preferred Lightning mint to preferences. */
+    private fun savePreferredLightningMint() {
+        preferences.edit().putString(KEY_PREFERRED_LIGHTNING_MINT, preferredLightningMint).apply()
+    }
 
     /**
      * Add a mint to the allowed list.
@@ -102,6 +159,12 @@ class MintManager private constructor(context: Context) {
         val changed = allowedMints.remove(url)
 
         if (changed) {
+            // If the removed mint was the preferred Lightning mint, reset to first available
+            if (preferredLightningMint == url) {
+                preferredLightningMint = allowedMints.firstOrNull()
+                savePreferredLightningMint()
+                Log.d(TAG, "Preferred Lightning mint was removed, now set to: $preferredLightningMint")
+            }
             saveChanges()
             Log.d(TAG, "Removed mint from allowed list: $url")
             listener?.onMintsChanged(getAllowedMints())
@@ -113,8 +176,10 @@ class MintManager private constructor(context: Context) {
     /** Reset allowed mints to the default list. */
     fun resetToDefaults() {
         allowedMints = HashSet(DEFAULT_MINTS)
+        preferredLightningMint = DEFAULT_LIGHTNING_MINT
         saveChanges()
-        Log.d(TAG, "Reset mints to default list")
+        savePreferredLightningMint()
+        Log.d(TAG, "Reset mints to default list, preferred Lightning mint: $preferredLightningMint")
         listener?.onMintsChanged(getAllowedMints())
     }
 

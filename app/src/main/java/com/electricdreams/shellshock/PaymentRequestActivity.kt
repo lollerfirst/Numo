@@ -274,8 +274,9 @@ class PaymentRequestActivity : AppCompatActivity() {
         val allowedMints = mintManager.getAllowedMints()
         Log.d(TAG, "Using ${allowedMints.size} allowed mints for payment request")
 
-        // Initialize Lightning handler (will be started when tab is selected)
-        lightningHandler = LightningMintHandler(allowedMints, uiScope)
+        // Initialize Lightning handler with preferred mint (will be started when tab is selected)
+        val preferredLightningMint = mintManager.getPreferredLightningMint()
+        lightningHandler = LightningMintHandler(preferredLightningMint, allowedMints, uiScope)
 
         // Check if NDEF is available
         val ndefAvailable = NdefHostCardEmulationService.isHceAvailable(this)
