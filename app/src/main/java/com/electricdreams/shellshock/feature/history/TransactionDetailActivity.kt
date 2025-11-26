@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.electricdreams.shellshock.R
 import com.electricdreams.shellshock.core.data.model.PaymentHistoryEntry
 import com.electricdreams.shellshock.core.model.Amount
+import com.electricdreams.shellshock.core.util.MintManager
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -125,7 +126,7 @@ class TransactionDetailActivity : AppCompatActivity() {
 
         val mintUrl = entry.mintUrl
         if (!mintUrl.isNullOrEmpty()) {
-            val mintName = extractMintName(mintUrl)
+            val mintName = getMintDisplayName(mintUrl)
             mintNameText.text = "From $mintName"
             mintUrlText.text = mintUrl
         } else {
@@ -245,21 +246,8 @@ class TransactionDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun extractMintName(mintUrl: String): String {
-        return try {
-            val uri = Uri.parse(mintUrl)
-            var host = uri.host
-            if (host != null) {
-                if (host.startsWith("www.")) {
-                    host = host.substring(4)
-                }
-                host
-            } else {
-                mintUrl
-            }
-        } catch (_: Exception) {
-            mintUrl
-        }
+    private fun getMintDisplayName(mintUrl: String): String {
+        return MintManager.getInstance(this).getMintDisplayName(mintUrl)
     }
 
     private fun setupActionButtons() {

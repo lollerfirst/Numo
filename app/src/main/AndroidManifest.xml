@@ -194,6 +194,73 @@
                 android:value=".feature.settings.SettingsActivity" />
         </activity>
         
+        <activity android:name="com.electricdreams.shellshock.feature.settings.SecuritySettingsActivity"
+            android:exported="false"
+            android:label="Security &amp; Privacy"
+            android:theme="@style/Theme.Shellshock"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName=".feature.settings.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".feature.settings.SettingsActivity" />
+        </activity>
+        
+        <activity android:name="com.electricdreams.shellshock.feature.settings.SeedPhraseActivity"
+            android:exported="false"
+            android:label="Seed Phrase"
+            android:theme="@style/Theme.Shellshock"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName=".feature.settings.SecuritySettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".feature.settings.SecuritySettingsActivity" />
+        </activity>
+        
+        <activity android:name="com.electricdreams.shellshock.feature.settings.RestoreWalletActivity"
+            android:exported="false"
+            android:label="Restore Wallet"
+            android:theme="@style/Theme.Shellshock"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName=".feature.settings.SecuritySettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".feature.settings.SecuritySettingsActivity" />
+        </activity>
+        
+        <!-- Withdraw Activities -->
+        <activity android:name="com.electricdreams.shellshock.feature.settings.WithdrawLightningActivity"
+            android:exported="false"
+            android:label="Withdraw"
+            android:theme="@style/Theme.Shellshock"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName=".feature.settings.MintsSettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".feature.settings.MintsSettingsActivity" />
+        </activity>
+        
+        <activity android:name="com.electricdreams.shellshock.feature.settings.WithdrawMeltQuoteActivity"
+            android:exported="false"
+            android:label="Confirm Withdrawal"
+            android:theme="@style/Theme.Shellshock"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName=".feature.settings.WithdrawLightningActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".feature.settings.WithdrawLightningActivity" />
+        </activity>
+        
+        <activity android:name="com.electricdreams.shellshock.feature.settings.WithdrawSuccessActivity"
+            android:exported="false"
+            android:label="Withdrawal Complete"
+            android:theme="@style/Theme.Shellshock"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName=".ModernPOSActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ModernPOSActivity" />
+        </activity>
+        
         <!-- Item Management Activities -->
         <activity android:name="com.electricdreams.shellshock.feature.items.ItemEntryActivity"
             android:exported="false"

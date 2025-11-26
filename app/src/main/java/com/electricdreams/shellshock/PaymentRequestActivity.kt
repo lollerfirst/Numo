@@ -191,14 +191,20 @@ class PaymentRequestActivity : AppCompatActivity() {
     }
 
     private fun createPendingPayment() {
-        val entryUnit = if (formattedAmountString.startsWith("₿")) "sat" else 
-            CurrencyManager.getInstance(this).getCurrentCurrency()
+        // Parse the formatted amount string to extract the exact entered amount
+        // This avoids precision loss from sats→fiat→sats round-trip conversion
+        val parsedAmount = Amount.parse(formattedAmountString)
         
-        val enteredAmount = if (entryUnit == "sat") {
-            paymentAmount
+        val entryUnit: String
+        val enteredAmount: Long
+        
+        if (parsedAmount != null) {
+            entryUnit = if (parsedAmount.currency == Currency.BTC) "sat" else parsedAmount.currency.name
+            enteredAmount = parsedAmount.value
         } else {
-            val fiatValue = bitcoinPriceWorker?.satoshisToFiat(paymentAmount) ?: 0.0
-            (fiatValue * 100).toLong() // Convert to cents
+            // Fallback if parsing fails (shouldn't happen with valid formatted amounts)
+            entryUnit = "sat"
+            enteredAmount = paymentAmount
         }
 
         val bitcoinPrice = bitcoinPriceWorker?.getCurrentPrice()?.takeIf { it > 0 }
@@ -274,8 +280,9 @@ class PaymentRequestActivity : AppCompatActivity() {
         val allowedMints = mintManager.getAllowedMints()
         Log.d(TAG, "Using ${allowedMints.size} allowed mints for payment request")
 
-        // Initialize Lightning handler (will be started when tab is selected)
-        lightningHandler = LightningMintHandler(allowedMints, uiScope)
+        // Initialize Lightning handler with preferred mint (will be started when tab is selected)
+        val preferredLightningMint = mintManager.getPreferredLightningMint()
+        lightningHandler = LightningMintHandler(preferredLightningMint, allowedMints, uiScope)
 
         // Check if NDEF is available
         val ndefAvailable = NdefHostCardEmulationService.isHceAvailable(this)
@@ -496,8 +503,8 @@ class PaymentRequestActivity : AppCompatActivity() {
         }
         setResult(Activity.RESULT_OK, resultIntent)
 
-        // Show PaymentReceivedActivity
-        showPaymentReceivedActivity(token)
+        // Use unified success handler
+        showPaymentSuccess(token, paymentAmount)
     }
 
     /**
@@ -532,16 +539,16 @@ class PaymentRequestActivity : AppCompatActivity() {
         }
         setResult(Activity.RESULT_OK, resultIntent)
 
-        // Show PaymentReceivedActivity (without token for Lightning)
-        showPaymentReceivedActivity("")
+        // Use unified success handler
+        showPaymentSuccess("", paymentAmount)
     }
 
     private fun showPaymentReceivedActivity(token: String) {
-        val successIntent = Intent(this, PaymentReceivedActivity::class.java).apply {
+        val intent = Intent(this, PaymentReceivedActivity::class.java).apply {
             putExtra(PaymentReceivedActivity.EXTRA_TOKEN, token)
             putExtra(PaymentReceivedActivity.EXTRA_AMOUNT, paymentAmount)
         }
-        startActivity(successIntent)
+        startActivity(intent)
         cleanupAndFinish()
     }
 
@@ -606,8 +613,37 @@ class PaymentRequestActivity : AppCompatActivity() {
         startActivity(Intent.createChooser(shareIntent, "Share Payment Request"))
     }
 
+    /**
+     * Unified success handler - plays feedback and shows success screen.
+     * This is the single source of truth for payment success handling.
+     */
+    private fun showPaymentSuccess(token: String, amount: Long) {
+        // Play success sound
+        try {
+            val mediaPlayer = android.media.MediaPlayer.create(this, R.raw.success_sound)
+            mediaPlayer?.setOnCompletionListener { it.release() }
+            mediaPlayer?.start()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error playing success sound: ${e.message}")
+        }
+        
+        // Vibrate
+        try {
+            val vibrator = getSystemService(android.content.Context.VIBRATOR_SERVICE) as android.os.Vibrator?
+            vibrator?.vibrate(PATTERN_SUCCESS, -1)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error vibrating: ${e.message}")
+        }
+
+        // Show success screen
+        showPaymentReceivedActivity(token)
+    }
+
     companion object {
         private const val TAG = "PaymentRequestActivity"
+        private val PATTERN_SUCCESS = longArrayOf(0, 50, 100, 50)
+
+
 
         const val EXTRA_PAYMENT_AMOUNT = "payment_amount"
         const val EXTRA_FORMATTED_AMOUNT = "formatted_amount"

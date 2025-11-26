@@ -23,7 +23,7 @@
             android:padding="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Back"
-            android:src="@drawable/ic_arrow_back"
+            android:src="@drawable/ic_chevron_back"
             android:tint="@color/color_text_primary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -63,6 +63,16 @@
                 android:text="ALLOWED MINTS"
                 android:textAppearance="@style/Text.SectionHeader" />
 
+            <!-- Lightning mint hint -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginBottom="12dp"
+                android:text="Select a mint for ⚡ Lightning payments. The selected mint will be used to receive and send Bitcoin over Lightning."
+                android:textAppearance="@style/Text.Caption"
+                android:textColor="@color/color_text_secondary" />
+
             <!-- Mints RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/mints_recycler_view"
@@ -89,6 +99,15 @@
                     android:paddingHorizontal="16dp"
                     android:textAppearance="@style/Text.Body"
                     android:textSize="15sp" />
+
+                <ProgressBar
+                    android:id="@+id/add_mint_loading"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_gravity="center_vertical"
+                    android:indeterminate="true"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/add_mint_button"

@@ -118,4 +118,10 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
+    <!-- Shape Appearances -->
+    <style name="ShapeAppearance.Circle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
 </resources>

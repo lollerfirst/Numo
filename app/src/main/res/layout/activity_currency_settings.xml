@@ -23,7 +23,7 @@
             android:padding="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Back"
-            android:src="@drawable/ic_arrow_back"
+            android:src="@drawable/ic_chevron_back"
             android:tint="@color/color_text_primary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

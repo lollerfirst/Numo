@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="12dp"
+    android:paddingHorizontal="16dp"
+    android:background="@drawable/bg_seed_word"
+    android:layout_marginBottom="8dp">
+
+    <!-- Status Icon -->
+    <FrameLayout
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="12dp">
+
+        <ProgressBar
+            android:id="@+id/mint_spinner"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/color_text_secondary" />
+
+        <ImageView
+            android:id="@+id/mint_status_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <!-- Mint Info -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/mint_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mint Name"
+            android:textSize="14sp"
+            android:textColor="@color/color_text_primary"
+            android:fontFamily="sans-serif-medium"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/mint_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Restoring..."
+            android:textSize="13sp"
+            android:textColor="@color/color_text_secondary"
+            android:layout_marginTop="2dp" />
+
+    </LinearLayout>
+
+    <!-- Balance Change -->
+    <TextView
+        android:id="@+id/balance_change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+0 sats"
+        android:textSize="14sp"
+        android:textColor="@color/color_success_green"
+        android:fontFamily="sans-serif-medium"
+        android:visibility="gone" />
+
+</LinearLayout>

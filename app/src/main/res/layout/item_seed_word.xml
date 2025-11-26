@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@drawable/bg_seed_word"
+    android:paddingVertical="14dp"
+    android:paddingHorizontal="12dp"
+    android:layout_margin="4dp">
+
+    <TextView
+        android:id="@+id/word_index"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:textSize="13sp"
+        android:textColor="@color/color_text_tertiary"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/word_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="word"
+        android:textSize="15sp"
+        android:textColor="@color/color_text_primary"
+        android:fontFamily="monospace"
+        android:layout_marginStart="8dp" />
+
+</LinearLayout>

@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.GridLayout
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -33,6 +34,7 @@ class PosUiCoordinator(
     private lateinit var amountDisplay: TextView
     private lateinit var secondaryAmountDisplay: TextView
     private lateinit var submitButton: Button
+    private lateinit var submitButtonSpinner: ProgressBar
     private lateinit var switchCurrencyButton: View
     private lateinit var inputModeContainer: ConstraintLayout
     private lateinit var errorMessage: TextView
@@ -70,6 +72,7 @@ class PosUiCoordinator(
             Handler(Looper.getMainLooper()).postDelayed({
                 if (submitButton.isEnabled) {
                     Log.d("PosUiCoordinator", "Auto-initiating payment flow for basket checkout with amount: $paymentAmount")
+                    showChargeButtonSpinner()
                     val formattedAmount = amountDisplay.text.toString()
                     paymentMethodHandler.showPaymentMethodDialog(amountDisplayManager.requestedAmount, formattedAmount)
                 }
@@ -87,6 +90,7 @@ class PosUiCoordinator(
         fiatInput.clear()
         amountDisplayManager.resetRequestedAmount()
         amountDisplayManager.updateDisplay(satoshiInput, fiatInput, AmountDisplayManager.AnimationType.NONE)
+        hideChargeButtonSpinner()
     }
 
     /** Show amount required error */
@@ -109,22 +113,41 @@ class PosUiCoordinator(
         nfcPaymentProcessor.handleNfcPayment(tag, amountDisplayManager.requestedAmount)
     }
 
-    /** Handle payment result success */
-    fun handlePaymentSuccess(token: String, amount: Long) {
-        paymentResultHandler.handlePaymentSuccess(
-            token, 
-            amount, 
-            amountDisplayManager.isUsdInputMode
-        ) {
-            resetToInputMode()
-        }
-    }
-
     /** Handle payment result error */
     fun handlePaymentError(message: String) {
         paymentResultHandler.handlePaymentError(message) {
             resetToInputMode()
         }
+    }
+
+    /**
+     * Unified success handler - plays feedback and shows success screen.
+     * This is the single source of truth for all payment success handling.
+     */
+    private fun showPaymentSuccess(token: String, amount: Long) {
+        // Play success sound
+        try {
+            val mediaPlayer = android.media.MediaPlayer.create(activity, R.raw.success_sound)
+            mediaPlayer?.setOnCompletionListener { it.release() }
+            mediaPlayer?.start()
+        } catch (e: Exception) {
+            android.util.Log.e("PosUiCoordinator", "Error playing success sound: ${e.message}")
+        }
+        
+        // Vibrate
+        try {
+            val vibrator = activity.getSystemService(android.content.Context.VIBRATOR_SERVICE) as android.os.Vibrator?
+            vibrator?.vibrate(PATTERN_SUCCESS, -1)
+        } catch (e: Exception) {
+            android.util.Log.e("PosUiCoordinator", "Error vibrating: ${e.message}")
+        }
+
+        // Show success screen
+        val successIntent = android.content.Intent(activity, com.electricdreams.shellshock.PaymentReceivedActivity::class.java).apply {
+            putExtra(com.electricdreams.shellshock.PaymentReceivedActivity.EXTRA_TOKEN, token)
+            putExtra(com.electricdreams.shellshock.PaymentReceivedActivity.EXTRA_AMOUNT, amount)
+        }
+        activity.startActivity(successIntent)
     }
 
     /** Stop services */
@@ -135,10 +158,15 @@ class PosUiCoordinator(
     /** Get requested amount */
     fun getRequestedAmount(): Long = amountDisplayManager.requestedAmount
 
+    companion object {
+        private val PATTERN_SUCCESS = longArrayOf(0, 50, 100, 50)
+    }
+
     private fun initializeViews() {
         amountDisplay = activity.findViewById(R.id.amount_display)
         secondaryAmountDisplay = activity.findViewById(R.id.secondary_amount_display)
         submitButton = activity.findViewById(R.id.submit_button)
+        submitButtonSpinner = activity.findViewById(R.id.submit_button_spinner)
         errorMessage = activity.findViewById(R.id.error_message)
         switchCurrencyButton = activity.findViewById(R.id.currency_switch_button)
         inputModeContainer = activity.findViewById(R.id.input_mode_container)
@@ -178,7 +206,9 @@ class PosUiCoordinator(
                     token, 
                     amountDisplayManager.requestedAmount, 
                     amountDisplayManager.isUsdInputMode
-                ) {
+                ) { resultToken, resultAmount ->
+                    // Use unified success handler
+                    showPaymentSuccess(resultToken, resultAmount)
                     resetToInputMode()
                 }
             },
@@ -216,6 +246,7 @@ class PosUiCoordinator(
         // Submit button
         submitButton.setOnClickListener {
             if (amountDisplayManager.requestedAmount > 0) {
+                showChargeButtonSpinner()
                 val formattedAmount = amountDisplay.text.toString()
                 paymentMethodHandler.showPaymentMethodDialog(amountDisplayManager.requestedAmount, formattedAmount)
             } else {
@@ -241,5 +272,19 @@ class PosUiCoordinator(
             }
         }
         popup.show()
+    }
+
+    /** Show spinner on charge button and disable it */
+    private fun showChargeButtonSpinner() {
+        submitButtonSpinner.visibility = View.VISIBLE
+        submitButton.text = "" // Hide button text
+        submitButton.isEnabled = false
+    }
+
+    /** Hide spinner on charge button and enable it */
+    fun hideChargeButtonSpinner() {
+        submitButtonSpinner.visibility = View.GONE
+        submitButton.text = "Charge" // Restore button text
+        submitButton.isEnabled = true
     }
 }

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_bg_white"
+    android:clipChildren="false"
+    tools:context=".feature.settings.WithdrawSuccessActivity">
+
+    <!-- Center content container -->
+    <FrameLayout
+        android:id="@+id/center_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        app:layout_constraintBottom_toTopOf="@+id/close_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- Amount sent text -->
+            <TextView
+                android:id="@+id/amount_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:gravity="center"
+                android:text="₿ 0 sent."
+                android:textColor="@color/color_text_primary"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <!-- Destination text -->
+            <TextView
+                android:id="@+id/destination_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:gravity="center"
+                android:text="To Lightning"
+                android:textColor="@color/color_text_secondary"
+                android:textSize="16sp" />
+
+            <!-- Animated checkmark container with clipChildren disabled -->
+            <FrameLayout
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:clipChildren="false">
+
+                <!-- Green circle background -->
+                <ImageView
+                    android:id="@+id/checkmark_circle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Success background"
+                    android:src="@drawable/ic_circle_solid_green"
+                    android:visibility="invisible" />
+
+                <!-- White checkmark icon -->
+                <ImageView
+                    android:id="@+id/checkmark_icon"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="Success"
+                    android:src="@drawable/ic_check"
+                    android:visibility="invisible"
+                    app:tint="@color/color_bg_white" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!-- Close button at bottom (full width, grey background) -->
+    <Button
+        android:id="@+id/close_button"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_button_secondary_gray"
+        android:text="Close"
+        android:textAllCaps="false"
+        android:textColor="@color/color_bg_white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

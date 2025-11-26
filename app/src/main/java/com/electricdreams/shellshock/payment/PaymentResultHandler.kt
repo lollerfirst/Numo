@@ -1,12 +1,8 @@
 package com.electricdreams.shellshock.payment
 
-import android.content.Context
-import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
-import com.electricdreams.shellshock.PaymentReceivedActivity
-import com.electricdreams.shellshock.R
 import com.electricdreams.shellshock.core.worker.BitcoinPriceWorker
 import com.electricdreams.shellshock.feature.history.PaymentsHistoryActivity
 
@@ -20,12 +16,12 @@ class PaymentResultHandler(
 
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    /** Handle successful payment */
+    /** Handle successful payment - records to history and delegates to callback */
     fun handlePaymentSuccess(
         token: String, 
         amount: Long, 
         isUsdInputMode: Boolean,
-        onComplete: () -> Unit
+        onComplete: (String, Long) -> Unit
     ) {
         val (entryUnit, enteredAmount) = if (isUsdInputMode) {
             val price = bitcoinPriceWorker?.getCurrentPrice() ?: 0.0
@@ -41,8 +37,6 @@ class PaymentResultHandler(
         
         val bitcoinPrice = bitcoinPriceWorker?.getCurrentPrice()?.takeIf { it > 0 }
         
-        playSuccessFeedback()
-        
         val mintUrl = extractMintUrlFromToken(token)
         PaymentsHistoryActivity.addToHistory(
             activity, 
@@ -56,13 +50,9 @@ class PaymentResultHandler(
             null
         )
         
+        // Delegate to callback for unified success handling (feedback + screen)
         mainHandler.post {
-            onComplete()
-            val successIntent = Intent(activity, PaymentReceivedActivity::class.java).apply {
-                putExtra(PaymentReceivedActivity.EXTRA_TOKEN, token)
-                putExtra(PaymentReceivedActivity.EXTRA_AMOUNT, amount)
-            }
-            activity.startActivity(successIntent)
+            onComplete(token, amount)
         }
     }
 
@@ -74,23 +64,6 @@ class PaymentResultHandler(
         }
     }
 
-    /** Play success feedback (sound + vibration) */
-    private fun playSuccessFeedback() {
-        try {
-            val mediaPlayer = android.media.MediaPlayer.create(activity, R.raw.success_sound)
-            mediaPlayer?.setOnCompletionListener { it.release() }
-            mediaPlayer?.start()
-        } catch (_: Exception) {}
-        
-        vibrateSuccess()
-    }
-
-    /** Vibrate for success */
-    private fun vibrateSuccess() {
-        val vibrator = activity.getSystemService(Context.VIBRATOR_SERVICE) as android.os.Vibrator?
-        vibrator?.let { v -> v.vibrate(PATTERN_SUCCESS, -1) }
-    }
-
     /** Extract mint URL from token string */
     private fun extractMintUrlFromToken(tokenString: String?): String? = try {
         if (!tokenString.isNullOrEmpty()) {
@@ -100,9 +73,5 @@ class PaymentResultHandler(
         }
     } catch (_: Exception) { 
         null 
-    }
-
-    companion object {
-        private val PATTERN_SUCCESS = longArrayOf(0, 50, 100, 50)
     }
 }

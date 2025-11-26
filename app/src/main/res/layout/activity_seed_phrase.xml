@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_bg_white">
+
+    <!-- Top App Bar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/color_bg_white"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:padding="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:src="@drawable/ic_chevron_back"
+            android:tint="@color/color_text_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Seed Phrase"
+            android:textAppearance="@style/Text.Title"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_bar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Warning Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:background="@drawable/bg_warning_card">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="12dp"
+                        android:src="@drawable/ic_warning"
+                        app:tint="#FF9500" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Keep this secret!"
+                        android:textSize="16sp"
+                        android:textColor="#111111"
+                        android:fontFamily="sans-serif-medium" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Anyone with these 12 words can access your funds. Write them down and store them in a safe place. Never share them with anyone."
+                    android:textSize="14sp"
+                    android:textColor="#6F6F73"
+                    android:lineSpacingMultiplier="1.3" />
+
+            </LinearLayout>
+
+            <!-- Seed Phrase Title -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="16dp"
+                android:text="Your Recovery Phrase"
+                android:textSize="15sp"
+                android:textColor="@color/color_text_secondary"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center" />
+
+            <!-- Seed Words Grid Container -->
+            <androidx.gridlayout.widget.GridLayout
+                android:id="@+id/seed_words_grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:columnCount="2"
+                app:rowCount="6"
+                app:useDefaultMargins="false"
+                android:layout_marginHorizontal="8dp">
+
+                <!-- Words will be added programmatically -->
+
+            </androidx.gridlayout.widget.GridLayout>
+
+            <!-- Copy Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/copy_button"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="32dp"
+                android:text="Copy to Clipboard"
+                android:textSize="16sp"
+                android:textColor="@color/color_bg_white"
+                android:fontFamily="sans-serif-medium"
+                android:backgroundTint="@color/color_text_primary"
+                app:cornerRadius="28dp"
+                app:icon="@drawable/ic_content_copy"
+                app:iconTint="@color/color_bg_white"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp" />
+
+            <!-- Copy Disclaimer -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Make sure to clear your clipboard after pasting"
+                android:textSize="13sp"
+                android:textColor="@color/color_text_tertiary"
+                android:gravity="center" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -100,7 +100,7 @@ class PaymentsHistoryAdapter : RecyclerView.Adapter<PaymentsHistoryAdapter.ViewH
             holder.statusText.visibility = View.GONE
         }
 
-        // Hide subtitle for now (payment type already shown in title)
+        // Hide subtitle (payment type already shown in title)
         holder.subtitleText.visibility = View.GONE
 
         holder.itemView.setOnClickListener {
