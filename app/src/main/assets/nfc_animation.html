@@ -91,24 +91,39 @@
         .status {
             position: absolute;
             bottom: 20%;
-            color: rgba(255,255,255,0.7);
-            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+            font-size: 32px;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 0.5px;
             transition: all 0.5s ease;
         }
         
-        .result-text {
+        .result-amount {
+            position: absolute;
+            top: 50%;
+            margin-top: -180px;
+            color: #FFFFFF;
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.5s ease 0.3s;
+            text-align: center;
+        }
+        
+        .result-label {
             position: absolute;
             top: 50%;
             margin-top: -120px;
-            color: #FFFFFF;
+            color: rgba(255,255,255,0.9);
             font-size: 32px;
             font-weight: 600;
             letter-spacing: 0.5px;
             opacity: 0;
             transform: translateY(-20px);
-            transition: all 0.5s ease 0.3s;
+            transition: all 0.5s ease 0.4s;
             text-align: center;
         }
         
@@ -222,7 +237,13 @@
             animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
-        .container.success .result-text {
+        .container.success .result-amount {
+            opacity: 1;
+            transform: translateY(0);
+            margin-top: -180px;
+        }
+        
+        .container.success .result-label {
             opacity: 1;
             transform: translateY(0);
             margin-top: -120px;
@@ -252,9 +273,14 @@
             animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
-        .container.error .result-text {
+        .container.error .result-amount {
+            opacity: 0;
+        }
+        
+        .container.error .result-label {
             opacity: 1;
             transform: translateY(0);
+            margin-top: -120px;
         }
         
         @keyframes popIn {
@@ -283,13 +309,15 @@
             <div class="error-x">✕</div>
         </div>
         <div class="status" id="status"></div>
-        <div class="result-text" id="resultText"></div>
+        <div class="result-amount" id="resultAmount"></div>
+        <div class="result-label" id="resultLabel"></div>
     </div>
     
     <script>
         const container = document.getElementById('container');
         const status = document.getElementById('status');
-        const resultText = document.getElementById('resultText');
+        const resultAmount = document.getElementById('resultAmount');
+        const resultLabel = document.getElementById('resultLabel');
         
         const phases = ['expanding', 'morphing', 'blob'];
         let currentPhase = -1;
@@ -304,7 +332,8 @@
             pendingResult = null;
             container.classList.remove('hidden', 'success', 'error', ...phases);
             currentPhase = -1;
-            resultText.textContent = '';
+            resultAmount.textContent = '';
+            resultLabel.textContent = '';
             
             nextPhase();
         }
@@ -377,10 +406,12 @@
             
             if (success) {
                 container.classList.add('success');
-                resultText.textContent = 'Received ' + amount;
+                resultAmount.textContent = amount;
+                resultLabel.textContent = 'Payment Received';
             } else {
                 container.classList.add('error');
-                resultText.textContent = message || 'Payment Failed';
+                resultAmount.textContent = '';
+                resultLabel.textContent = message || 'Payment Failed';
             }
             
             // Notify Android that animation is complete (show close button quickly)
@@ -399,7 +430,8 @@
             isAnimating = false;
             pendingResult = null;
             status.textContent = '';
-            resultText.textContent = '';
+            resultAmount.textContent = '';
+            resultLabel.textContent = '';
         }
     </script>
 </body>

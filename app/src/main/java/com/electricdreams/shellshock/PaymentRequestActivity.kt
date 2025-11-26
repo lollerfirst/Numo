@@ -635,12 +635,12 @@ class PaymentRequestActivity : AppCompatActivity() {
         // Show success animation with the received amount
         if (nfcAnimationContainer.visibility == View.VISIBLE) {
             // NFC animation is showing, transition to success
-            showAnimationSuccess("Received $formattedAmountString")
+            showAnimationSuccess(formattedAmountString)
         } else {
             // No animation showing (QR/Nostr payment), show animation overlay with success
             showAnimationOverlay()
             Handler(Looper.getMainLooper()).postDelayed({
-                showAnimationSuccess("Received $formattedAmountString")
+                showAnimationSuccess(formattedAmountString)
             }, 500)
         }
     }
@@ -680,7 +680,7 @@ class PaymentRequestActivity : AppCompatActivity() {
         // Show success animation
         showAnimationOverlay()
         Handler(Looper.getMainLooper()).postDelayed({
-            showAnimationSuccess("Received $formattedAmountString")
+            showAnimationSuccess(formattedAmountString)
         }, 500)
     }
 
