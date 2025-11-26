@@ -39,7 +39,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Add Item Button (shown in normal mode) -->
+        <!-- Add Item Button (shown when items exist, in normal mode) -->
         <ImageButton
             android:id="@+id/fab_add_item"
             android:layout_width="48dp"
@@ -48,10 +48,12 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Add item"
             android:src="@drawable/ic_add"
+            android:visibility="gone"
             app:tint="@color/color_primary_green"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
         <!-- Done Button (shown in reordering mode) -->
         <ImageButton
@@ -80,106 +82,81 @@
         app:layout_anchorGravity="bottom" />
 
     <!-- Main Content Area -->
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="56dp"
-        android:orientation="vertical">
+        android:layout_marginTop="56dp">
 
-        <!-- Items RecyclerView -->
-        <FrameLayout
+        <!-- Regular Content: Items List -->
+        <LinearLayout
+            android:id="@+id/items_content"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
 
+            <!-- Items RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/items_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:clipToPadding="false"
                 android:overScrollMode="never"
                 tools:listitem="@layout/item_product" />
 
-            <!-- Empty State -->
+            <!-- Bottom Actions Section (only shown when items exist) -->
             <LinearLayout
-                android:id="@+id/empty_view"
+                android:id="@+id/bottom_actions"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="32dp"
-                android:visibility="gone">
+                android:paddingHorizontal="20dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="24dp"
+                android:background="@color/color_bg_white">
 
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/ic_image_placeholder"
-                    app:tint="@color/color_icon_tertiary"
-                    android:contentDescription="No items" />
+                <!-- Top divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/color_divider" />
 
+                <!-- Import from CSV Button -->
+                <Button
+                    android:id="@+id/import_csv_button"
+                    style="@style/Widget.Button.Secondary.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Import from CSV" />
+
+                <!-- Clear All Items Link -->
                 <TextView
+                    android:id="@+id/clear_items_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="No Items"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="20sp"
-                    android:fontFamily="sans-serif-medium" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Tap + to add your first item"
-                    android:textAlignment="center"
-                    android:textColor="@color/color_text_tertiary"
-                    android:textSize="15sp" />
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:padding="8dp"
+                    android:text="Clear All Items"
+                    android:textAppearance="@style/Text.Link"
+                    android:textColor="@color/color_warning_red" />
 
             </LinearLayout>
 
-        </FrameLayout>
-
-        <!-- Bottom Actions Section -->
-        <LinearLayout
-            android:id="@+id/bottom_actions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="20dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="24dp"
-            android:background="@color/color_bg_white">
-
-            <!-- Top divider -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginBottom="16dp"
-                android:background="@color/color_divider" />
-
-            <!-- Import from CSV Button -->
-            <Button
-                android:id="@+id/import_csv_button"
-                style="@style/Widget.Button.Secondary.Outlined"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Import from CSV" />
-
-            <!-- Clear All Items Link -->
-            <TextView
-                android:id="@+id/clear_items_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:background="?attr/selectableItemBackground"
-                android:padding="8dp"
-                android:text="Clear All Items"
-                android:textAppearance="@style/Text.Link"
-                android:textColor="@color/color_warning_red" />
-
         </LinearLayout>
 
-    </LinearLayout>
+        <!-- Empty State (Full Screen with Animation) -->
+        <include
+            android:id="@+id/empty_view"
+            layout="@layout/layout_empty_state_items"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible" />
+
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

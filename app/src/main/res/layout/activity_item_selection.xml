@@ -8,7 +8,22 @@
     android:background="@color/color_bg_white"
     android:fitsSystemWindows="true">
 
-    <!-- Main Scrollable Content -->
+    <!-- Full Screen Empty State (shown when no items exist) -->
+    <FrameLayout
+        android:id="@+id/empty_state_fullscreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <include
+            android:id="@+id/empty_view"
+            layout="@layout/layout_empty_state_items"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+
+    <!-- Main Content (shown when items exist) -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/main_scroll_view"
         android:layout_width="match_parent"
@@ -179,46 +194,7 @@
                     android:nestedScrollingEnabled="false"
                     tools:listitem="@layout/item_product_selection" />
 
-                <!-- Empty State -->
-                <LinearLayout
-                    android:id="@+id/empty_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="32dp"
-                    android:visibility="gone">
-
-                    <ImageView
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:src="@drawable/ic_shopping_bag"
-                        app:tint="@color/color_icon_tertiary"
-                        android:contentDescription="No items" />
-
-                    <TextView
-                        android:id="@+id/empty_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="No items found"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="17sp"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <TextView
-                        android:id="@+id/empty_subtitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Add items in Settings → Items"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="15sp"
-                        android:gravity="center" />
-
-                </LinearLayout>
-
-                <!-- No Search Results -->
+                <!-- No Search Results (only shown when filtering returns empty) -->
                 <LinearLayout
                     android:id="@+id/no_results_view"
                     android:layout_width="match_parent"

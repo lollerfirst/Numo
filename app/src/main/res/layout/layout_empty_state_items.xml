@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/empty_state_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/empty_state_background">
+
+    <!-- Main Content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Animated Chip Ribbon Area -->
+        <FrameLayout
+            android:id="@+id/ribbon_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <!-- Container for all animated rows - will be rotated -->
+            <FrameLayout
+                android:id="@+id/ribbon_rows_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="60dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
+
+                <!-- Row 1 -->
+                <LinearLayout
+                    android:id="@+id/ribbon_row_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|start"
+                    android:layout_marginTop="0dp"
+                    android:orientation="horizontal"
+                    android:clipChildren="false"
+                    android:clipToPadding="false" />
+
+                <!-- Row 2 -->
+                <LinearLayout
+                    android:id="@+id/ribbon_row_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|start"
+                    android:layout_marginTop="52dp"
+                    android:orientation="horizontal"
+                    android:clipChildren="false"
+                    android:clipToPadding="false" />
+
+                <!-- Row 3 -->
+                <LinearLayout
+                    android:id="@+id/ribbon_row_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|start"
+                    android:layout_marginTop="104dp"
+                    android:orientation="horizontal"
+                    android:clipChildren="false"
+                    android:clipToPadding="false" />
+
+                <!-- Row 4 -->
+                <LinearLayout
+                    android:id="@+id/ribbon_row_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|start"
+                    android:layout_marginTop="156dp"
+                    android:orientation="horizontal"
+                    android:clipChildren="false"
+                    android:clipToPadding="false" />
+
+                <!-- Row 5 -->
+                <LinearLayout
+                    android:id="@+id/ribbon_row_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|start"
+                    android:layout_marginTop="208dp"
+                    android:orientation="horizontal"
+                    android:clipChildren="false"
+                    android:clipToPadding="false" />
+
+            </FrameLayout>
+
+            <!-- Gradient Fade at Bottom -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/bg_empty_state_fade" />
+
+        </FrameLayout>
+
+        <!-- Content Area -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingHorizontal="@dimen/margin_screen_horizontal"
+            android:paddingBottom="@dimen/space_3xl"
+            android:background="@color/empty_state_background">
+
+            <!-- Main Heading -->
+            <TextView
+                android:id="@+id/empty_state_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create your catalog"
+                android:textColor="@color/empty_state_title"
+                android:textSize="28sp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.1" />
+
+            <!-- Subheading -->
+            <TextView
+                android:id="@+id/empty_state_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_m"
+                android:text="Add products to start accepting payments with your POS."
+                android:textColor="@color/empty_state_subtitle"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.3"
+                android:paddingHorizontal="@dimen/space_l" />
+
+            <!-- Primary Button - Add Item -->
+            <Button
+                android:id="@+id/empty_state_add_button"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height"
+                android:layout_marginTop="@dimen/space_xl"
+                android:background="@drawable/bg_button_empty_state_primary"
+                android:text="Add item"
+                android:textColor="@color/empty_state_button_primary_text"
+                android:textSize="17sp"
+                android:fontFamily="sans-serif-medium"
+                android:textAllCaps="false"
+                android:stateListAnimator="@null" />
+
+            <!-- Secondary Button - Import from CSV -->
+            <TextView
+                android:id="@+id/empty_state_import_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:paddingVertical="@dimen/space_m"
+                android:paddingHorizontal="@dimen/space_l"
+                android:text="Import from CSV"
+                android:textColor="@color/empty_state_button_secondary_text"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif-medium"
+                android:background="?attr/selectableItemBackgroundBorderless" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Close Button (Top Left - standard iOS/mobile pattern) -->
+    <ImageButton
+        android:id="@+id/empty_state_close_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|start"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Close"
+        android:padding="12dp"
+        android:src="@drawable/ic_close"
+        app:tint="@color/empty_state_close_icon" />
+
+</FrameLayout>

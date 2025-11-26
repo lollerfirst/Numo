@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -58,10 +60,14 @@ class ItemSelectionActivity : AppCompatActivity() {
     private lateinit var basketTotalView: TextView
     private lateinit var clearBasketButton: TextView
     private lateinit var itemsRecyclerView: RecyclerView
-    private lateinit var emptyView: LinearLayout
     private lateinit var noResultsView: LinearLayout
     private lateinit var checkoutContainer: CardView
     private lateinit var checkoutButton: Button
+    private lateinit var topBar: LinearLayout
+    
+    // Empty state views
+    private lateinit var emptyStateFullscreen: FrameLayout
+    private var emptyStateAnimator: EmptyStateAnimator? = null
 
     // ----- Category State -----
     private var categoryChipViews: MutableMap<String, TextView> = mutableMapOf()
@@ -85,6 +91,25 @@ class ItemSelectionActivity : AppCompatActivity() {
             itemsAdapter.notifyDataSetChanged()
         }
     }
+    
+    private val addItemLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            // Reload items and update UI
+            searchHandler.loadItems()
+            updateEmptyStateVisibility()
+        }
+    }
+    
+    private val csvPickerLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) {
+            // Import CSV file
+            importCsvFile(uri)
+        }
+    }
 
     // ----- Lifecycle -----
 
@@ -98,9 +123,11 @@ class ItemSelectionActivity : AppCompatActivity() {
         initializeAdapters()
         setupRecyclerViews()
         setupClickListeners()
+        setupEmptyStateButtons()
 
         // Load initial data
         searchHandler.loadItems()
+        updateEmptyStateVisibility()
         refreshBasket()
 
         bitcoinPriceWorker.start()
@@ -110,7 +137,18 @@ class ItemSelectionActivity : AppCompatActivity() {
         super.onResume()
         // Refresh in case items were modified
         searchHandler.loadItems()
+        updateEmptyStateVisibility()
         refreshBasket()
+        
+        // Start animation if empty state is visible
+        if (emptyStateFullscreen.visibility == View.VISIBLE) {
+            emptyStateAnimator?.start()
+        }
+    }
+    
+    override fun onPause() {
+        super.onPause()
+        emptyStateAnimator?.stop()
     }
 
     // ----- Initialization -----
@@ -136,10 +174,13 @@ class ItemSelectionActivity : AppCompatActivity() {
         basketTotalView = findViewById(R.id.basket_total)
         clearBasketButton = findViewById(R.id.clear_basket_button)
         itemsRecyclerView = findViewById(R.id.items_recycler_view)
-        emptyView = findViewById(R.id.empty_view)
         noResultsView = findViewById(R.id.no_results_view)
         checkoutContainer = findViewById(R.id.checkout_container)
         checkoutButton = findViewById(R.id.checkout_button)
+        topBar = findViewById(R.id.top_bar)
+        
+        // Empty state views
+        emptyStateFullscreen = findViewById(R.id.empty_state_fullscreen)
     }
 
     private fun initializeHandlers() {
@@ -157,11 +198,14 @@ class ItemSelectionActivity : AppCompatActivity() {
             onBasketUpdated = { basketAdapter.updateItems(basketManager.getBasketItems()) }
         )
 
+        // Create a dummy LinearLayout for the emptyView parameter since we handle it differently now
+        val dummyEmptyView = LinearLayout(this)
+        
         searchHandler = ItemSearchHandler(
             itemManager = itemManager,
             searchInput = searchInput,
             itemsRecyclerView = itemsRecyclerView,
-            emptyView = emptyView,
+            emptyView = dummyEmptyView, // We handle empty state ourselves
             noResultsView = noResultsView,
             onItemsFiltered = { items -> itemsAdapter.updateItems(items) },
             onFilterStateChanged = { hasActiveFilters -> updateFilterButtonState(hasActiveFilters) }
@@ -226,6 +270,113 @@ class ItemSelectionActivity : AppCompatActivity() {
         // Category badge click to remove category filter
         categoryBadge.setOnClickListener {
             selectCategory(null)
+        }
+    }
+    
+    private fun setupEmptyStateButtons() {
+        // Find buttons in the included empty state layout
+        val emptyView = findViewById<View>(R.id.empty_view)
+        val addButton = emptyView?.findViewById<Button>(R.id.empty_state_add_button)
+        val importButton = emptyView?.findViewById<View>(R.id.empty_state_import_button)
+        val closeButton = emptyView?.findViewById<ImageButton>(R.id.empty_state_close_button)
+        val ribbonContainer = emptyView?.findViewById<View>(R.id.ribbon_container)
+
+        addButton?.setOnClickListener {
+            val intent = Intent(this, ItemEntryActivity::class.java)
+            addItemLauncher.launch(intent)
+        }
+
+        importButton?.setOnClickListener {
+            csvPickerLauncher.launch("text/csv")
+        }
+        
+        closeButton?.setOnClickListener {
+            finish()
+        }
+
+        // Initialize the animator
+        ribbonContainer?.let {
+            emptyStateAnimator = EmptyStateAnimator(this, it)
+        }
+    }
+    
+    private fun importCsvFile(uri: android.net.Uri) {
+        try {
+            val tempFile = java.io.File(cacheDir, "import_catalog.csv")
+            
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                java.io.FileOutputStream(tempFile).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            } ?: run {
+                android.widget.Toast.makeText(this, "Failed to open CSV file", android.widget.Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val importedCount = itemManager.importItemsFromCsv(tempFile.absolutePath, true)
+
+            if (importedCount > 0) {
+                android.widget.Toast.makeText(this, "Imported $importedCount items", android.widget.Toast.LENGTH_SHORT).show()
+                searchHandler.loadItems()
+                updateEmptyStateVisibility()
+            } else {
+                android.widget.Toast.makeText(this, "No items imported from CSV", android.widget.Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: java.io.IOException) {
+            android.util.Log.e("ItemSelectionActivity", "Error importing CSV file: ${e.message}", e)
+            android.widget.Toast.makeText(this, "Error importing CSV file: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+        }
+    }
+    
+    /**
+     * Update visibility of full-screen empty state vs main content.
+     */
+    private fun updateEmptyStateVisibility() {
+        val hasItems = searchHandler.getAllItems().isNotEmpty()
+        
+        if (hasItems) {
+            // Show main content
+            emptyStateFullscreen.visibility = View.GONE
+            mainScrollView.visibility = View.VISIBLE
+            emptyStateAnimator?.stop()
+            
+            // Reset navigation bar to normal
+            setNavigationBarStyle(isDarkBackground = false)
+        } else {
+            // Show full-screen empty state
+            emptyStateFullscreen.visibility = View.VISIBLE
+            mainScrollView.visibility = View.GONE
+            emptyStateAnimator?.start()
+            
+            // Set navigation bar to match dark background
+            setNavigationBarStyle(isDarkBackground = true)
+        }
+    }
+    
+    /**
+     * Set the navigation bar style to match the current screen background.
+     */
+    private fun setNavigationBarStyle(isDarkBackground: Boolean) {
+        window.navigationBarColor = if (isDarkBackground) {
+            ContextCompat.getColor(this, R.color.empty_state_background)
+        } else {
+            ContextCompat.getColor(this, R.color.color_bg_white)
+        }
+        
+        // Set light/dark icons in navigation bar
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightNavigationBars = !isDarkBackground
+        }
+        
+        // Also update status bar
+        window.statusBarColor = if (isDarkBackground) {
+            ContextCompat.getColor(this, R.color.empty_state_background)
+        } else {
+            ContextCompat.getColor(this, R.color.color_bg_white)
+        }
+        
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = !isDarkBackground
         }
     }
 
