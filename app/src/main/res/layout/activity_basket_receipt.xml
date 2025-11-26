@@ -15,7 +15,7 @@
         android:background="@color/color_bg_white"
         android:elevation="1dp"
         android:paddingStart="8dp"
-        android:paddingEnd="16dp"
+        android:paddingEnd="8dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
@@ -38,6 +38,19 @@
             android:layout_height="wrap_content"
             android:text="Receipt"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <ImageButton
+            android:id="@+id/print_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_print"
+            android:contentDescription="Print Receipt"
+            android:padding="12dp"
+            app:tint="@color/color_primary_green"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />

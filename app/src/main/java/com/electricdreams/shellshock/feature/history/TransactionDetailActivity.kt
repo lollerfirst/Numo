@@ -274,6 +274,11 @@ class TransactionDetailActivity : AppCompatActivity() {
     private fun openBasketReceipt() {
         val intent = Intent(this, BasketReceiptActivity::class.java).apply {
             putExtra(BasketReceiptActivity.EXTRA_CHECKOUT_BASKET_JSON, checkoutBasketJson)
+            putExtra(BasketReceiptActivity.EXTRA_PAYMENT_TYPE, paymentType)
+            putExtra(BasketReceiptActivity.EXTRA_PAYMENT_DATE, entry.date.time)
+            putExtra(BasketReceiptActivity.EXTRA_TRANSACTION_ID, entry.token.takeIf { it.isNotEmpty() }?.take(32))
+            putExtra(BasketReceiptActivity.EXTRA_MINT_URL, entry.mintUrl)
+            entry.bitcoinPrice?.let { putExtra(BasketReceiptActivity.EXTRA_BITCOIN_PRICE, it) }
         }
         startActivity(intent)
     }

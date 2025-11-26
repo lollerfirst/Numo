@@ -11,6 +11,7 @@ import com.electricdreams.shellshock.R
 import com.electricdreams.shellshock.core.model.Amount
 import com.electricdreams.shellshock.core.model.CheckoutBasket
 import com.electricdreams.shellshock.core.model.CheckoutBasketItem
+import com.electricdreams.shellshock.core.util.ReceiptPrinter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -35,8 +36,16 @@ class BasketReceiptActivity : AppCompatActivity() {
     private lateinit var finalTotalValue: TextView
     private lateinit var satsEquivalentText: TextView
     private lateinit var paidAmountText: TextView
+    private lateinit var printButton: ImageButton
 
     private var basket: CheckoutBasket? = null
+    
+    // Additional payment data for printing
+    private var paymentType: String? = null
+    private var paymentDate: Date = Date()
+    private var transactionId: String? = null
+    private var mintUrl: String? = null
+    private var bitcoinPrice: Double? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +59,10 @@ class BasketReceiptActivity : AppCompatActivity() {
     private fun initializeViews() {
         // Back button
         findViewById<ImageButton>(R.id.back_button).setOnClickListener { finish() }
+        
+        // Print button
+        printButton = findViewById(R.id.print_button)
+        printButton.setOnClickListener { printReceipt() }
 
         // Hero section
         totalAmountText = findViewById(R.id.total_amount)
@@ -76,8 +89,34 @@ class BasketReceiptActivity : AppCompatActivity() {
         val basketJson = intent.getStringExtra(EXTRA_CHECKOUT_BASKET_JSON)
         basket = CheckoutBasket.fromJson(basketJson)
         
+        // Load additional payment data
+        paymentType = intent.getStringExtra(EXTRA_PAYMENT_TYPE)
+        val dateMillis = intent.getLongExtra(EXTRA_PAYMENT_DATE, System.currentTimeMillis())
+        paymentDate = Date(dateMillis)
+        transactionId = intent.getStringExtra(EXTRA_TRANSACTION_ID)
+        mintUrl = intent.getStringExtra(EXTRA_MINT_URL)
+        val btcPrice = intent.getDoubleExtra(EXTRA_BITCOIN_PRICE, -1.0)
+        bitcoinPrice = if (btcPrice > 0) btcPrice else null
+        
         android.util.Log.d("BasketReceiptActivity", "Received basket JSON: ${basketJson?.length ?: 0} chars")
         android.util.Log.d("BasketReceiptActivity", "Parsed basket: ${basket?.items?.size ?: 0} items")
+    }
+    
+    private fun printReceipt() {
+        val currentBasket = basket ?: return
+        
+        val receiptPrinter = ReceiptPrinter(this)
+        val receiptData = ReceiptPrinter.ReceiptData(
+            basket = currentBasket,
+            paymentType = paymentType,
+            paymentDate = paymentDate,
+            transactionId = transactionId,
+            mintUrl = mintUrl,
+            bitcoinPrice = bitcoinPrice,
+        )
+        
+        // Print directly - one click printing
+        receiptPrinter.printReceipt(receiptData)
     }
 
     private fun displayReceipt() {
@@ -292,5 +331,10 @@ class BasketReceiptActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_CHECKOUT_BASKET_JSON = "checkout_basket_json"
+        const val EXTRA_PAYMENT_TYPE = "payment_type"
+        const val EXTRA_PAYMENT_DATE = "payment_date"
+        const val EXTRA_TRANSACTION_ID = "transaction_id"
+        const val EXTRA_MINT_URL = "mint_url"
+        const val EXTRA_BITCOIN_PRICE = "bitcoin_price"
     }
 }
