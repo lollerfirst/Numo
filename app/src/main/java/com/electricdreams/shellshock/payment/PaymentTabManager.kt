@@ -88,6 +88,9 @@ class PaymentTabManager(
         cashuQrImageView.visibility = View.VISIBLE
         lightningQrContainer.visibility = View.INVISIBLE
         lightningQrImageView.visibility = View.INVISIBLE
+
+        // Notify listener that Cashu tab is now selected
+        listener?.onCashuTabSelected()
     }
 
     /**
