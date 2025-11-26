@@ -12,8 +12,7 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -35,25 +34,27 @@ import com.electricdreams.shellshock.core.model.Item
 import com.electricdreams.shellshock.core.model.PriceType
 import com.electricdreams.shellshock.core.util.CurrencyManager
 import com.electricdreams.shellshock.core.util.ItemManager
+import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.io.File
 import java.io.IOException
-import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.UUID
-import java.util.regex.Pattern
 
 /**
  * Activity for adding or editing catalog items with an Apple-inspired design.
  * Features:
+ * - UUID internal tracking for items
+ * - Tag-based category selection
+ * - SKU duplicate validation
+ * - Manual integer VAT input (0-100)
  * - Dual pricing (Fiat or Bitcoin/sats)
  * - Barcode scanning for SKU
  * - Inventory tracking with low stock alerts
- * - Auto-capitalization for text fields
  */
 class ItemEntryActivity : AppCompatActivity() {
 
@@ -63,6 +64,13 @@ class ItemEntryActivity : AppCompatActivity() {
     private lateinit var categoryInput: EditText
     private lateinit var descriptionInput: EditText
     private lateinit var skuInput: EditText
+
+    // UI Elements - Category Tags
+    private lateinit var categoryTagsContainer: FlexboxLayout
+    private lateinit var newCategoryContainer: LinearLayout
+    private lateinit var newCategoryInput: EditText
+    private lateinit var btnConfirmCategory: ImageButton
+    private lateinit var btnCancelCategory: ImageButton
 
     // UI Elements - Pricing
     private lateinit var priceTypeToggle: MaterialButtonToggleGroup
@@ -80,12 +88,16 @@ class ItemEntryActivity : AppCompatActivity() {
     private lateinit var switchVatEnabled: SwitchMaterial
     private lateinit var vatFieldsContainer: LinearLayout
     private lateinit var switchPriceIncludesVat: SwitchMaterial
-    private lateinit var spinnerVatRate: Spinner
+    private lateinit var vatRateInput: EditText
     private lateinit var priceBreakdownContainer: LinearLayout
     private lateinit var textNetPrice: TextView
     private lateinit var textVatLabel: TextView
     private lateinit var textVatAmount: TextView
     private lateinit var textGrossPrice: TextView
+
+    // UI Elements - SKU
+    private lateinit var skuContainer: View
+    private lateinit var skuErrorText: TextView
 
     // UI Elements - Inventory
     private lateinit var switchTrackInventory: SwitchMaterial
@@ -116,6 +128,9 @@ class ItemEntryActivity : AppCompatActivity() {
     private var currentItem: Item? = null
     private var currentPhotoPath: String? = null
     private var currentPriceType: PriceType = PriceType.FIAT
+    private var selectedCategory: String? = null
+    private var isSkuValid: Boolean = true
+    private var existingCategories: MutableList<String> = mutableListOf()
 
     // Activity Result Launchers
     private val selectGalleryLauncher: ActivityResultLauncher<String> =
@@ -138,8 +153,14 @@ class ItemEntryActivity : AppCompatActivity() {
             if (result.resultCode == RESULT_OK) {
                 val barcodeValue = result.data?.getStringExtra(BarcodeScannerActivity.EXTRA_BARCODE_VALUE)
                 if (!barcodeValue.isNullOrEmpty()) {
-                    skuInput.setText(barcodeValue)
-                    Toast.makeText(this, "Barcode scanned successfully", Toast.LENGTH_SHORT).show()
+                    // Check if SKU already exists before setting
+                    if (itemManager.isSkuDuplicate(barcodeValue, editItemId)) {
+                        // Show error but don't enter the SKU
+                        Toast.makeText(this, "This barcode is already used by another item", Toast.LENGTH_LONG).show()
+                    } else {
+                        skuInput.setText(barcodeValue)
+                        Toast.makeText(this, "Barcode scanned successfully", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -150,10 +171,13 @@ class ItemEntryActivity : AppCompatActivity() {
 
         initializeViews()
         initializeManagers()
+        loadExistingCategories()
         setupPriceTypeToggle()
         setupVatSection()
         setupInventoryTracking()
         setupInputValidation()
+        setupSkuValidation()
+        setupCategoryTags()
         setupClickListeners()
 
         editItemId = intent.getStringExtra(EXTRA_ITEM_ID)
@@ -176,6 +200,13 @@ class ItemEntryActivity : AppCompatActivity() {
         descriptionInput = findViewById(R.id.item_description_input)
         skuInput = findViewById(R.id.item_sku_input)
 
+        // Category Tags
+        categoryTagsContainer = findViewById(R.id.category_tags_container)
+        newCategoryContainer = findViewById(R.id.new_category_container)
+        newCategoryInput = findViewById(R.id.new_category_input)
+        btnConfirmCategory = findViewById(R.id.btn_confirm_category)
+        btnCancelCategory = findViewById(R.id.btn_cancel_category)
+
         // Pricing
         priceTypeToggle = findViewById(R.id.price_type_toggle)
         btnPriceFiat = findViewById(R.id.btn_price_fiat)
@@ -192,12 +223,16 @@ class ItemEntryActivity : AppCompatActivity() {
         switchVatEnabled = findViewById(R.id.switch_vat_enabled)
         vatFieldsContainer = findViewById(R.id.vat_fields_container)
         switchPriceIncludesVat = findViewById(R.id.switch_price_includes_vat)
-        spinnerVatRate = findViewById(R.id.spinner_vat_rate)
+        vatRateInput = findViewById(R.id.vat_rate_input)
         priceBreakdownContainer = findViewById(R.id.price_breakdown_container)
         textNetPrice = findViewById(R.id.text_net_price)
         textVatLabel = findViewById(R.id.text_vat_label)
         textVatAmount = findViewById(R.id.text_vat_amount)
         textGrossPrice = findViewById(R.id.text_gross_price)
+
+        // SKU
+        skuContainer = findViewById(R.id.sku_container)
+        skuErrorText = findViewById(R.id.sku_error_text)
 
         // Inventory
         switchTrackInventory = findViewById(R.id.switch_track_inventory)
@@ -221,6 +256,111 @@ class ItemEntryActivity : AppCompatActivity() {
     private fun initializeManagers() {
         itemManager = ItemManager.getInstance(this)
         currencyManager = CurrencyManager.getInstance(this)
+    }
+
+    private fun loadExistingCategories() {
+        existingCategories = itemManager.getAllCategories().toMutableList()
+    }
+
+    private fun setupCategoryTags() {
+        refreshCategoryTags()
+        
+        btnConfirmCategory.setOnClickListener {
+            val newCategory = newCategoryInput.text.toString().trim()
+            if (newCategory.isNotEmpty()) {
+                // Add to existing categories if not already present
+                if (!existingCategories.contains(newCategory)) {
+                    existingCategories.add(newCategory)
+                    existingCategories.sort()
+                }
+                selectCategory(newCategory)
+                newCategoryContainer.visibility = View.GONE
+                newCategoryInput.text.clear()
+                refreshCategoryTags()
+            }
+        }
+        
+        btnCancelCategory.setOnClickListener {
+            newCategoryContainer.visibility = View.GONE
+            newCategoryInput.text.clear()
+        }
+    }
+
+    private fun refreshCategoryTags() {
+        categoryTagsContainer.removeAllViews()
+        
+        // Add existing category tags
+        for (category in existingCategories) {
+            val tagView = createCategoryTag(category, category == selectedCategory)
+            categoryTagsContainer.addView(tagView)
+        }
+        
+        // Add "Add New" button
+        val addNewButton = createAddNewCategoryButton()
+        categoryTagsContainer.addView(addNewButton)
+    }
+
+    private fun createCategoryTag(category: String, isSelected: Boolean): View {
+        val textView = TextView(this).apply {
+            text = category
+            textSize = 14f
+            setTextColor(
+                if (isSelected) ContextCompat.getColor(context, R.color.color_bg_white)
+                else ContextCompat.getColor(context, R.color.color_text_primary)
+            )
+            background = ContextCompat.getDrawable(
+                context,
+                if (isSelected) R.drawable.bg_category_tag_selected
+                else R.drawable.bg_category_tag
+            )
+            
+            val params = FlexboxLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(0, 0, 12, 12)
+            layoutParams = params
+            
+            setOnClickListener {
+                if (isSelected) {
+                    // Deselect
+                    selectCategory(null)
+                } else {
+                    // Select this category
+                    selectCategory(category)
+                }
+                refreshCategoryTags()
+            }
+        }
+        return textView
+    }
+
+    private fun createAddNewCategoryButton(): View {
+        val textView = TextView(this).apply {
+            text = "+ Add New"
+            textSize = 14f
+            setTextColor(ContextCompat.getColor(context, R.color.color_primary_green))
+            background = ContextCompat.getDrawable(context, R.drawable.bg_category_tag_add)
+            
+            val params = FlexboxLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(0, 0, 12, 12)
+            layoutParams = params
+            
+            setOnClickListener {
+                // Show the new category input
+                newCategoryContainer.visibility = View.VISIBLE
+                newCategoryInput.requestFocus()
+            }
+        }
+        return textView
+    }
+
+    private fun selectCategory(category: String?) {
+        selectedCategory = category
+        categoryInput.setText(category ?: "")
     }
 
     private fun setupPriceTypeToggle() {
@@ -248,14 +388,15 @@ class ItemEntryActivity : AppCompatActivity() {
     }
 
     private fun setupVatSection() {
-        // Setup VAT rate spinner
-        val vatRateLabels = Item.COMMON_VAT_RATES.map { it.first }
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, vatRateLabels)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerVatRate.adapter = adapter
-        
-        // Default to 20% (index 5)
-        spinnerVatRate.setSelection(5)
+        // VAT rate input - integers only (0-99)
+        vatRateInput.filters = arrayOf(InputFilter.LengthFilter(2))
+        vatRateInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                updatePriceBreakdown()
+            }
+        })
 
         // VAT enabled toggle
         switchVatEnabled.setOnCheckedChangeListener { _, isChecked ->
@@ -268,16 +409,6 @@ class ItemEntryActivity : AppCompatActivity() {
         switchPriceIncludesVat.setOnCheckedChangeListener { _, _ ->
             updatePriceBreakdown()
         }
-
-        // VAT rate spinner
-        spinnerVatRate.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                updatePriceBreakdown()
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-
-
     }
 
     private fun updateVatSectionVisibility() {
@@ -304,9 +435,8 @@ class ItemEntryActivity : AppCompatActivity() {
         val priceStr = priceInput.text.toString().trim().replace(",", ".")
         val enteredPrice = priceStr.toDoubleOrNull() ?: 0.0
 
-        // Get selected VAT rate
-        val selectedPosition = spinnerVatRate.selectedItemPosition
-        val vatRate = Item.COMMON_VAT_RATES.getOrNull(selectedPosition)?.second ?: 0.0
+        // Get VAT rate from input
+        val vatRate = vatRateInput.text.toString().toIntOrNull() ?: 0
 
         // Calculate prices based on whether entered price includes VAT or not
         val netPrice: Double
@@ -316,12 +446,12 @@ class ItemEntryActivity : AppCompatActivity() {
         if (switchPriceIncludesVat.isChecked) {
             // Entered price is gross (includes VAT) - need to calculate net
             grossPrice = enteredPrice
-            netPrice = Item.calculateNetFromGross(grossPrice, vatRate)
+            netPrice = Item.calculateNetFromGross(grossPrice, vatRate.toDouble())
             vatAmount = grossPrice - netPrice
         } else {
             // Entered price is net (excludes VAT) - need to calculate gross
             netPrice = enteredPrice
-            grossPrice = Item.calculateGrossFromNet(netPrice, vatRate)
+            grossPrice = Item.calculateGrossFromNet(netPrice, vatRate.toDouble())
             vatAmount = grossPrice - netPrice
         }
 
@@ -329,21 +459,13 @@ class ItemEntryActivity : AppCompatActivity() {
         val currency = Amount.Currency.fromCode(currencyManager.getCurrentCurrency())
         
         textNetPrice.text = Amount.fromMajorUnits(netPrice, currency).toString()
-        textVatLabel.text = "VAT (${vatRate.toInt()}%)"
+        textVatLabel.text = "VAT ($vatRate%)"
         textVatAmount.text = Amount.fromMajorUnits(vatAmount, currency).toString()
         textGrossPrice.text = Amount.fromMajorUnits(grossPrice, currency).toString()
     }
 
-    private fun getSelectedVatRate(): Double {
-        val selectedPosition = spinnerVatRate.selectedItemPosition
-        return Item.COMMON_VAT_RATES.getOrNull(selectedPosition)?.second ?: 0.0
-    }
-
-    private fun setVatRateByValue(rate: Double) {
-        val index = Item.COMMON_VAT_RATES.indexOfFirst { it.second == rate }
-        if (index >= 0) {
-            spinnerVatRate.setSelection(index)
-        }
+    private fun getVatRate(): Int {
+        return vatRateInput.text.toString().toIntOrNull() ?: 0
     }
 
     private fun setupInventoryTracking() {
@@ -405,6 +527,41 @@ class ItemEntryActivity : AppCompatActivity() {
         })
     }
 
+    private fun setupSkuValidation() {
+        skuInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            
+            override fun afterTextChanged(s: Editable?) {
+                val sku = s.toString().trim()
+                validateSku(sku)
+            }
+        })
+    }
+
+    private fun validateSku(sku: String) {
+        if (sku.isEmpty()) {
+            // Empty SKU is valid (optional field)
+            setSkuError(false)
+            return
+        }
+
+        val isDuplicate = itemManager.isSkuDuplicate(sku, editItemId)
+        setSkuError(isDuplicate)
+    }
+
+    private fun setSkuError(hasError: Boolean) {
+        isSkuValid = !hasError
+        
+        if (hasError) {
+            skuContainer.setBackgroundResource(R.drawable.bg_input_field_error)
+            skuErrorText.visibility = View.VISIBLE
+        } else {
+            skuContainer.setBackgroundResource(0) // Remove background (handled by card)
+            skuErrorText.visibility = View.GONE
+        }
+    }
+
     private fun setupClickListeners() {
         val backButton: View? = findViewById(R.id.back_button)
         val saveButton: Button = findViewById(R.id.item_save_button)
@@ -446,9 +603,13 @@ class ItemEntryActivity : AppCompatActivity() {
                 // Basic info
                 nameInput.setText(item.name)
                 variationInput.setText(item.variationName)
-                categoryInput.setText(item.category)
                 descriptionInput.setText(item.description)
                 skuInput.setText(item.sku)
+
+                // Category
+                selectedCategory = item.category
+                categoryInput.setText(item.category)
+                refreshCategoryTags()
 
                 // Pricing
                 currentPriceType = item.priceType
@@ -473,7 +634,7 @@ class ItemEntryActivity : AppCompatActivity() {
                 switchVatEnabled.isChecked = item.vatEnabled
                 vatFieldsContainer.visibility = if (item.vatEnabled) View.VISIBLE else View.GONE
                 priceBreakdownContainer.visibility = if (item.vatEnabled && item.priceType == PriceType.FIAT) View.VISIBLE else View.GONE
-                setVatRateByValue(item.vatRate)
+                vatRateInput.setText(item.vatRate.toString())
                 // When editing, we show gross price in input, so price "includes VAT"
                 switchPriceIncludesVat.isChecked = true
                 
@@ -654,6 +815,13 @@ class ItemEntryActivity : AppCompatActivity() {
             return
         }
 
+        // Validate SKU is not duplicate
+        if (!isSkuValid) {
+            Toast.makeText(this, "Please use a unique SKU", Toast.LENGTH_SHORT).show()
+            skuInput.requestFocus()
+            return
+        }
+
         // Validate and get price based on type
         var fiatPrice = 0.0
         var satsPrice = 0L
@@ -686,11 +854,11 @@ class ItemEntryActivity : AppCompatActivity() {
                 // Convert entered price to net price if VAT is enabled
                 val vatEnabled = switchVatEnabled.isChecked
                 val priceIncludesVat = switchPriceIncludesVat.isChecked
-                val vatRate = getSelectedVatRate()
+                val vatRate = getVatRate()
 
                 fiatPrice = if (vatEnabled && priceIncludesVat) {
                     // Entered price includes VAT - calculate net price
-                    Item.calculateNetFromGross(enteredPrice, vatRate)
+                    Item.calculateNetFromGross(enteredPrice, vatRate.toDouble())
                 } else {
                     // Entered price is net price (or no VAT)
                     enteredPrice
@@ -752,16 +920,19 @@ class ItemEntryActivity : AppCompatActivity() {
         val item = Item().apply {
             if (isEditMode) {
                 id = editItemId
+                // Preserve existing UUID
+                uuid = currentItem?.uuid ?: UUID.randomUUID().toString()
                 if (currentItem?.imagePath != null && selectedImageUri == null) {
                     imagePath = currentItem?.imagePath
                 }
             } else {
                 id = UUID.randomUUID().toString()
+                uuid = UUID.randomUUID().toString()
             }
 
             this.name = name
             variationName = variationInput.text.toString().trim()
-            category = categoryInput.text.toString().trim()
+            category = selectedCategory
             description = descriptionInput.text.toString().trim()
             sku = skuInput.text.toString().trim()
 
@@ -782,10 +953,10 @@ class ItemEntryActivity : AppCompatActivity() {
             // VAT (only for fiat items)
             if (currentPriceType == PriceType.FIAT) {
                 vatEnabled = switchVatEnabled.isChecked
-                vatRate = if (vatEnabled) getSelectedVatRate() else 0.0
+                vatRate = if (vatEnabled) getVatRate() else 0
             } else {
                 vatEnabled = false
-                vatRate = 0.0
+                vatRate = 0
             }
 
             // Inventory
@@ -819,8 +990,8 @@ class ItemEntryActivity : AppCompatActivity() {
 
     private fun isValidFiatPrice(price: String): Boolean {
         // Accept both . and , as decimal separators, max 2 decimal places
-        val pattern = Pattern.compile("^\\d+([.,]\\d{0,2})?$")
-        return pattern.matcher(price).matches()
+        val pattern = "^\\d+([.,]\\d{0,2})?$".toRegex()
+        return pattern.matches(price)
     }
 
     companion object {

@@ -174,35 +174,7 @@
                             android:textColorHint="@color/color_text_tertiary" />
                     </LinearLayout>
 
-                    <!-- Category -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="16dp"
-                        android:minHeight="50dp">
-
-                        <TextView
-                            android:layout_width="100dp"
-                            android:layout_height="wrap_content"
-                            android:text="Category"
-                            android:textAppearance="@style/Text.Body"
-                            android:textColor="@color/color_text_primary" />
-
-                        <EditText
-                            android:id="@+id/item_category_input"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@null"
-                            android:hint="Optional"
-                            android:inputType="textCapWords"
-                            android:textAppearance="@style/Text.Body"
-                            android:textColorHint="@color/color_text_tertiary" />
-                    </LinearLayout>
-
-                    <!-- Variation -->
+                    <!-- Variation (moved before Category) -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -262,6 +234,105 @@
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
+            <!-- ==================== CATEGORY SECTION (Tag-based) ==================== -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="8dp"
+                android:text="CATEGORY"
+                android:textAppearance="@style/Text.SectionHeader" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/color_bg_white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Category Tags Flow Layout -->
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:id="@+id/category_tags_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:flexWrap="wrap"
+                        app:alignItems="flex_start"
+                        app:justifyContent="flex_start">
+
+                        <!-- Tags will be added programmatically -->
+
+                    </com.google.android.flexbox.FlexboxLayout>
+
+                    <!-- New Category Input (hidden by default) -->
+                    <LinearLayout
+                        android:id="@+id/new_category_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="12dp"
+                        android:visibility="gone">
+
+                        <EditText
+                            android:id="@+id/new_category_input"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_input_field_rounded"
+                            android:hint="New category name"
+                            android:inputType="textCapWords"
+                            android:paddingHorizontal="12dp"
+                            android:textSize="15sp"
+                            android:textColorHint="@color/color_text_tertiary" />
+
+                        <ImageButton
+                            android:id="@+id/btn_confirm_category"
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_circle_green"
+                            android:contentDescription="Confirm"
+                            android:src="@drawable/ic_check"
+                            app:tint="@color/color_bg_white" />
+
+                        <ImageButton
+                            android:id="@+id/btn_cancel_category"
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:layout_marginStart="8dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Cancel"
+                            android:src="@drawable/ic_close"
+                            app:tint="@color/color_text_secondary" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Hidden category input for compatibility -->
+            <EditText
+                android:id="@+id/item_category_input"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="24dp"
+                android:text="Select an existing category or create a new one."
+                android:textAppearance="@style/Text.Caption" />
 
             <!-- ==================== PRICING SECTION ==================== -->
             <TextView
@@ -483,7 +554,7 @@
 
                         </LinearLayout>
 
-                        <!-- VAT Rate Selection -->
+                        <!-- VAT Rate Manual Input -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -493,20 +564,43 @@
                             android:minHeight="50dp">
 
                             <TextView
-                                android:layout_width="80dp"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_weight="1"
                                 android:text="VAT Rate"
                                 android:textAppearance="@style/Text.Body"
                                 android:textColor="@color/color_text_primary" />
 
-                            <Spinner
-                                android:id="@+id/spinner_vat_rate"
-                                android:layout_width="0dp"
-                                android:layout_height="44dp"
-                                android:layout_weight="1"
-                                android:background="@drawable/bg_spinner_rounded"
-                                android:paddingHorizontal="12dp"
-                                android:spinnerMode="dropdown" />
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:background="@drawable/bg_vat_input">
+
+                                <EditText
+                                    android:id="@+id/vat_rate_input"
+                                    android:layout_width="48dp"
+                                    android:layout_height="36dp"
+                                    android:background="@null"
+                                    android:gravity="center"
+                                    android:hint="20"
+                                    android:inputType="number"
+                                    android:maxLength="2"
+                                    android:textSize="16sp"
+                                    android:textColor="@color/color_text_primary"
+                                    android:textColorHint="@color/color_text_tertiary"
+                                    android:fontFamily="sans-serif-medium" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="%"
+                                    android:textSize="16sp"
+                                    android:textColor="@color/color_text_secondary"
+                                    android:layout_marginEnd="4dp" />
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
@@ -514,6 +608,13 @@
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
+            <!-- Hidden spinner for compatibility -->
+            <Spinner
+                android:id="@+id/spinner_vat_rate"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
 
             <!-- Price Breakdown (shown when VAT enabled) -->
             <LinearLayout
@@ -649,12 +750,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="8dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/color_bg_white">
 
                 <LinearLayout
+                    android:id="@+id/sku_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -692,6 +794,18 @@
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
+            <!-- SKU Error Message -->
+            <TextView
+                android:id="@+id/sku_error_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="16dp"
+                android:text="This SKU already exists"
+                android:textSize="13sp"
+                android:textColor="@color/color_warning_red"
+                android:visibility="gone" />
 
             <!-- ==================== INVENTORY SECTION ==================== -->
             <TextView

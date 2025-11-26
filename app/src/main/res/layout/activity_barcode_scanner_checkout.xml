@@ -19,12 +19,22 @@
         android:layout_height="match_parent"
         android:background="@drawable/scanner_overlay" />
 
-    <!-- Top Bar -->
+    <!-- Top Bar with Close Button -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="48dp"
         android:paddingHorizontal="16dp">
+
+        <ImageButton
+            android:id="@+id/top_close_button"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="start"
+            android:background="@drawable/bg_circle_button_dark"
+            android:contentDescription="Close"
+            android:src="@drawable/ic_close"
+            app:tint="@android:color/white" />
 
         <TextView
             android:layout_width="wrap_content"

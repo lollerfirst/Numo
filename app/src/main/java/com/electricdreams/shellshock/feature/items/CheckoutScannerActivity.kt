@@ -48,6 +48,7 @@ class CheckoutScannerActivity : AppCompatActivity() {
     private lateinit var previewView: PreviewView
     private lateinit var overlayView: View
     private lateinit var instructionText: TextView
+    private lateinit var topCloseButton: ImageButton
     private lateinit var closeButton: Button
     private lateinit var scannedItemOverlay: LinearLayout
 
@@ -124,6 +125,7 @@ class CheckoutScannerActivity : AppCompatActivity() {
         previewView = findViewById(R.id.preview_view)
         overlayView = findViewById(R.id.scanner_overlay)
         instructionText = findViewById(R.id.instruction_text)
+        topCloseButton = findViewById(R.id.top_close_button)
         closeButton = findViewById(R.id.close_button)
         scannedItemOverlay = findViewById(R.id.scanned_item_overlay)
 
@@ -139,6 +141,15 @@ class CheckoutScannerActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
+        topCloseButton.setOnClickListener {
+            if (basketUpdated) {
+                setResult(RESULT_BASKET_UPDATED)
+            } else {
+                setResult(RESULT_CANCELED)
+            }
+            finish()
+        }
+
         closeButton.setOnClickListener {
             if (basketUpdated) {
                 setResult(RESULT_BASKET_UPDATED)

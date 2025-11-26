@@ -2,6 +2,7 @@ package com.electricdreams.shellshock.core.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.util.UUID
 import kotlin.math.roundToLong
 
 /**
@@ -25,7 +26,8 @@ enum class PriceType {
  */
 @Parcelize
 data class Item(
-    var id: String? = null,                     // Unique identifier for the item
+    var id: String? = null,                     // Legacy ID (kept for backwards compatibility)
+    var uuid: String = UUID.randomUUID().toString(), // Internal UUID for tracking across app
     var name: String? = null,                   // Item name
     var variationName: String? = null,          // Optional variation name
     var sku: String? = null,                    // Stock keeping unit
@@ -37,7 +39,7 @@ data class Item(
     var priceType: PriceType = PriceType.FIAT,  // Whether price is in fiat or sats
     var priceCurrency: String = "USD",          // Fiat currency code (USD, EUR, etc.)
     var vatEnabled: Boolean = false,            // Whether VAT/tax applies to this item
-    var vatRate: Double = 0.0,                  // VAT rate as percentage (e.g., 20.0 for 20%)
+    var vatRate: Int = 0,                       // VAT rate as integer percentage (e.g., 20 for 20%)
     var trackInventory: Boolean = false,        // Whether to track inventory for this item
     var quantity: Int = 0,                      // Available quantity (only used if trackInventory is true)
     var alertEnabled: Boolean = false,          // Whether stock alerts are enabled

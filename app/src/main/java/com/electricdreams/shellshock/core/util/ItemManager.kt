@@ -68,6 +68,13 @@ class ItemManager private constructor(context: Context) {
                         name = obj.getString("name")
                         price = obj.getDouble("price")
 
+                        // UUID - generate if missing (migration for old items)
+                        uuid = if (!obj.isNull("uuid")) {
+                            obj.getString("uuid")
+                        } else {
+                            UUID.randomUUID().toString()
+                        }
+
                         if (!obj.isNull("variationName")) {
                             variationName = obj.getString("variationName")
                         }
@@ -112,6 +119,13 @@ class ItemManager private constructor(context: Context) {
                         if (!obj.isNull("trackInventory")) {
                             trackInventory = obj.getBoolean("trackInventory")
                         }
+                        // VAT fields
+                        if (!obj.isNull("vatEnabled")) {
+                            vatEnabled = obj.getBoolean("vatEnabled")
+                        }
+                        if (!obj.isNull("vatRate")) {
+                            vatRate = obj.getInt("vatRate")
+                        }
                     }
 
                     items.add(item)
@@ -133,6 +147,7 @@ class ItemManager private constructor(context: Context) {
             for (item in items) {
                 val obj = JSONObject().apply {
                     put("id", item.id)
+                    put("uuid", item.uuid)
                     put("name", item.name)
                     put("price", item.price)
 
@@ -152,6 +167,10 @@ class ItemManager private constructor(context: Context) {
                     put("priceType", item.priceType.name)
                     put("priceCurrency", item.priceCurrency)
                     put("trackInventory", item.trackInventory)
+                    
+                    // VAT fields
+                    put("vatEnabled", item.vatEnabled)
+                    put("vatRate", item.vatRate)
                 }
                 array.put(obj)
             }
@@ -176,6 +195,32 @@ class ItemManager private constructor(context: Context) {
      */
     fun findItemBySku(sku: String): Item? {
         return items.find { it.sku?.equals(sku, ignoreCase = true) == true }
+    }
+
+    /**
+     * Check if a SKU already exists in the catalog.
+     * @param sku SKU to check.
+     * @param excludeItemId Optional item ID to exclude from the check (for editing existing items).
+     * @return true if SKU exists (and belongs to a different item), false otherwise.
+     */
+    fun isSkuDuplicate(sku: String, excludeItemId: String? = null): Boolean {
+        if (sku.isBlank()) return false
+        return items.any { item ->
+            item.sku?.equals(sku, ignoreCase = true) == true && item.id != excludeItemId
+        }
+    }
+
+    /**
+     * Get all unique categories from existing items.
+     * @return Sorted list of unique category names (non-null, non-empty).
+     */
+    fun getAllCategories(): List<String> {
+        return items
+            .mapNotNull { it.category }
+            .filter { it.isNotBlank() }
+            .map { it.trim() }
+            .distinct()
+            .sorted()
     }
 
     /**
