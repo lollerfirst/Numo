@@ -298,9 +298,43 @@ class ItemSelectionActivity : AppCompatActivity() {
             return
         }
 
-        val satoshisAmount = basketManager.getTotalSatoshis(bitcoinPriceWorker.getCurrentPrice())
+        val fiatTotal = basketManager.getTotalPrice()
+        val satsTotal = basketManager.getTotalSatsDirectPrice()
+        val btcPrice = bitcoinPriceWorker.getCurrentPrice()
+
+        // Calculate total in satoshis
+        val totalSatoshis = basketManager.getTotalSatoshis(btcPrice)
+
+        if (totalSatoshis <= 0) {
+            Toast.makeText(this, "Invalid payment amount", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Determine how to format the amount for PaymentRequestActivity
+        val formattedAmount: String
+        
+        when {
+            // Pure fiat (no sats items) - display as fiat
+            satsTotal == 0L && fiatTotal > 0 -> {
+                val currencyCode = currencyManager.getCurrentCurrency()
+                val currency = Amount.Currency.fromCode(currencyCode)
+                // Convert fiat total to cents for Amount class
+                val fiatCents = (fiatTotal * 100).toLong()
+                formattedAmount = Amount(fiatCents, currency).toString()
+            }
+            // Pure sats (no fiat items) - display as BTC/sats
+            fiatTotal == 0.0 && satsTotal > 0 -> {
+                formattedAmount = Amount(satsTotal, Amount.Currency.BTC).toString()
+            }
+            // Mixed fiat + sats - treat as pure sats (display as BTC)
+            else -> {
+                formattedAmount = Amount(totalSatoshis, Amount.Currency.BTC).toString()
+            }
+        }
+
         val intent = Intent(this, PaymentRequestActivity::class.java).apply {
-            putExtra("EXTRA_SATOSHI_AMOUNT", satoshisAmount)
+            putExtra(PaymentRequestActivity.EXTRA_PAYMENT_AMOUNT, totalSatoshis)
+            putExtra(PaymentRequestActivity.EXTRA_FORMATTED_AMOUNT, formattedAmount)
         }
 
         basketManager.clearBasket()
