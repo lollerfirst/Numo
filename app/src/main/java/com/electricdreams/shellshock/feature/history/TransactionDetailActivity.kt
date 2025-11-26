@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.electricdreams.shellshock.R
 import com.electricdreams.shellshock.core.data.model.PaymentHistoryEntry
 import com.electricdreams.shellshock.core.model.Amount
+import com.electricdreams.shellshock.core.model.CheckoutBasket
 import com.electricdreams.shellshock.core.util.MintManager
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -106,16 +107,44 @@ class TransactionDetailActivity : AppCompatActivity() {
             }
         }
 
-        // Amount display
+        // Amount display - show primary and secondary amounts based on basket type
         val amountText: TextView = findViewById(R.id.detail_amount)
+        val amountSubtitleText: TextView = findViewById(R.id.detail_amount_subtitle)
         val amountValueText: TextView = findViewById(R.id.detail_amount_value)
 
-        val currency = Amount.Currency.fromCode(entry.getUnit())
-        val amount = Amount(entry.amount, currency)
-        val formattedAmount = amount.toString()
-
-        amountText.text = formattedAmount
-        amountValueText.text = formattedAmount
+        // Parse basket to determine display mode
+        val basket = CheckoutBasket.fromJson(checkoutBasketJson)
+        val showSatsAsPrimary = basket?.let { 
+            it.hasMixedPriceTypes() || it.getFiatItems().isEmpty() 
+        } ?: (entry.getEntryUnit() == "sat")
+        
+        val satAmount = Amount(entry.amount, Amount.Currency.BTC)
+        
+        if (showSatsAsPrimary) {
+            // Primary: Sats
+            amountText.text = satAmount.toString()
+            amountValueText.text = satAmount.toString()
+            
+            // Secondary: Fiat equivalent
+            if (entry.enteredAmount > 0 && entry.getEntryUnit() != "sat") {
+                val entryCurrency = Amount.Currency.fromCode(entry.getEntryUnit())
+                val fiatAmount = Amount(entry.enteredAmount, entryCurrency)
+                amountSubtitleText.text = "≈ $fiatAmount"
+                amountSubtitleText.visibility = View.VISIBLE
+            } else {
+                amountSubtitleText.visibility = View.GONE
+            }
+        } else {
+            // Primary: Fiat
+            val entryCurrency = Amount.Currency.fromCode(entry.getEntryUnit())
+            val fiatAmount = Amount(entry.enteredAmount, entryCurrency)
+            amountText.text = fiatAmount.toString()
+            amountValueText.text = fiatAmount.toString()
+            
+            // Secondary: Sats paid
+            amountSubtitleText.text = satAmount.toString()
+            amountSubtitleText.visibility = View.VISIBLE
+        }
 
         // Date
         val dateText: TextView = findViewById(R.id.detail_date)
@@ -262,13 +291,9 @@ class TransactionDetailActivity : AppCompatActivity() {
         openWithButton.setOnClickListener { openWithApp() }
         deleteButton.setOnClickListener { showDeleteConfirmation() }
 
-        // Show View Basket button only if there's basket data
-        if (!checkoutBasketJson.isNullOrEmpty()) {
-            viewBasketButton.visibility = View.VISIBLE
-            viewBasketButton.setOnClickListener { openBasketReceipt() }
-        } else {
-            viewBasketButton.visibility = View.GONE
-        }
+        // Always show View Receipt button - works with or without basket
+        viewBasketButton.visibility = View.VISIBLE
+        viewBasketButton.setOnClickListener { openBasketReceipt() }
     }
 
     private fun openBasketReceipt() {
@@ -279,6 +304,11 @@ class TransactionDetailActivity : AppCompatActivity() {
             putExtra(BasketReceiptActivity.EXTRA_TRANSACTION_ID, entry.token.takeIf { it.isNotEmpty() }?.take(32))
             putExtra(BasketReceiptActivity.EXTRA_MINT_URL, entry.mintUrl)
             entry.bitcoinPrice?.let { putExtra(BasketReceiptActivity.EXTRA_BITCOIN_PRICE, it) }
+            
+            // For non-basket transactions, pass the payment amount info
+            putExtra(BasketReceiptActivity.EXTRA_TOTAL_SATOSHIS, entry.amount)
+            putExtra(BasketReceiptActivity.EXTRA_ENTERED_AMOUNT, entry.enteredAmount)
+            putExtra(BasketReceiptActivity.EXTRA_ENTERED_CURRENCY, entry.getEntryUnit())
         }
         startActivity(intent)
     }

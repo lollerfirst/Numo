@@ -2,14 +2,8 @@ package com.electricdreams.shellshock.core.util
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Typeface
 import android.print.PrintAttributes
 import android.print.PrintManager
-import android.print.pdf.PrintedPdfDocument
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.content.FileProvider
@@ -24,13 +18,18 @@ import java.util.Locale
 /**
  * Utility class for generating and printing thermal receipt-style receipts.
  * Produces a narrow-format, fixed-width font receipt suitable for thermal printers.
+ * 
+ * Handles three pricing scenarios:
+ * 1. Fiat-only basket: Shows fiat total as primary, sats as secondary
+ * 2. Mixed basket (fiat + sats items): Shows sats total as primary, fiat equivalent as secondary
+ * 3. Sats-only basket: Shows sats total as primary, fiat equivalent as secondary
+ * 4. No basket (direct payment): Shows single "Payment" line item
  */
 class ReceiptPrinter(private val context: Context) {
 
     companion object {
         // Standard thermal receipt width (58mm or 80mm paper)
         private const val RECEIPT_WIDTH_CHARS = 42 // Characters per line for 58mm paper
-        private const val RECEIPT_WIDTH_CHARS_WIDE = 48 // Characters per line for 80mm paper
         
         private const val LINE_SEPARATOR = "──────────────────────────────────────────"
         private const val DOUBLE_LINE = "══════════════════════════════════════════"
@@ -38,9 +37,10 @@ class ReceiptPrinter(private val context: Context) {
 
     /**
      * Data class containing all information needed to print a receipt.
+     * Basket is optional - if null, creates a simple "Payment" receipt.
      */
     data class ReceiptData(
-        val basket: CheckoutBasket,
+        val basket: CheckoutBasket?, // null for transactions without basket
         val paymentType: String?, // "cashu" or "lightning"
         val paymentDate: Date,
         val transactionId: String?,
@@ -49,7 +49,42 @@ class ReceiptPrinter(private val context: Context) {
         val merchantName: String = "SHELLSHOCK POS",
         val merchantAddress: String? = null,
         val merchantVatNumber: String? = null,
+        // For non-basket transactions
+        val totalSatoshis: Long = 0,
+        val enteredAmount: Long = 0, // in minor units (cents)
+        val enteredCurrency: String = "USD",
     )
+
+    /**
+     * Determine if the receipt should show sats as the primary amount.
+     * True for: mixed baskets, sats-only baskets, or when no fiat items exist.
+     */
+    private fun shouldShowSatsAsPrimary(data: ReceiptData): Boolean {
+        val basket = data.basket ?: return false // No basket = use fiat if available
+        
+        // Mixed pricing or sats-only = show sats as primary
+        return basket.hasMixedPriceTypes() || basket.getFiatItems().isEmpty()
+    }
+
+    /**
+     * Calculate total fiat value including converted sats items.
+     */
+    private fun getTotalFiatIncludingSatsConversion(data: ReceiptData): Long {
+        val basket = data.basket ?: return data.enteredAmount
+        
+        val fiatTotal = basket.getFiatGrossTotalCents()
+        val satsItems = basket.getSatsItems()
+        
+        if (satsItems.isEmpty() || data.bitcoinPrice == null || data.bitcoinPrice <= 0) {
+            return fiatTotal
+        }
+        
+        // Convert sats items to fiat
+        val satsTotal = basket.getSatsDirectTotal()
+        val satsInFiat = ((satsTotal.toDouble() / 100_000_000.0) * data.bitcoinPrice * 100).toLong()
+        
+        return fiatTotal + satsInFiat
+    }
 
     /**
      * Generate a plain-text receipt suitable for thermal printers.
@@ -73,9 +108,13 @@ class ReceiptPrinter(private val context: Context) {
         fun doubleLine() = DOUBLE_LINE.take(w)
 
         // Currency helper
-        val currency = Amount.Currency.fromCode(data.basket.currency)
+        val currency = data.basket?.let { Amount.Currency.fromCode(it.currency) } 
+            ?: Amount.Currency.fromCode(data.enteredCurrency)
         fun formatFiat(cents: Long): String = Amount(cents, currency).toString()
         fun formatSats(sats: Long): String = Amount(sats, Amount.Currency.BTC).toString()
+
+        val showSatsAsPrimary = shouldShowSatsAsPrimary(data)
+        val totalSats = data.basket?.totalSatoshis ?: data.totalSatoshis
 
         // ═══════════════════════════════════════════
         // HEADER
@@ -111,40 +150,55 @@ class ReceiptPrinter(private val context: Context) {
         sb.appendLine(line())
         sb.appendLine()
 
-        data.basket.items.forEach { item ->
-            // Item name (may wrap if too long)
-            val itemName = item.displayName
-            val truncatedName = if (itemName.length > w - 12) {
-                itemName.take(w - 15) + "..."
+        val basket = data.basket
+        if (basket != null && basket.items.isNotEmpty()) {
+            // Display each item with its original price
+            basket.items.forEach { item ->
+                val itemName = item.displayName
+                val truncatedName = if (itemName.length > w - 12) {
+                    itemName.take(w - 15) + "..."
+                } else {
+                    itemName
+                }
+                
+                // Show price in original currency (fiat or sats)
+                if (item.isFiatPrice()) {
+                    val unitPrice = formatFiat(item.getGrossPricePerUnitCents())
+                    val lineTotal = formatFiat(item.getGrossTotalCents())
+                    
+                    sb.appendLine(truncatedName)
+                    sb.appendLine(leftRight("  ${item.quantity} x $unitPrice", lineTotal))
+                    
+                    // VAT detail
+                    if (item.vatEnabled && item.vatRate > 0) {
+                        val vatAmount = formatFiat(item.getTotalVatCents())
+                        sb.appendLine("  (incl. ${item.vatRate}% VAT: $vatAmount)")
+                    }
+                } else {
+                    // Sats-priced item
+                    val unitPrice = formatSats(item.priceSats)
+                    val lineTotal = formatSats(item.getNetTotalSats())
+                    
+                    sb.appendLine(truncatedName)
+                    sb.appendLine(leftRight("  ${item.quantity} x $unitPrice", lineTotal))
+                    
+                    // Show fiat equivalent if we have bitcoin price
+                    if (data.bitcoinPrice != null && data.bitcoinPrice > 0) {
+                        val satsInFiat = ((item.getNetTotalSats().toDouble() / 100_000_000.0) * data.bitcoinPrice * 100).toLong()
+                        sb.appendLine("  (≈ ${formatFiat(satsInFiat)})")
+                    }
+                }
+                
+                sb.appendLine()
+            }
+        } else {
+            // No basket - single "Payment" line
+            sb.appendLine("Payment")
+            if (data.enteredAmount > 0) {
+                sb.appendLine(leftRight("  1 x ${formatFiat(data.enteredAmount)}", formatFiat(data.enteredAmount)))
             } else {
-                itemName
+                sb.appendLine(leftRight("  1 x ${formatSats(totalSats)}", formatSats(totalSats)))
             }
-            
-            // Quantity x Unit Price
-            val qtyPrice = if (item.isFiatPrice()) {
-                val unitPrice = formatFiat(item.getGrossPricePerUnitCents())
-                "${item.quantity} x $unitPrice"
-            } else {
-                val unitPrice = formatSats(item.priceSats)
-                "${item.quantity} x $unitPrice"
-            }
-            
-            // Line total
-            val lineTotal = if (item.isFiatPrice()) {
-                formatFiat(item.getGrossTotalCents())
-            } else {
-                formatSats(item.getNetTotalSats())
-            }
-            
-            sb.appendLine(truncatedName)
-            sb.appendLine(leftRight("  $qtyPrice", lineTotal))
-            
-            // VAT detail if applicable
-            if (item.isFiatPrice() && item.vatEnabled && item.vatRate > 0) {
-                val vatAmount = formatFiat(item.getTotalVatCents())
-                sb.appendLine("  (incl. ${item.vatRate}% VAT: $vatAmount)")
-            }
-            
             sb.appendLine()
         }
 
@@ -153,40 +207,62 @@ class ReceiptPrinter(private val context: Context) {
         // ───────────────────────────────────────────
         // TOTALS
         // ───────────────────────────────────────────
-        val hasVat = data.basket.hasVat()
-        val hasFiatItems = data.basket.getFiatItems().isNotEmpty()
+        if (basket != null) {
+            val hasVat = basket.hasVat()
+            val hasFiatItems = basket.getFiatItems().isNotEmpty()
 
-        if (hasVat && hasFiatItems) {
-            // Net subtotal
-            val netTotal = formatFiat(data.basket.getFiatNetTotalCents())
-            sb.appendLine(leftRight("Subtotal (excl. VAT):", netTotal))
+            if (hasVat && hasFiatItems) {
+                // Net subtotal (fiat items only)
+                val netTotal = formatFiat(basket.getFiatNetTotalCents())
+                sb.appendLine(leftRight("Fiat Subtotal (net):", netTotal))
 
-            // VAT breakdown
-            data.basket.getVatBreakdown().forEach { (rate, amountCents) ->
-                val vatAmount = formatFiat(amountCents)
-                sb.appendLine(leftRight("VAT ($rate%):", vatAmount))
+                // VAT breakdown
+                basket.getVatBreakdown().forEach { (rate, amountCents) ->
+                    val vatAmount = formatFiat(amountCents)
+                    sb.appendLine(leftRight("VAT ($rate%):", vatAmount))
+                }
+                
+                // Fiat gross subtotal
+                val grossFiat = formatFiat(basket.getFiatGrossTotalCents())
+                sb.appendLine(leftRight("Fiat Subtotal (gross):", grossFiat))
+                
+                sb.appendLine(line())
             }
-            
-            sb.appendLine(line())
+
+            // Sats items subtotal if present
+            if (basket.getSatsItems().isNotEmpty()) {
+                val satsSubtotal = formatSats(basket.getSatsDirectTotal())
+                sb.appendLine(leftRight("Bitcoin Items:", satsSubtotal))
+                
+                // Show fiat equivalent
+                if (data.bitcoinPrice != null && data.bitcoinPrice > 0) {
+                    val satsInFiat = ((basket.getSatsDirectTotal().toDouble() / 100_000_000.0) * data.bitcoinPrice * 100).toLong()
+                    sb.appendLine(leftRight("  (equivalent):", "≈ ${formatFiat(satsInFiat)}"))
+                }
+                sb.appendLine(line())
+            }
         }
 
         // GRAND TOTAL
-        val grossTotal = data.basket.getFiatGrossTotalCents()
-        val totalDisplay = if (grossTotal > 0) {
-            formatFiat(grossTotal)
+        sb.appendLine()
+        if (showSatsAsPrimary || (basket == null && data.enteredAmount == 0L)) {
+            // Primary: Sats
+            sb.appendLine(leftRight("TOTAL:", formatSats(totalSats)))
+            
+            // Secondary: Fiat equivalent
+            val totalFiat = getTotalFiatIncludingSatsConversion(data)
+            if (totalFiat > 0) {
+                sb.appendLine(leftRight("  (equivalent):", "≈ ${formatFiat(totalFiat)}"))
+            }
         } else {
-            formatSats(data.basket.totalSatoshis)
+            // Primary: Fiat
+            val totalFiat = getTotalFiatIncludingSatsConversion(data)
+            sb.appendLine(leftRight("TOTAL:", formatFiat(totalFiat)))
+            
+            // Secondary: Sats
+            sb.appendLine(leftRight("  (paid):", formatSats(totalSats)))
         }
-        
         sb.appendLine()
-        sb.appendLine(leftRight("TOTAL:", totalDisplay))
-        sb.appendLine()
-
-        // Bitcoin equivalent
-        if (hasFiatItems && data.basket.totalSatoshis > 0) {
-            val satsTotal = formatSats(data.basket.totalSatoshis)
-            sb.appendLine(leftRight("Bitcoin:", satsTotal))
-        }
 
         // Bitcoin price at time of transaction
         data.bitcoinPrice?.let { price ->
@@ -209,7 +285,7 @@ class ReceiptPrinter(private val context: Context) {
         }
         sb.appendLine(leftRight("Payment:", paymentMethod))
         
-        val paidAmount = formatSats(data.basket.totalSatoshis)
+        val paidAmount = formatSats(totalSats)
         sb.appendLine(leftRight("Paid:", paidAmount))
         sb.appendLine(leftRight("Status:", "✓ PAID"))
 
@@ -243,13 +319,123 @@ class ReceiptPrinter(private val context: Context) {
      * Generate an HTML receipt for web view or PDF printing.
      */
     fun generateHtmlReceipt(data: ReceiptData): String {
-        val currency = Amount.Currency.fromCode(data.basket.currency)
+        val currency = data.basket?.let { Amount.Currency.fromCode(it.currency) } 
+            ?: Amount.Currency.fromCode(data.enteredCurrency)
         fun formatFiat(cents: Long): String = Amount(cents, currency).toString()
         fun formatSats(sats: Long): String = Amount(sats, Amount.Currency.BTC).toString()
         
         val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
-        val hasVat = data.basket.hasVat()
-        val hasFiatItems = data.basket.getFiatItems().isNotEmpty()
+        val basket = data.basket
+        val hasVat = basket?.hasVat() ?: false
+        val hasFiatItems = basket?.getFiatItems()?.isNotEmpty() ?: false
+        val showSatsAsPrimary = shouldShowSatsAsPrimary(data)
+        val totalSats = basket?.totalSatoshis ?: data.totalSatoshis
+        val totalFiat = getTotalFiatIncludingSatsConversion(data)
+        
+        // Build items HTML
+        val itemsHtml = if (basket != null && basket.items.isNotEmpty()) {
+            basket.items.joinToString("") { item ->
+                if (item.isFiatPrice()) {
+                    val lineTotal = formatFiat(item.getGrossTotalCents())
+                    val unitPrice = formatFiat(item.getGrossPricePerUnitCents())
+                    val vatInfo = if (item.vatEnabled && item.vatRate > 0) {
+                        "<div class=\"vat-detail\">(incl. ${item.vatRate}% VAT: ${formatFiat(item.getTotalVatCents())})</div>"
+                    } else ""
+                    """
+                    <div class="item">
+                        <div class="row">
+                            <span class="item-name">${item.displayName}</span>
+                            <span class="bold">$lineTotal</span>
+                        </div>
+                        <div class="item-detail">${item.quantity} × $unitPrice</div>
+                        $vatInfo
+                    </div>
+                    """
+                } else {
+                    // Sats item
+                    val lineTotal = formatSats(item.getNetTotalSats())
+                    val unitPrice = formatSats(item.priceSats)
+                    val fiatEquiv = if (data.bitcoinPrice != null && data.bitcoinPrice > 0) {
+                        val satsInFiat = ((item.getNetTotalSats().toDouble() / 100_000_000.0) * data.bitcoinPrice * 100).toLong()
+                        "<div class=\"item-detail small\">(≈ ${formatFiat(satsInFiat)})</div>"
+                    } else ""
+                    """
+                    <div class="item">
+                        <div class="row">
+                            <span class="item-name">${item.displayName}</span>
+                            <span class="bold">$lineTotal</span>
+                        </div>
+                        <div class="item-detail">${item.quantity} × $unitPrice</div>
+                        $fiatEquiv
+                    </div>
+                    """
+                }
+            }
+        } else {
+            // No basket - single Payment line
+            val amount = if (data.enteredAmount > 0) formatFiat(data.enteredAmount) else formatSats(totalSats)
+            """
+            <div class="item">
+                <div class="row">
+                    <span class="item-name">Payment</span>
+                    <span class="bold">$amount</span>
+                </div>
+                <div class="item-detail">1 × $amount</div>
+            </div>
+            """
+        }
+
+        // Build totals HTML
+        val totalsHtml = buildString {
+            if (basket != null && hasVat && hasFiatItems) {
+                append("""
+                <div class="row">
+                    <span>Fiat Subtotal (net):</span>
+                    <span>${formatFiat(basket.getFiatNetTotalCents())}</span>
+                </div>
+                """)
+                basket.getVatBreakdown().entries.forEach { (rate, amount) ->
+                    append("<div class=\"row\"><span>VAT ($rate%):</span><span>${formatFiat(amount)}</span></div>")
+                }
+                append("""
+                <div class="row">
+                    <span>Fiat Subtotal (gross):</span>
+                    <span>${formatFiat(basket.getFiatGrossTotalCents())}</span>
+                </div>
+                <div class="divider"></div>
+                """)
+            }
+            
+            if (basket != null && basket.getSatsItems().isNotEmpty()) {
+                append("""
+                <div class="row">
+                    <span>Bitcoin Items:</span>
+                    <span>${formatSats(basket.getSatsDirectTotal())}</span>
+                </div>
+                """)
+                if (data.bitcoinPrice != null && data.bitcoinPrice > 0) {
+                    val satsInFiat = ((basket.getSatsDirectTotal().toDouble() / 100_000_000.0) * data.bitcoinPrice * 100).toLong()
+                    append("""
+                    <div class="row small">
+                        <span>&nbsp;&nbsp;(equivalent):</span>
+                        <span>≈ ${formatFiat(satsInFiat)}</span>
+                    </div>
+                    """)
+                }
+                append("<div class=\"divider\"></div>")
+            }
+        }
+
+        // Primary/secondary amount display
+        val primaryTotal: String
+        val secondaryTotal: String
+        if (showSatsAsPrimary || (basket == null && data.enteredAmount == 0L)) {
+            primaryTotal = formatSats(totalSats)
+            secondaryTotal = if (totalFiat > 0) "≈ ${formatFiat(totalFiat)}" else ""
+        } else {
+            primaryTotal = formatFiat(totalFiat)
+            secondaryTotal = formatSats(totalSats)
+        }
         
         return """
 <!DOCTYPE html>
@@ -281,7 +467,7 @@ class ReceiptPrinter(private val context: Context) {
         .right { text-align: right; }
         .bold { font-weight: bold; }
         .large { font-size: 16px; }
-        .small { font-size: 10px; }
+        .small { font-size: 10px; color: #666; }
         .header { margin-bottom: 8px; }
         .merchant-name { font-size: 18px; font-weight: bold; }
         .divider { 
@@ -304,6 +490,7 @@ class ReceiptPrinter(private val context: Context) {
         .item-detail { padding-left: 8px; color: #333; }
         .vat-detail { font-size: 10px; color: #666; padding-left: 8px; }
         .total-row { font-size: 14px; font-weight: bold; margin: 4px 0; }
+        .secondary-total { font-size: 11px; color: #666; }
         .paid-badge {
             display: inline-block;
             background: #000;
@@ -343,52 +530,26 @@ class ReceiptPrinter(private val context: Context) {
     <div class="divider"></div>
     
     <!-- Items -->
-    ${data.basket.items.joinToString("") { item ->
-        val lineTotal = if (item.isFiatPrice()) formatFiat(item.getGrossTotalCents()) else formatSats(item.getNetTotalSats())
-        val unitPrice = if (item.isFiatPrice()) formatFiat(item.getGrossPricePerUnitCents()) else formatSats(item.priceSats)
-        val vatInfo = if (item.isFiatPrice() && item.vatEnabled && item.vatRate > 0) {
-            "<div class=\"vat-detail\">(incl. ${item.vatRate}% VAT: ${formatFiat(item.getTotalVatCents())})</div>"
-        } else ""
-        """
-        <div class="item">
-            <div class="row">
-                <span class="item-name">${item.displayName}</span>
-                <span class="bold">$lineTotal</span>
-            </div>
-            <div class="item-detail">${item.quantity} × $unitPrice</div>
-            $vatInfo
-        </div>
-        """
-    }}
+    $itemsHtml
     
     <div class="divider"></div>
     
     <!-- Totals -->
-    ${if (hasVat && hasFiatItems) """
-    <div class="row">
-        <span>Subtotal (excl. VAT):</span>
-        <span>${formatFiat(data.basket.getFiatNetTotalCents())}</span>
-    </div>
-    ${data.basket.getVatBreakdown().entries.joinToString("") { (rate, amount) ->
-        "<div class=\"row\"><span>VAT ($rate%):</span><span>${formatFiat(amount)}</span></div>"
-    }}
-    <div class="divider"></div>
-    """ else ""}
+    $totalsHtml
     
     <div class="row total-row">
         <span>TOTAL:</span>
-        <span>${if (data.basket.getFiatGrossTotalCents() > 0) formatFiat(data.basket.getFiatGrossTotalCents()) else formatSats(data.basket.totalSatoshis)}</span>
+        <span>$primaryTotal</span>
     </div>
-    
-    ${if (hasFiatItems && data.basket.totalSatoshis > 0) """
-    <div class="row small">
-        <span>Bitcoin:</span>
-        <span>${formatSats(data.basket.totalSatoshis)}</span>
+    ${if (secondaryTotal.isNotEmpty()) """
+    <div class="row secondary-total">
+        <span>&nbsp;&nbsp;${if (showSatsAsPrimary) "(equivalent):" else "(paid):"}</span>
+        <span>$secondaryTotal</span>
     </div>
     """ else ""}
     
     ${data.bitcoinPrice?.let { """
-    <div class="row small">
+    <div class="row small" style="margin-top: 4px;">
         <span>BTC/USD Rate:</span>
         <span>${String.format(Locale.US, "$%,.2f", it)}</span>
     </div>
@@ -407,7 +568,7 @@ class ReceiptPrinter(private val context: Context) {
     </div>
     <div class="row">
         <span>Paid:</span>
-        <span>${formatSats(data.basket.totalSatoshis)}</span>
+        <span>${formatSats(totalSats)}</span>
     </div>
     <div class="row">
         <span>Status:</span>

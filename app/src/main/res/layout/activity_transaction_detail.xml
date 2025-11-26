@@ -119,6 +119,17 @@
                 android:textColor="@color/color_text_primary"
                 android:text="₿0" />
 
+            <!-- Secondary Amount Display (e.g., sats when fiat is primary) -->
+            <TextView
+                android:id="@+id/detail_amount_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/color_text_tertiary"
+                android:visibility="gone" />
+
             <!-- Date/Time -->
             <TextView
                 android:id="@+id/detail_date"
