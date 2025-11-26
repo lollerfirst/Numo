@@ -5,21 +5,25 @@
     android:id="@+id/empty_state_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/empty_state_background">
+    android:background="@color/empty_state_background"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <!-- Main Content -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
-        <!-- Spacer for top safe area + nav button -->
+        <!-- Spacer for navigation area -->
         <View
             android:layout_width="match_parent"
             android:layout_height="56dp" />
 
-        <!-- Animated Chip Ribbon Area - centered vertically -->
+        <!-- Animated Chip Ribbon Area -->
         <FrameLayout
             android:id="@+id/ribbon_container"
             android:layout_width="match_parent"
@@ -28,7 +32,7 @@
             android:clipChildren="false"
             android:clipToPadding="false">
 
-            <!-- Container for animated rows - will be rotated -->
+            <!-- Container for animated rows -->
             <FrameLayout
                 android:id="@+id/ribbon_rows_wrapper"
                 android:layout_width="match_parent"
@@ -75,7 +79,7 @@
             <!-- Gradient Fade at Bottom -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
+                android:layout_height="100dp"
                 android:layout_gravity="bottom"
                 android:background="@drawable/bg_empty_state_fade" />
 
@@ -149,14 +153,14 @@
 
     </LinearLayout>
 
-    <!-- Close Button (Top Left - always on top with elevation) -->
+    <!-- Close Button - Fixed position, always top-left -->
     <ImageButton
         android:id="@+id/empty_state_close_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="top|start"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Close"
         android:padding="12dp"
