@@ -39,8 +39,13 @@ class ItemListActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var emptyView: View
     private lateinit var bottomActions: LinearLayout
+    private lateinit var fabAddItem: ImageButton
+    private lateinit var doneReorderButton: ImageButton
     private lateinit var adapter: ItemAdapter
     private lateinit var itemTouchHelper: ItemTouchHelper
+
+    // Reordering mode state
+    private var isReorderingMode = false
 
     private val addItemLauncher: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -62,12 +67,19 @@ class ItemListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_item_list)
 
         // Set up back button
-        findViewById<View?>(R.id.back_button)?.setOnClickListener { finish() }
+        findViewById<View?>(R.id.back_button)?.setOnClickListener {
+            if (isReorderingMode) {
+                exitReorderingMode()
+            } else {
+                finish()
+            }
+        }
 
         recyclerView = findViewById(R.id.items_recycler_view)
         emptyView = findViewById(R.id.empty_view)
         bottomActions = findViewById(R.id.bottom_actions)
-        val fabAddItem: ImageButton = findViewById(R.id.fab_add_item)
+        fabAddItem = findViewById(R.id.fab_add_item)
+        doneReorderButton = findViewById(R.id.done_reorder_button)
         val importCsvButton: Button = findViewById(R.id.import_csv_button)
         val clearItemsButton: TextView = findViewById(R.id.clear_items_button)
 
@@ -85,6 +97,10 @@ class ItemListActivity : AppCompatActivity() {
         fabAddItem.setOnClickListener {
             val intent = Intent(this, ItemEntryActivity::class.java)
             addItemLauncher.launch(intent)
+        }
+
+        doneReorderButton.setOnClickListener {
+            exitReorderingMode()
         }
 
         importCsvButton.setOnClickListener {
@@ -221,18 +237,104 @@ class ItemListActivity : AppCompatActivity() {
         itemTouchHelper.startDrag(viewHolder)
     }
 
+    // ----- Reordering Mode -----
+
+    /**
+     * Enter reordering mode - shows drag handles and replaces add button with done button.
+     */
+    fun enterReorderingMode() {
+        if (isReorderingMode) return
+        isReorderingMode = true
+
+        // Swap buttons with cross-fade animation
+        fabAddItem.animate()
+            .alpha(0f)
+            .setDuration(150)
+            .withEndAction {
+                fabAddItem.visibility = View.GONE
+                doneReorderButton.visibility = View.VISIBLE
+                doneReorderButton.alpha = 0f
+                doneReorderButton.animate()
+                    .alpha(1f)
+                    .setDuration(150)
+                    .start()
+            }
+            .start()
+
+        // Hide bottom actions during reordering
+        bottomActions.animate()
+            .alpha(0f)
+            .setDuration(150)
+            .withEndAction {
+                bottomActions.visibility = View.GONE
+            }
+            .start()
+
+        // Refresh adapter to show drag handles
+        adapter.setReorderingMode(true)
+    }
+
+    /**
+     * Exit reordering mode - hides drag handles and restores add button.
+     */
+    private fun exitReorderingMode() {
+        if (!isReorderingMode) return
+        isReorderingMode = false
+
+        // Swap buttons with cross-fade animation
+        doneReorderButton.animate()
+            .alpha(0f)
+            .setDuration(150)
+            .withEndAction {
+                doneReorderButton.visibility = View.GONE
+                fabAddItem.visibility = View.VISIBLE
+                fabAddItem.alpha = 0f
+                fabAddItem.animate()
+                    .alpha(1f)
+                    .setDuration(150)
+                    .start()
+            }
+            .start()
+
+        // Show bottom actions again
+        bottomActions.visibility = View.VISIBLE
+        bottomActions.alpha = 0f
+        bottomActions.animate()
+            .alpha(1f)
+            .setDuration(150)
+            .start()
+
+        // Refresh adapter to hide drag handles
+        adapter.setReorderingMode(false)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (isReorderingMode) {
+            exitReorderingMode()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     private inner class ItemAdapter(items: List<Item>) :
         RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
         private val itemsList: MutableList<Item> = items.toMutableList()
         private var pendingFromPosition: Int = -1
         private var pendingToPosition: Int = -1
+        private var inReorderingMode: Boolean = false
 
         fun updateItems(newItems: List<Item>) {
             itemsList.clear()
             itemsList.addAll(newItems)
             pendingFromPosition = -1
             pendingToPosition = -1
+            notifyDataSetChanged()
+        }
+
+        fun setReorderingMode(enabled: Boolean) {
+            inReorderingMode = enabled
             notifyDataSetChanged()
         }
 
@@ -273,7 +375,7 @@ class ItemListActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
             val item = itemsList[position]
-            holder.bind(item, position == itemsList.size - 1)
+            holder.bind(item, position == itemsList.size - 1, inReorderingMode)
         }
 
         override fun getItemCount(): Int = itemsList.size
@@ -289,7 +391,7 @@ class ItemListActivity : AppCompatActivity() {
             private val dragHandle: ImageView = itemView.findViewById(R.id.drag_handle)
 
             @SuppressLint("ClickableViewAccessibility")
-            fun bind(item: Item, isLast: Boolean) {
+            fun bind(item: Item, isLast: Boolean, isReordering: Boolean) {
                 // Item name
                 nameView.text = item.name ?: ""
 
@@ -330,19 +432,38 @@ class ItemListActivity : AppCompatActivity() {
                 // Hide divider on last item
                 divider.visibility = if (isLast) View.GONE else View.VISIBLE
 
-                // Drag handle - start dragging on touch
-                dragHandle.setOnTouchListener { _, event ->
-                    if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                        startDragging(this)
+                // Drag handle visibility based on reordering mode
+                dragHandle.visibility = if (isReordering) View.VISIBLE else View.GONE
+
+                // Drag handle - start dragging on touch (only when visible)
+                if (isReordering) {
+                    dragHandle.setOnTouchListener { _, event ->
+                        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                            startDragging(this)
+                        }
+                        false
                     }
-                    false
+                } else {
+                    dragHandle.setOnTouchListener(null)
                 }
 
-                // Click to edit
-                itemView.setOnClickListener {
-                    val intent = Intent(this@ItemListActivity, ItemEntryActivity::class.java)
-                    intent.putExtra(ItemEntryActivity.EXTRA_ITEM_ID, item.id)
-                    addItemLauncher.launch(intent)
+                // Click behavior depends on mode
+                if (isReordering) {
+                    // In reordering mode, clicking does nothing (only drag works)
+                    itemView.setOnClickListener(null)
+                    itemView.setOnLongClickListener(null)
+                } else {
+                    // Normal mode: click to edit, long-press to enter reordering mode
+                    itemView.setOnClickListener {
+                        val intent = Intent(this@ItemListActivity, ItemEntryActivity::class.java)
+                        intent.putExtra(ItemEntryActivity.EXTRA_ITEM_ID, item.id)
+                        addItemLauncher.launch(intent)
+                    }
+
+                    itemView.setOnLongClickListener {
+                        enterReorderingMode()
+                        true
+                    }
                 }
             }
         }
