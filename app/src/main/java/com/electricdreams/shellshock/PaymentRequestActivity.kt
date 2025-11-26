@@ -45,10 +45,16 @@ class PaymentRequestActivity : AppCompatActivity() {
     private lateinit var lightningLoadingSpinner: View
     private lateinit var lightningLogoCard: View
 
+    // HCE mode for deciding which payload to emulate (Cashu vs Lightning)
+    private enum class HceMode { CASHU, LIGHTNING }
+
     private var paymentAmount: Long = 0
     private var bitcoinPriceWorker: BitcoinPriceWorker? = null
     private var hcePaymentRequest: String? = null
     private var formattedAmountString: String = ""
+
+    // Current HCE mode (defaults to Cashu)
+    private var currentHceMode: HceMode = HceMode.CASHU
 
     // Tab manager for Cashu/Lightning tab switching
     private lateinit var tabManager: PaymentTabManager
@@ -116,14 +122,21 @@ class PaymentRequestActivity : AppCompatActivity() {
         // Set up tabs with listener
         tabManager.setup(object : PaymentTabManager.TabSelectionListener {
             override fun onLightningTabSelected() {
+                Log.d(TAG, "onLightningTabSelected() called. lightningStarted=$lightningStarted, lightningInvoice=$lightningInvoice")
+
                 // Start lightning quote flow once when tab first selected
                 if (!lightningStarted) {
                     startLightningMintFlow()
+                } else if (lightningInvoice != null) {
+                    // If invoice is already known, try to switch HCE now
+                    setHceToLightning()
                 }
             }
 
             override fun onCashuTabSelected() {
-                // Status text mainly controlled by Nostr / HCE flow
+                Log.d(TAG, "onCashuTabSelected() called. currentHceMode=$currentHceMode")
+                // When user returns to Cashu tab, restore Cashu HCE payload
+                setHceToCashu()
             }
         })
 
@@ -323,6 +336,48 @@ class PaymentRequestActivity : AppCompatActivity() {
         // (see TabSelectionListener.onLightningTabSelected())
     }
 
+    private fun setHceToCashu() {
+        val request = hcePaymentRequest ?: run {
+            Log.w(TAG, "setHceToCashu() called but hcePaymentRequest is null")
+            return
+        }
+
+        try {
+            val hceService = NdefHostCardEmulationService.getInstance()
+            if (hceService != null) {
+                Log.d(TAG, "setHceToCashu(): Switching HCE payload to Cashu request")
+                hceService.setPaymentRequest(request, paymentAmount)
+                currentHceMode = HceMode.CASHU
+            } else {
+                Log.w(TAG, "setHceToCashu(): HCE service not available")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "setHceToCashu(): Error while setting HCE Cashu payload: ${e.message}", e)
+        }
+    }
+
+    private fun setHceToLightning() {
+        val invoice = lightningInvoice ?: run {
+            Log.w(TAG, "setHceToLightning() called but lightningInvoice is null")
+            return
+        }
+        val payload = "lightning:$invoice"
+
+        try {
+            val hceService = NdefHostCardEmulationService.getInstance()
+            if (hceService != null) {
+                Log.d(TAG, "setHceToLightning(): Switching HCE payload to Lightning invoice. payload=$payload")
+                // Lightning mode is just a text payload; amount check is not used here
+                hceService.setPaymentRequest(payload, 0L)
+                currentHceMode = HceMode.LIGHTNING
+            } else {
+                Log.w(TAG, "setHceToLightning(): HCE service not available")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "setHceToLightning(): Error while setting HCE Lightning payload: ${e.message}", e)
+        }
+    }
+
     private fun startNostrPaymentFlow() {
         val handler = nostrHandler ?: return
 
@@ -408,6 +463,12 @@ class PaymentRequestActivity : AppCompatActivity() {
                     // Still hide spinner on error
                     lightningLoadingSpinner.visibility = View.GONE
                 }
+
+                // If Lightning tab is currently visible, switch HCE payload to Lightning
+                if (tabManager.isLightningTabSelected()) {
+                    Log.d(TAG, "onInvoiceReady(): Lightning tab is selected, calling setHceToLightning()")
+                    setHceToLightning()
+                }
             }
 
             override fun onPaymentSuccess() {
@@ -437,8 +498,8 @@ class PaymentRequestActivity : AppCompatActivity() {
             if (hceService != null) {
                 Log.d(TAG, "Setting up NDEF payment with HCE service")
 
-                // Set the payment request to the HCE service with expected amount
-                hceService.setPaymentRequest(request, paymentAmount)
+                // Set the payment request to the HCE service with expected amount (Cashu by default)
+                setHceToCashu()
 
                 // Set up callback for when a token is received or an error occurs
                 hceService.setPaymentCallback(object : NdefHostCardEmulationService.CashuPaymentCallback {
