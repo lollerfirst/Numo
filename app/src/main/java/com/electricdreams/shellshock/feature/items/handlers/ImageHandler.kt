@@ -115,7 +115,7 @@ class ImageHandler(
         if (granted) {
             takePicture()
         } else {
-            Toast.makeText(activity, "Camera permission is required to take pictures", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.error_camera_permission_required), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -181,7 +181,7 @@ class ImageHandler(
             )
             takePictureLauncher.launch(selectedImageUri)
         } catch (ex: IOException) {
-            Toast.makeText(activity, "Error creating image file: ${ex.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.error_error_creating_image_file, ex.message), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -204,7 +204,7 @@ class ImageHandler(
                 imagePlaceholder.visibility = View.GONE
                 updatePhotoButtonText()
             } catch (e: Exception) {
-                Toast.makeText(activity, "Failed to load image", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, getString(R.string.error_failed_to_load_image), Toast.LENGTH_SHORT).show()
             }
         }
     }

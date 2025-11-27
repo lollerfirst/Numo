@@ -71,7 +71,7 @@ class WithdrawLightningActivity : AppCompatActivity() {
         preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
 
         if (mintUrl.isEmpty()) {
-            Toast.makeText(this, "Invalid mint URL", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_invalid_mint_url), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -199,7 +199,7 @@ class WithdrawLightningActivity : AppCompatActivity() {
     private fun processInvoice() {
         val invoice = invoiceInput.text.toString().trim()
         if (invoice.isBlank()) {
-            Toast.makeText(this, "Please enter a Lightning invoice", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_invalid_lightning_invoice), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -211,7 +211,7 @@ class WithdrawLightningActivity : AppCompatActivity() {
                 val wallet = CashuWalletManager.getWallet()
                 if (wallet == null) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@WithdrawLightningActivity, "Wallet not initialized", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@WithdrawLightningActivity, getString(R.string.error_wallet_not_initialized), Toast.LENGTH_SHORT).show()
                         setLoading(false)
                     }
                     return@launch
@@ -255,12 +255,12 @@ class WithdrawLightningActivity : AppCompatActivity() {
         val amountSats = amountInput.text.toString().toLongOrNull()
 
         if (address.isBlank()) {
-            Toast.makeText(this, "Please enter a Lightning address", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_invalid_lightning_address), Toast.LENGTH_SHORT).show()
             return
         }
 
         if (amountSats == null || amountSats <= 0) {
-            Toast.makeText(this, "Please enter a valid amount", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_invalid_amount), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -272,7 +272,7 @@ class WithdrawLightningActivity : AppCompatActivity() {
                 val wallet = CashuWalletManager.getWallet()
                 if (wallet == null) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@WithdrawLightningActivity, "Wallet not initialized", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@WithdrawLightningActivity, getString(R.string.error_wallet_not_initialized), Toast.LENGTH_SHORT).show()
                         setLoading(false)
                     }
                     return@launch

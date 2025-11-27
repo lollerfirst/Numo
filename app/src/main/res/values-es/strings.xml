@@ -4,7 +4,7 @@
     <string name="navigation_drawer_close">Cerrar menú de navegación</string>
     <string name="item_list_title">Gestionar artículos del catálogo</string>
 
-    <!-- Common -->
+    <!-- Comunes -->
     <string name="common_ok">Aceptar</string>
     <string name="common_cancel">Cancelar</string>
     <string name="common_close">Cerrar</string>
@@ -48,7 +48,7 @@
     <string name="onboarding_label_balance_by_mint">SALDO POR MINT</string>
     <string name="onboarding_button_enter_wallet">Entrar al monedero</string>
 
-    <!-- Settings -->
+    <!-- Ajustes -->
     <string name="settings_title">Ajustes</string>
     <string name="settings_section_general">General</string>
     <string name="settings_item_fiat_currency">Moneda fíat</string>
@@ -64,10 +64,179 @@
     <string name="settings_item_developer_title">Ajustes de desarrollador</string>
     <string name="settings_item_developer_subtitle">Ajustes avanzados y herramientas de depuración</string>
 
-    <!-- Host Card Emulation strings -->
+    <!-- Emulación de tarjeta (HCE) -->
     <string name="service_description">Servicio de pagos Cashu</string>
     <string name="ndef_aid_description">Etiqueta NDEF tipo 4</string>
 
-    <!-- QR-based PaymentRequest -->
+    <!-- Solicitud de pago por QR -->
     <string name="payment_request_qr_description">Código QR de solicitud de pago Cashu</string>
+
+    <!-- Errores y validación (toasts, mensajes) -->
+    <string name="error_invalid_payment_amount">Importe de pago no válido</string>
+    <string name="error_invalid_melt_quote_data">Datos de cotización de retirada no válidos</string>
+    <string name="error_invalid_mint_url">URL de mint no válida</string>
+    <string name="error_invalid_percentage">Introduce un porcentaje válido (1-100)</string>
+    <string name="error_invalid_amount">Introduce un importe válido</string>
+    <string name="error_invalid_lightning_invoice">Introduce una factura Lightning</string>
+    <string name="error_invalid_lightning_address">Introduce una dirección Lightning</string>
+    <string name="error_invalid_seed_phrase">Pega una frase semilla válida de 12 palabras</string>
+    <string name="error_select_at_least_one_mint">Selecciona al menos un mint</string>
+    <string name="error_empty_clipboard">El portapapeles está vacío</string>
+    <string name="error_wallet_not_initialized">El monedero no está inicializado</string>
+    <string name="error_failed_to_create_payment_request">No se pudo crear la solicitud de pago</string>
+    <string name="error_failed_to_prepare_ndef">No se pudo preparar los datos de pago NDEF</string>
+    <string name="error_error_setting_up_ndef">Error al configurar el pago NDEF: %1$s</string>
+    <string name="error_payment_error">Error de pago: %1$s</string>
+    <string name="error_payment_failed">El pago ha fallado: %1$s</string>
+    <string name="error_failed_to_open_csv">No se pudo abrir el archivo CSV</string>
+    <string name="error_failed_to_import_csv">Error al importar el archivo CSV: %1$s</string>
+    <string name="error_failed_to_save_item">No se pudo guardar el artículo</string>
+    <string name="error_item_saved_image_failed">El artículo se guardó pero no se pudo guardar la imagen</string>
+    <string name="error_camera_permission_required">Se necesita permiso de cámara para hacer fotos</string>
+    <string name="error_error_creating_image_file">Error al crear el archivo de imagen: %1$s</string>
+    <string name="error_failed_to_load_image">No se pudo cargar la imagen</string>
+    <string name="error_unique_sku">Usa un SKU único</string>
+    <string name="error_unique_gtin">Usa un GTIN único</string>
+    <string name="error_gtin_already_used">Este GTIN ya lo usa otro artículo</string>
+    <string name="error_no_more_stock">No hay más existencias disponibles</string>
+    <string name="error_basket_empty">Tu cesta está vacía</string>
+    <string name="error_nothing_to_share_yet">Aún no hay nada para compartir</string>
+    <string name="error_no_token_to_share">No hay token para compartir</string>
+    <string name="error_transaction_details_not_available">Los detalles de la transacción no están disponibles</string>
+    <string name="error_no_apps_for_payment">No hay aplicaciones disponibles para procesar este pago</string>
+    <string name="error_no_apps_for_token">No hay aplicaciones disponibles para procesar este token</string>
+    <string name="error_no_apps_to_share_token">No hay aplicaciones disponibles para compartir este token</string>
+    <string name="error_invalid_characters_detected">Se han detectado caracteres no válidos</string>
+
+    <!-- Información / éxito (toasts) -->
+    <string name="info_seed_phrase_pasted">Frase semilla pegada</string>
+    <string name="info_imported_items_count">Se importaron %1$d artículos</string>
+    <string name="info_no_items_imported_csv">No se importó ningún artículo desde el CSV</string>
+    <string name="info_gtin_scanned_successfully">GTIN escaneado correctamente</string>
+    <string name="info_mints_reset_to_defaults">Los mints se restablecieron a los valores predeterminados</string>
+    <string name="info_mints_lightning_selected">Los pagos Lightning usarán este mint</string>
+    <string name="info_presets_reset_to_defaults">Los preajustes se restablecieron a los valores predeterminados</string>
+    <string name="info_all_items_cleared">Se borraron todos los artículos</string>
+    <string name="info_token_copied_to_clipboard">Token copiado al portapapeles</string>
+    <string name="info_invoice_copied_to_clipboard">Factura copiada al portapapeles</string>
+    <string name="info_copied_to_clipboard">Copiado al portapapeles</string>
+
+    <!-- Mensajes de aviso / indicaciones -->
+    <string name="prompt_enter_amount_first">Introduce primero un importe</string>
+    <string name="prompt_enter_variation_name">Introduce un nombre de variación</string>
+
+    <!-- Estados de PaymentRequest -->
+    <string name="payment_request_status_preparing">Preparando solicitud de pago...</string>
+    <string name="payment_request_status_waiting_for_payment">Esperando el pago...</string>
+    <string name="payment_request_status_error_generating_qr">Error al generar el código QR</string>
+    <string name="payment_request_status_error_generic">Error: %1$s</string>
+    <string name="payment_request_status_success">¡Pago realizado correctamente!</string>
+    <string name="payment_request_status_failed">El pago ha fallado: %1$s</string>
+
+    <!-- Diálogos de recarga / NFC -->
+    <string name="top_up_ready_to_import_proofs">Listo para importar pruebas</string>
+    <string name="top_up_scan_card_again">Escanea la tarjeta de nuevo</string>
+    <string name="top_up_processing_import">Procesando importación</string>
+    <string name="top_up_importing_proofs">Importando pruebas...</string>
+
+    <!-- Historial / recibos -->
+    <string name="history_transaction_type_lightning_payment">Pago Lightning</string>
+    <string name="history_transaction_type_cashu_payment">Pago Cashu</string>
+    <string name="history_transaction_type_payment_received">Pago recibido</string>
+    <string name="history_amount_subtitle_fiat">≈ %1$s</string>
+    <string name="history_amount_subtitle_tip_fiat">≈ %1$s</string>
+    <string name="history_mint_name_from">Desde %1$s</string>
+    <string name="history_mint_url_unknown">Desconocido</string>
+    <string name="history_total_subtitle_fiat">≈ %1$s</string>
+    <string name="history_total_subtitle_incl_vat">%1$s • incl. %2$s IVA</string>
+    <string name="history_total_subtitle_incl_vat_simple">incl. %1$s IVA</string>
+    <string name="history_items_header_single">1 ARTÍCULO</string>
+    <string name="history_vat_label_incl_vat">incl. %1$s%% IVA</string>
+    <string name="history_vat_label_equivalent">equivalente</string>
+    <string name="history_vat_amount_equiv_fiat">≈ %1$s</string>
+    <string name="history_basket_quantity_single">1</string>
+    <string name="history_basket_name_payment">Pago</string>
+    <string name="history_vat_label_paid">pagado</string>
+    <string name="history_fiat_subtotal_net">Subtotal fíat (neto)</string>
+    <string name="history_fiat_items">Artículos en fíat</string>
+    <string name="history_sats_items_equiv">≈ %1$s</string>
+    <string name="history_final_total_label">Total</string>
+    <string name="history_sats_equivalent">≈ %1$s</string>
+    <string name="history_payments_status_tap_to_resume">Toca para reanudar</string>
+
+    <!-- Propinas / selección de propina -->
+    <string name="tip_selection_enter_tip_amount">Introduce el importe de la propina</string>
+    <string name="tip_selection_question_add_tip">¿Quieres añadir una propina?</string>
+
+    <!-- Mensajes de código para seed / restauración / onboarding -->
+    <string name="onboarding_generating_creating_wallet">Creando tu monedero...</string>
+    <string name="onboarding_generating_generating_seed_phrase">Generando frase semilla...</string>
+    <string name="onboarding_generating_setting_up_default_mints">Configurando mints predeterminados...</string>
+    <string name="onboarding_generating_initializing_wallet">Inicializando monedero...</string>
+    <string name="onboarding_generating_connecting_to_mints">Conectando con los mints...</string>
+    <string name="onboarding_generating_fetching_mint_information">Obteniendo información de los mints...</string>
+    <string name="onboarding_seed_invalid_characters">Se han detectado caracteres no válidos</string>
+    <string name="onboarding_seed_words_entered_count">%1$d de 12 palabras introducidas</string>
+    <string name="onboarding_seed_ready_to_continue">Listo para continuar</string>
+    <string name="onboarding_fetching_searching_backup_nostr">Buscando copia de seguridad en Nostr...</string>
+    <string name="onboarding_restoring_initializing_restore">Inicializando restauración...</string>
+    <string name="onboarding_backup_last_backed_up_dynamic">Última copia de seguridad: %1$s</string>
+    <string name="onboarding_backup_no_backup_found">No se encontró copia de seguridad</string>
+    <string name="onboarding_backup_using_default_mints">Usando mints predeterminados</string>
+    <string name="onboarding_mints_select_which_to_restore">Selecciona qué mints restaurar</string>
+    <string name="onboarding_mints_continue_restore_wallet">Restaurar monedero</string>
+    <string name="onboarding_mints_these_mints_will_store_tokens">Estos mints almacenarán tus tokens de ecash</string>
+    <string name="onboarding_mints_continue">Continuar</string>
+    <string name="onboarding_mints_count">%1$d mint%2$s seleccionado</string>
+    <string name="onboarding_success_wallet_restored">Monedero restaurado</string>
+    <string name="onboarding_success_recovered_sats">Se recuperaron %1$d sats</string>
+    <string name="onboarding_success_total_balance_sats">Saldo total: %1$d sats</string>
+    <string name="onboarding_success_wallet_created_code">Monedero creado</string>
+    <string name="onboarding_success_wallet_ready_code">Tu monedero está listo para usarse</string>
+
+    <!-- Restaurar monedero (ajustes) -->
+    <string name="restore_wallet_title_restore">Restaurar monedero</string>
+    <string name="restore_wallet_title_fetching_backup">Buscando copia de seguridad</string>
+    <string name="restore_wallet_title_review_mints">Revisar mints</string>
+    <string name="restore_wallet_title_restoring">Restaurando</string>
+    <string name="restore_wallet_title_restored">Restaurado</string>
+    <string name="restore_wallet_seed_invalid_characters">Se han detectado caracteres no válidos</string>
+    <string name="restore_wallet_seed_words_entered_count">%1$d de 12 palabras introducidas</string>
+    <string name="restore_wallet_seed_ready_to_continue">Listo para continuar</string>
+    <string name="restore_wallet_fetching_searching_backup_nostr">Buscando copia de seguridad de mints en Nostr...</string>
+    <string name="restore_wallet_backup_last_backed_up_dynamic">Última copia de seguridad: %1$s</string>
+    <string name="restore_wallet_backup_no_backup_found">No se encontró copia de seguridad</string>
+    <string name="restore_wallet_backup_using_current_mints">Usando tus mints configurados actualmente</string>
+    <string name="restore_wallet_mints_count">%1$d mint%2$s seleccionado</string>
+    <string name="restore_wallet_progress_initializing_restore">Inicializando restauración...</string>
+
+    <!-- Artículos / stock -->
+    <string name="items_quantity_in_stock">%1$d en stock</string>
+    <string name="items_withdraw_from_mint">Retirar desde %1$s</string>
+    <string name="items_edit_item_title">Editar artículo</string>
+
+    <!-- TPV / cobro -->
+    <string name="pos_amount_charge">Cobrar %1$s</string>
+    <string name="pos_charge">Cobrar</string>
+
+    <!-- Pago recibido / retirada correcta -->
+    <string name="payment_received_amount_received">%1$s recibido.</string>
+    <string name="withdraw_success_amount_sent">%1$s enviado.</string>
+    <string name="withdraw_success_destination">A %1$s</string>
+
+    <!-- Títulos de diálogos -->
+    <string name="dialog_title_enter_pin">Introduce el PIN</string>
+    <string name="dialog_title_remove_mint">Quitar mint</string>
+    <string name="dialog_title_clear_basket">Vaciar cesta</string>
+    <string name="dialog_title_clear_all_items">Borrar todos los artículos</string>
+    <string name="dialog_title_add_tip_preset">Añadir preajuste de propina</string>
+    <string name="dialog_title_edit_tip_preset">Editar preajuste de propina</string>
+    <string name="dialog_title_remove_preset">Quitar preajuste</string>
+    <string name="dialog_title_reset_to_defaults">Restablecer valores predeterminados</string>
+    <string name="dialog_title_terms_of_service">Términos de servicio</string>
+    <string name="dialog_title_restart_onboarding">Reiniciar introducción</string>
+    <string name="dialog_title_confirm_restore">Confirmar restauración</string>
+    <string name="dialog_title_delete_payment">Eliminar pago</string>
+    <string name="dialog_title_delete_token">Eliminar token</string>
+    <string name="dialog_title_clear_history">Borrar historial</string>
 </resources>

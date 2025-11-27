@@ -155,7 +155,7 @@ class PaymentsHistoryActivity : AppCompatActivity() {
         try {
             startActivity(chooserIntent)
         } catch (e: Exception) {
-            Toast.makeText(this, "No apps available to handle this payment", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_no_apps_for_payment), Toast.LENGTH_SHORT).show()
         }
     }
 

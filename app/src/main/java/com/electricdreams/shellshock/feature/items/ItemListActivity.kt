@@ -141,7 +141,7 @@ class ItemListActivity : AppCompatActivity() {
                 itemManager.clearItems()
                 refreshItems()
                 setResult(Activity.RESULT_OK)
-                Toast.makeText(this, "All items cleared", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.info_all_items_cleared), Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -156,7 +156,7 @@ class ItemListActivity : AppCompatActivity() {
                     copyStream(inputStream, outputStream)
                 }
             } ?: run {
-                Toast.makeText(this, "Failed to open CSV file", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.error_failed_to_open_csv), Toast.LENGTH_SHORT).show()
                 return
             }
 
@@ -167,11 +167,11 @@ class ItemListActivity : AppCompatActivity() {
                 refreshItems()
                 setResult(Activity.RESULT_OK)
             } else {
-                Toast.makeText(this, "No items imported from CSV", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.info_no_items_imported_csv), Toast.LENGTH_SHORT).show()
             }
         } catch (e: IOException) {
-            Log.e(TAG, "Error importing CSV file: ${e.message}", e)
-            Toast.makeText(this, "Error importing CSV file: ${e.message}", Toast.LENGTH_SHORT).show()
+            Log.e(TAG, getString(R.string.error_failed_to_import_csv, e.message), e)
+            Toast.makeText(this, getString(R.string.error_failed_to_import_csv, e.message), Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -198,7 +198,7 @@ class PaymentReceivedActivity : AppCompatActivity() {
     
     private fun shareToken() {
         if (tokenString.isNullOrEmpty()) {
-            Toast.makeText(this, "No token to share", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_no_token_to_share), Toast.LENGTH_SHORT).show()
             return
         }
         
@@ -223,7 +223,7 @@ class PaymentReceivedActivity : AppCompatActivity() {
         try {
             startActivity(chooserIntent)
         } catch (e: Exception) {
-            Toast.makeText(this, "No apps available to share this token", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_no_apps_to_share_token), Toast.LENGTH_SHORT).show()
         }
     }
     
@@ -233,7 +233,7 @@ class PaymentReceivedActivity : AppCompatActivity() {
         val entry = history.lastOrNull()
         
         if (entry == null) {
-            Toast.makeText(this, "Transaction details not available", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_transaction_details_not_available), Toast.LENGTH_SHORT).show()
             return
         }
         

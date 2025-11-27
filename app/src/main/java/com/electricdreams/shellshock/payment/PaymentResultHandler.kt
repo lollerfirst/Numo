@@ -60,7 +60,7 @@ class PaymentResultHandler(
     fun handlePaymentError(message: String, onComplete: () -> Unit) {
         mainHandler.post {
             onComplete()
-            android.widget.Toast.makeText(activity, "Payment error: $message", android.widget.Toast.LENGTH_LONG).show()
+            android.widget.Toast.makeText(activity, getString(R.string.error_payment_error, message), android.widget.Toast.LENGTH_LONG).show()
         }
     }
 

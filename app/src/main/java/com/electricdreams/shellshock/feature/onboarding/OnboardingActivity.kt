@@ -674,7 +674,7 @@ class OnboardingActivity : AppCompatActivity() {
         val clipData = clipboard.primaryClip
 
         if (clipData == null || clipData.itemCount == 0) {
-            Toast.makeText(this, "Clipboard is empty", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_empty_clipboard), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -682,7 +682,7 @@ class OnboardingActivity : AppCompatActivity() {
         val words = pastedText.split("\\s+".toRegex()).filter { it.isNotBlank() }
 
         if (words.size != 12) {
-            Toast.makeText(this, "Please paste a valid 12-word seed phrase", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_invalid_seed_phrase), Toast.LENGTH_LONG).show()
             return
         }
 
@@ -693,7 +693,7 @@ class OnboardingActivity : AppCompatActivity() {
         }
 
         validateSeedInputs()
-        Toast.makeText(this, "Seed phrase pasted", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.info_seed_phrase_pasted), Toast.LENGTH_SHORT).show()
     }
 
     private fun getMnemonic(): String {

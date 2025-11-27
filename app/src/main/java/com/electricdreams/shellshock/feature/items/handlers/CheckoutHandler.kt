@@ -27,7 +27,7 @@ class CheckoutHandler(
      */
     fun proceedToCheckout() {
         if (basketManager.getTotalItemCount() == 0) {
-            Toast.makeText(activity, "Your basket is empty", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.error_basket_empty), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -39,7 +39,7 @@ class CheckoutHandler(
         val totalSatoshis = basketManager.getTotalSatoshis(btcPrice)
 
         if (totalSatoshis <= 0) {
-            Toast.makeText(activity, "Invalid payment amount", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.error_invalid_payment_amount), Toast.LENGTH_SHORT).show()
             return
         }
 

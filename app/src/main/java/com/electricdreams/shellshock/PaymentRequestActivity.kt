@@ -158,7 +158,7 @@ class PaymentRequestActivity : AppCompatActivity() {
 
         if (paymentAmount <= 0) {
             Log.e(TAG, "Invalid payment amount: $paymentAmount")
-            Toast.makeText(this, "Invalid payment amount", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_invalid_payment_amount), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -205,7 +205,7 @@ class PaymentRequestActivity : AppCompatActivity() {
             if (toShare != null) {
                 sharePaymentRequest(toShare)
             } else {
-                Toast.makeText(this, "Nothing to share yet", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.error_nothing_to_share_yet), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -373,7 +373,7 @@ class PaymentRequestActivity : AppCompatActivity() {
 
             if (hcePaymentRequest == null) {
                 Log.e(TAG, "Failed to create payment request for HCE")
-                Toast.makeText(this, "Failed to prepare NDEF payment data", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.error_failed_to_prepare_ndef), Toast.LENGTH_SHORT).show()
             } else {
                 Log.d(TAG, "Created HCE payment request: $hcePaymentRequest")
 
@@ -680,8 +680,8 @@ class PaymentRequestActivity : AppCompatActivity() {
         Log.e(TAG, "Payment error: $errorMessage")
 
         statusText.visibility = View.VISIBLE
-        statusText.text = "Payment failed: $errorMessage"
-        Toast.makeText(this, "Payment failed: $errorMessage", Toast.LENGTH_LONG).show()
+        statusText.text = getString(R.string.error_payment_failed, errorMessage)
+        Toast.makeText(this, getString(R.string.error_payment_failed, errorMessage), Toast.LENGTH_LONG).show()
 
         setResult(Activity.RESULT_CANCELED)
 

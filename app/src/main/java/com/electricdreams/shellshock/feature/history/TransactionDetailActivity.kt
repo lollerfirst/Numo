@@ -380,7 +380,7 @@ class TransactionDetailActivity : AppCompatActivity() {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Cashu Token", entry.token)
         clipboard.setPrimaryClip(clip)
-        Toast.makeText(this, "Token copied to clipboard", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.info_token_copied_to_clipboard), Toast.LENGTH_SHORT).show()
     }
 
     private fun copyLightningInvoice() {
@@ -388,7 +388,7 @@ class TransactionDetailActivity : AppCompatActivity() {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Lightning Invoice", invoice)
         clipboard.setPrimaryClip(clip)
-        Toast.makeText(this, "Invoice copied to clipboard", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.info_invoice_copied_to_clipboard), Toast.LENGTH_SHORT).show()
     }
 
     private fun openWithApp() {
@@ -409,7 +409,7 @@ class TransactionDetailActivity : AppCompatActivity() {
         try {
             startActivity(chooserIntent)
         } catch (e: Exception) {
-            Toast.makeText(this, "No apps available to handle this payment", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_no_apps_for_payment), Toast.LENGTH_SHORT).show()
         }
     }
 

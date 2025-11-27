@@ -68,7 +68,7 @@ class WithdrawMeltQuoteActivity : AppCompatActivity() {
         mintManager = MintManager.getInstance(this)
 
         if (mintUrl.isEmpty() || quoteId.isEmpty()) {
-            Toast.makeText(this, "Invalid melt quote data", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_invalid_melt_quote_data), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -135,7 +135,7 @@ class WithdrawMeltQuoteActivity : AppCompatActivity() {
                 val wallet = CashuWalletManager.getWallet()
                 if (wallet == null) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@WithdrawMeltQuoteActivity, "Wallet not initialized", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@WithdrawMeltQuoteActivity, getString(R.string.error_wallet_not_initialized), Toast.LENGTH_SHORT).show()
                         setLoading(false)
                     }
                     return@launch

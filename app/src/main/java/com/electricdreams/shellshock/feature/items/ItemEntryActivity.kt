@@ -329,7 +329,7 @@ class ItemEntryActivity : AppCompatActivity() {
 
         val success = if (isEditMode) itemManager.updateItem(item) else itemManager.addItem(item)
         if (!success) {
-            Toast.makeText(this, "Failed to save item", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_failed_to_save_item), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -341,7 +341,7 @@ class ItemEntryActivity : AppCompatActivity() {
     private fun saveImageIfNeeded(item: Item) {
         imageHandler.selectedImageUri?.let { uri ->
             if (!itemManager.saveItemImage(item, uri)) {
-                Toast.makeText(this, "Item saved but image could not be saved", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.error_item_saved_image_failed), Toast.LENGTH_LONG).show()
             }
         }
     }

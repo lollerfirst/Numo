@@ -48,7 +48,7 @@ class PaymentMethodHandler(
     /** Proceed with NDEF payment (HCE) - preserved but not currently invoked in main flow */
     fun proceedWithNdefPayment(amount: Long, onStatusUpdate: (String) -> Unit, onComplete: () -> Unit) {
         if (!NdefHostCardEmulationService.isHceAvailable(activity)) {
-            Toast.makeText(activity, "Host Card Emulation is not available on this device", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.error_failed_to_create_payment_request), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -56,7 +56,7 @@ class PaymentMethodHandler(
         val allowedMints = mintManager.getAllowedMints()
         val paymentRequest = CashuPaymentHelper.createPaymentRequest(amount, "Payment of $amount sats", allowedMints)
             ?: run {
-                Toast.makeText(activity, "Failed to create payment request", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, getString(R.string.error_failed_to_create_payment_request), Toast.LENGTH_SHORT).show()
                 return
             }
 
@@ -94,7 +94,7 @@ class PaymentMethodHandler(
                 override fun onCashuPaymentError(errorMessage: String) {
                     activity.runOnUiThread {
                         onComplete()
-                        Toast.makeText(activity, "Payment failed: $errorMessage", Toast.LENGTH_LONG).show()
+                        Toast.makeText(activity, getString(R.string.error_payment_failed, errorMessage), Toast.LENGTH_LONG).show()
                     }
                 }
 

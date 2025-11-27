@@ -47,7 +47,7 @@ class SeedPhraseActivity : AppCompatActivity() {
         mnemonic = CashuWalletManager.getMnemonic()
         
         if (mnemonic.isNullOrBlank()) {
-            Toast.makeText(this, "Wallet not initialized", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_wallet_not_initialized), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -88,7 +88,7 @@ class SeedPhraseActivity : AppCompatActivity() {
             val clip = ClipData.newPlainText("Seed Phrase", phrase)
             clipboard.setPrimaryClip(clip)
             
-            Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.info_copied_to_clipboard), Toast.LENGTH_SHORT).show()
         }
     }
 

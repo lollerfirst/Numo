@@ -181,7 +181,7 @@ class CheckoutScannerActivity : AppCompatActivity() {
                 updateQuantityDisplay()
                 updateBasketForCurrentItem()
             } else {
-                Toast.makeText(this, "No more stock available", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.error_no_more_stock), Toast.LENGTH_SHORT).show()
             }
         }
     }

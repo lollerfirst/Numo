@@ -45,14 +45,14 @@ class ItemFormValidator(
 
         // Validate SKU is not duplicate
         if (!skuHandler.isValid()) {
-            Toast.makeText(activity, "Please use a unique SKU", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.error_unique_sku), Toast.LENGTH_SHORT).show()
             skuHandler.getSkuInput().requestFocus()
             return ValidationResult(false)
         }
 
         // Validate GTIN is not duplicate
         if (!gtinHandler.isValid()) {
-            Toast.makeText(activity, "Please use a unique GTIN", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.error_unique_gtin), Toast.LENGTH_SHORT).show()
             gtinHandler.getGtinInput().requestFocus()
             return ValidationResult(false)
         }

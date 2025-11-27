@@ -184,7 +184,7 @@ class MintsSettingsActivity : AppCompatActivity(),
     private fun addNewMint() {
         val mintUrl = newMintEditText.text.toString().trim()
         if (TextUtils.isEmpty(mintUrl)) {
-            Toast.makeText(this, "Please enter a valid mint URL", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_invalid_mint_url), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -223,7 +223,7 @@ class MintsSettingsActivity : AppCompatActivity(),
                 loadMintBalances()
                 mintsAdapter.notifyDataSetChanged()
             } else {
-                Toast.makeText(this@MintsSettingsActivity, "Mint already in the list", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MintsSettingsActivity, getString(R.string.error_gtin_already_used), Toast.LENGTH_SHORT).show()
             }
             
             // Hide loading spinner and re-enable button
@@ -237,7 +237,7 @@ class MintsSettingsActivity : AppCompatActivity(),
         mintManager.resetToDefaults()
         mintsAdapter.updateMints(mintManager.getAllowedMints())
         mintsAdapter.setPreferredLightningMint(mintManager.getPreferredLightningMint())
-        Toast.makeText(this, "Mints reset to defaults", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.info_mints_reset_to_defaults), Toast.LENGTH_SHORT).show()
         // Reload all balances
         loadMintBalances()
     }
@@ -253,7 +253,7 @@ class MintsSettingsActivity : AppCompatActivity(),
     override fun onLightningMintSelected(mintUrl: String) {
         if (mintManager.setPreferredLightningMint(mintUrl)) {
             mintsAdapter.setPreferredLightningMint(mintUrl)
-            Toast.makeText(this, "Lightning payments will use this mint", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.info_mints_lightning_selected), Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -149,14 +149,14 @@ class TipsSettingsActivity : AppCompatActivity() {
                 val percentage = percentageStr.toIntOrNull()
                 
                 if (percentage == null || percentage !in 1..100) {
-                    Toast.makeText(this, "Please enter a valid percentage (1-100)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.error_invalid_percentage), Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
                 
                 if (tipsManager.addPreset(percentage)) {
                     refreshPresetsList()
                 } else {
-                    Toast.makeText(this, "Could not add preset (may already exist or at max capacity)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.error_invalid_percentage), Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton("Cancel", null)
@@ -184,7 +184,7 @@ class TipsSettingsActivity : AppCompatActivity() {
                 val percentage = percentageStr.toIntOrNull()
                 
                 if (percentage == null || percentage !in 1..100) {
-                    Toast.makeText(this, "Please enter a valid percentage (1-100)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.error_invalid_percentage), Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
                 
@@ -214,7 +214,7 @@ class TipsSettingsActivity : AppCompatActivity() {
             .setPositiveButton("Reset") { _, _ ->
                 tipsManager.resetToDefaults()
                 refreshPresetsList()
-                Toast.makeText(this, "Presets reset to defaults", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.info_presets_reset_to_defaults), Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancel", null)
             .show()
