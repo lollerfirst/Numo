@@ -861,10 +861,26 @@ class PaymentRequestActivity : AppCompatActivity() {
         // Load the animation HTML
         nfcAnimationWebView.loadUrl("file:///android_asset/nfc_animation.html")
         
-        // Setup close button - just close the activity
+        // Setup close button - animate out then close
         animationCloseButton.setOnClickListener {
-            cleanupAndFinish()
+            animateSuccessScreenOut()
         }
+    }
+    
+    /**
+     * Elegant slide-down animation when closing the success screen.
+     * Uses activity transition to slide entire screen down, revealing home screen behind.
+     */
+    private fun animateSuccessScreenOut() {
+        // Disable the button to prevent multiple taps
+        animationCloseButton.isEnabled = false
+        
+        // Clean up and finish with slide-down transition
+        cleanupAndFinish()
+        
+        // Override the default transition to slide down, revealing the home screen
+        @Suppress("DEPRECATION")
+        overridePendingTransition(R.anim.stay, R.anim.slide_out_down)
     }
 
     private fun showNfcAnimationOverlay() {
