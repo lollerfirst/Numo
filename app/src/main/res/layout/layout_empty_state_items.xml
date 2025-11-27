@@ -153,19 +153,39 @@
 
     </LinearLayout>
 
-    <!-- Close Button - Fixed position, always top-left -->
-    <ImageButton
-        android:id="@+id/empty_state_close_button"
+    <!-- Navigation Button Container (Top Left) -->
+    <FrameLayout
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="top|start"
         android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Close"
-        android:padding="12dp"
-        android:src="@drawable/ic_close"
-        android:elevation="10dp"
-        app:tint="@color/empty_state_close_icon" />
+        android:elevation="10dp">
+        
+        <!-- Back Arrow (shown when from Settings → Items) -->
+        <ImageButton
+            android:id="@+id/empty_state_back_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:padding="12dp"
+            android:src="@drawable/ic_chevron_back"
+            android:visibility="gone"
+            app:tint="@color/empty_state_close_icon" />
+
+        <!-- Close Button (shown when from Home → Items) -->
+        <ImageButton
+            android:id="@+id/empty_state_close_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Close"
+            android:padding="12dp"
+            android:src="@drawable/ic_close"
+            android:visibility="visible"
+            app:tint="@color/empty_state_close_icon" />
+
+    </FrameLayout>
 
 </FrameLayout>

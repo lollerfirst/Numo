@@ -150,6 +150,7 @@ class ItemListActivity : AppCompatActivity() {
         val addButton = emptyView.findViewById<Button>(R.id.empty_state_add_button)
         val importButton = emptyView.findViewById<View>(R.id.empty_state_import_button)
         val closeButton = emptyView.findViewById<ImageButton>(R.id.empty_state_close_button)
+        val backButton = emptyView.findViewById<ImageButton>(R.id.empty_state_back_button)
         val ribbonContainer = emptyView.findViewById<View>(R.id.ribbon_container)
 
         addButton?.setOnClickListener {
@@ -161,7 +162,10 @@ class ItemListActivity : AppCompatActivity() {
             csvPickerLauncher.launch("text/csv")
         }
         
-        closeButton?.setOnClickListener {
+        // Settings → Items: Show back arrow, hide close button
+        closeButton?.visibility = View.GONE
+        backButton?.visibility = View.VISIBLE
+        backButton?.setOnClickListener {
             finish()
         }
 
