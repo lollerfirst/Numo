@@ -15,8 +15,7 @@ import com.electricdreams.shellshock.R
 
 /**
  * Handles the animated chip ribbon for the empty state.
- * Chips start OFF-SCREEN to the right and scroll left into view.
- * This ensures all chips are fully rendered before becoming visible.
+ * Uses true infinite scroll with seamless looping - no visible resets.
  */
 class EmptyStateAnimator(
     private val context: Context,
@@ -25,18 +24,18 @@ class EmptyStateAnimator(
     // 6 visually distinct chips
     private val chipData = listOf(
         ChipItem("👕", "SHIRTS", R.drawable.bg_chip_ribbon_cyan, true),
-        ChipItem("₿", "BITCOIN", R.drawable.bg_chip_ribbon_pink, true),
+        ChipItem("🥩", "STEAKS", R.drawable.bg_chip_ribbon_pink, true),
         ChipItem("🌿", "PLANTS", R.drawable.bg_chip_ribbon_lime, true),
         ChipItem("🥜", "PEANUTS", R.drawable.bg_chip_ribbon_green, false),
         ChipItem("💵", "FIAT", R.drawable.bg_chip_ribbon_purple, false),
         ChipItem("🐮", "TALLOW", R.drawable.bg_chip_ribbon_yellow, true)
     )
 
-    // FAST animation - 3-4 seconds per cycle (doubled from before)
-    private val rowDurations = listOf(3500L, 4000L, 3200L)
+    // Fast animation with slight variation per row for organic feel
+    private val rowDurations = listOf(4000L, 4400L, 3800L)
     
-    // Staggered start positions
-    private val rowStartOffsets = listOf(0f, 0.5f, 0.25f)
+    // Different starting phases so rows aren't synchronized
+    private val rowPhases = listOf(0f, 0.33f, 0.66f)
 
     private val animators = mutableListOf<ValueAnimator>()
     private var isStarted = false
@@ -77,29 +76,27 @@ class EmptyStateAnimator(
     private fun setupRow(row: LinearLayout, rowIndex: Int) {
         row.removeAllViews()
         
+        // Vary the starting chip for visual diversity between rows
         val startIndex = (rowIndex * 2) % chipData.size
         
-        // Pre-create ALL chip views with full content
+        // Create 3 COMPLETE sets of all chips for seamless infinite loop
+        // [SET 1] [SET 2] [SET 3]
+        // We scroll through SET 1, then seamlessly reset to the start
+        // This creates the illusion of infinite motion
         val chipViews = mutableListOf<TextView>()
-        // 4 complete sets for seamless looping with buffer
-        repeat(4) {
+        repeat(3) {
             for (i in chipData.indices) {
                 val chip = chipData[(startIndex + i) % chipData.size]
                 chipViews.add(createChipView(chip))
             }
         }
         
-        // Add all pre-rendered chips
+        // Add all chips to row
         chipViews.forEach { row.addView(it) }
         
-        // Start animation after layout
+        // Start animation after layout is complete
         row.post {
-            // Force a layout pass to ensure all chips are measured
-            row.measure(
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-            )
-            startRowAnimation(row, rowIndex)
+            startInfiniteScroll(row, rowIndex)
         }
     }
 
@@ -137,31 +134,44 @@ class EmptyStateAnimator(
         }
     }
 
-    private fun startRowAnimation(row: LinearLayout, rowIndex: Int) {
+    /**
+     * True infinite scroll with seamless looping.
+     * - Row contains [SET1][SET2][SET3]
+     * - Starts with SET2 visible (middle position)
+     * - Scrolls left continuously
+     * - When SET1 would finish, seamlessly resets to identical visual position
+     * - User never sees a "jump" or reset
+     */
+    private fun startInfiniteScroll(row: LinearLayout, rowIndex: Int) {
         val rowWidth = row.width.toFloat()
         if (rowWidth <= 0) return
 
-        val screenWidth = context.resources.displayMetrics.widthPixels.toFloat()
+        // Width of one complete set of chips (we have 3 sets)
+        val setWidth = rowWidth / 3f
         
-        // Width of one set of chips (we have 4 sets)
-        val chipSetWidth = rowWidth / 4f
+        // Start position: Begin with chips already filling the screen
+        // Position so the MIDDLE set (SET2) is centered on screen initially
+        // This means SET1 is partially visible on left, SET2 in center, SET3 on right
+        val startPosition = -setWidth * rowPhases[rowIndex]
         
-        // START OFF-SCREEN to the right - chips render before entering viewport
-        // This ensures no empty circles are ever visible
-        val startX = screenWidth * 0.3f + (chipSetWidth * rowStartOffsets[rowIndex])
-        
-        row.translationX = startX
+        // Set initial position
+        row.translationX = startPosition
 
-        val animator = ValueAnimator.ofFloat(0f, chipSetWidth).apply {
+        val animator = ValueAnimator.ofFloat(0f, setWidth).apply {
             duration = rowDurations[rowIndex]
             repeatCount = ValueAnimator.INFINITE
             repeatMode = ValueAnimator.RESTART
             interpolator = LinearInterpolator()
             
             addUpdateListener { animation ->
-                val value = animation.animatedValue as Float
-                row.translationX = startX - value
+                val progress = animation.animatedValue as Float
+                // Scroll left (negative direction)
+                row.translationX = startPosition - progress
             }
+            
+            // No special reset logic needed - ValueAnimator.RESTART handles it
+            // The animation restarts from 0, which visually is identical to the end
+            // because we have 3 identical sets of chips
         }
 
         animators.add(animator)
