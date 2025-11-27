@@ -117,7 +117,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginEnd="16dp"
-                    android:src="@drawable/ic_settings"
+                    android:src="@drawable/ic_bank"
                     app:tint="@color/color_icon_secondary" />
 
                 <TextView
