@@ -88,7 +88,7 @@ class PaymentReceivedActivity : AppCompatActivity() {
         
         // Set up button listeners
         closeButton.setOnClickListener {
-            finish()
+            finishWithFade()
         }
         
         viewDetailsButton.setOnClickListener {
@@ -100,7 +100,7 @@ class PaymentReceivedActivity : AppCompatActivity() {
         }
         
         closeIconButton.setOnClickListener {
-            finish()
+            finishWithFade()
         }
         
         // Start the checkmark animation after a short delay
@@ -259,5 +259,14 @@ class PaymentReceivedActivity : AppCompatActivity() {
         }
         
         startActivity(intent)
+    }
+    
+    /**
+     * Finish the activity with an elegant fade-out animation.
+     */
+    private fun finishWithFade() {
+        finish()
+        @Suppress("DEPRECATION")
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 }

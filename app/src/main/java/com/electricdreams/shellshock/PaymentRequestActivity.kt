@@ -868,19 +868,46 @@ class PaymentRequestActivity : AppCompatActivity() {
     }
     
     /**
-     * Elegant slide-down animation when closing the success screen.
-     * Uses activity transition to slide entire screen down, revealing home screen behind.
+     * Elegant fade-out animation when closing the success screen.
      */
     private fun animateSuccessScreenOut() {
         // Disable the button to prevent multiple taps
         animationCloseButton.isEnabled = false
         
-        // Clean up and finish with slide-down transition
-        cleanupAndFinish()
+        // Clean up and finish with fade transition
+        cleanupAndFinishWithSlide()
         
-        // Override the default transition to slide down, revealing the home screen
+        // Fade out the success screen, fade in the home screen
         @Suppress("DEPRECATION")
-        overridePendingTransition(R.anim.stay, R.anim.slide_out_down)
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+    }
+    
+    /**
+     * Cleanup and finish specifically for the slide-down animation.
+     * Does NOT exit full-screen mode so the green success screen stays full during the slide.
+     */
+    private fun cleanupAndFinishWithSlide() {
+        // Stop Nostr handler
+        nostrHandler?.stop()
+        nostrHandler = null
+
+        // Stop Lightning handler
+        lightningHandler?.cancel()
+        lightningHandler = null
+
+        // Clean up HCE service
+        try {
+            val hceService = NdefHostCardEmulationService.getInstance()
+            if (hceService != null) {
+                Log.d(TAG, "Cleaning up HCE service")
+                hceService.clearPaymentRequest()
+                hceService.setPaymentCallback(null)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error cleaning up HCE service: ${e.message}", e)
+        }
+
+        finish()
     }
 
     private fun showNfcAnimationOverlay() {
