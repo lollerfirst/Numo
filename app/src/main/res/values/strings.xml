@@ -25,4 +25,49 @@
     <string name="balance_check_info_inconsistent_proofs">Proof data inconsistent</string>
     <string name="balance_check_error_card_does_not_support_isodep">Card does not support IsoDep</string>
     <string name="balance_check_error_invalid_nfc_tag">Invalid NFC tag</string>
+
+    <!-- Tips settings -->
+    <string name="tips_settings_toolbar_back">Back</string>
+    <string name="tips_settings_title">Tips</string>
+    <string name="tips_settings_description">Allow customers to add a tip when paying. Tip presets will appear as quick-select buttons on the payment screen.</string>
+    <string name="tips_settings_enable_label">Enable Tips</string>
+    <string name="tips_settings_presets_header">TIP PRESETS</string>
+    <string name="tips_settings_presets_description">Configure quick-select tip percentages. Customers can also enter a custom amount.</string>
+    <string name="tips_settings_add_preset">Add Preset</string>
+    <string name="tips_settings_reset_defaults">Reset to Defaults</string>
+
+    <!-- Tips dialogs & toasts -->
+    <string name="tip_percentage_format">%1$d%%</string>
+    <string name="tips_dialog_add_preset_title">Add Tip Preset</string>
+    <string name="tips_dialog_add_preset_hint">Enter percentage (1-100)</string>
+    <string name="tips_dialog_add_preset_positive">Add</string>
+    <string name="tips_dialog_add_preset_negative">Cancel</string>
+    <string name="tips_error_invalid_percentage">Please enter a valid percentage (1-100)</string>
+    <string name="tips_error_could_not_add_preset">Could not add preset (may already exist or at max capacity)</string>
+
+    <string name="tips_dialog_edit_preset_title">Edit Tip Preset</string>
+    <string name="tips_dialog_edit_preset_positive">Save</string>
+
+    <string name="tips_dialog_remove_preset_title">Remove Preset</string>
+    <string name="tips_dialog_remove_preset_message">Remove %1$d%% from tip presets?</string>
+    <string name="tips_dialog_remove_preset_positive">Remove</string>
+
+    <string name="tips_dialog_reset_defaults_title">Reset to Defaults</string>
+    <string name="tips_dialog_reset_defaults_message">Reset tip presets to default values (5%, 10%, 15%, 20%)?</string>
+    <string name="tips_dialog_reset_defaults_positive">Reset</string>
+    <string name="tips_toast_reset_to_defaults">Presets reset to defaults</string>
+
+    <!-- Tip selection screen -->
+    <string name="tip_selection_close_content_description">Close</string>
+    <string name="tip_selection_order_total_label">Order Total</string>
+    <string name="tip_selection_question_add_tip">Would you like to add a tip?</string>
+    <string name="tip_selection_custom_tip_label">Custom Tip</string>
+    <string name="tip_selection_custom_tip_subtitle">Enter amount</string>
+    <string name="tip_selection_no_tip_button">No Tip</string>
+    <string name="tip_selection_custom_currency_switch_to_btc">Switch to ₿</string>
+    <string name="tip_selection_custom_currency_switch_to_fiat">Switch to %1$s</string>
+    <string name="tip_selection_custom_question">Enter tip amount</string>
+    <string name="tip_selection_main_back">Back</string>
+    <string name="tip_selection_main_confirm">Confirm</string>
+
 </resources>

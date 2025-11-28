@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Numo</string>
-    <!-- Spanish translations will be added as keys appear in values/strings.xml -->
 
     <!-- Balance check -->
     <string name="balance_check_toolbar_back">Atrás</string>
@@ -16,4 +15,49 @@
     <string name="balance_check_info_inconsistent_proofs">Los datos de pruebas son inconsistentes</string>
     <string name="balance_check_error_card_does_not_support_isodep">La tarjeta no admite IsoDep</string>
     <string name="balance_check_error_invalid_nfc_tag">Etiqueta NFC no válida</string>
+
+    <!-- Tips settings -->
+    <string name="tips_settings_toolbar_back">Atrás</string>
+    <string name="tips_settings_title">Propinas</string>
+    <string name="tips_settings_description">Permite a los clientes añadir una propina al pagar. Las propinas predefinidas aparecerán como botones de selección rápida en la pantalla de pago.</string>
+    <string name="tips_settings_enable_label">Activar propinas</string>
+    <string name="tips_settings_presets_header">PROPINA PREDEFINIDA</string>
+    <string name="tips_settings_presets_description">Configura porcentajes de propina de selección rápida. Los clientes también pueden introducir un importe personalizado.</string>
+    <string name="tips_settings_add_preset">Añadir propina</string>
+    <string name="tips_settings_reset_defaults">Restablecer valores predeterminados</string>
+
+    <!-- Tips dialogs & toasts -->
+    <string name="tip_percentage_format">%1$d%%</string>
+    <string name="tips_dialog_add_preset_title">Añadir propina predefinida</string>
+    <string name="tips_dialog_add_preset_hint">Introduce un porcentaje (1-100)</string>
+    <string name="tips_dialog_add_preset_positive">Añadir</string>
+    <string name="tips_dialog_add_preset_negative">Cancelar</string>
+    <string name="tips_error_invalid_percentage">Introduce un porcentaje válido (1-100)</string>
+    <string name="tips_error_could_not_add_preset">No se pudo añadir la propina (puede que ya exista o que se haya alcanzado el máximo)</string>
+
+    <string name="tips_dialog_edit_preset_title">Editar propina predefinida</string>
+    <string name="tips_dialog_edit_preset_positive">Guardar</string>
+
+    <string name="tips_dialog_remove_preset_title">Eliminar propina predefinida</string>
+    <string name="tips_dialog_remove_preset_message">¿Eliminar la propina del %1$d%% de las opciones predefinidas?</string>
+    <string name="tips_dialog_remove_preset_positive">Eliminar</string>
+
+    <string name="tips_dialog_reset_defaults_title">Restablecer valores predeterminados</string>
+    <string name="tips_dialog_reset_defaults_message">¿Restablecer las propinas predefinidas a los valores por defecto (5 %, 10 %, 15 %, 20 %)?</string>
+    <string name="tips_dialog_reset_defaults_positive">Restablecer</string>
+    <string name="tips_toast_reset_to_defaults">Propinas restablecidas a los valores por defecto</string>
+
+    <!-- Tip selection screen -->
+    <string name="tip_selection_close_content_description">Cerrar</string>
+    <string name="tip_selection_order_total_label">Total del pedido</string>
+    <string name="tip_selection_question_add_tip">¿Quieres añadir una propina?</string>
+    <string name="tip_selection_custom_tip_label">Propina personalizada</string>
+    <string name="tip_selection_custom_tip_subtitle">Introduce un importe</string>
+    <string name="tip_selection_no_tip_button">Sin propina</string>
+    <string name="tip_selection_custom_currency_switch_to_btc">Cambiar a ₿</string>
+    <string name="tip_selection_custom_currency_switch_to_fiat">Cambiar a %1$s</string>
+    <string name="tip_selection_custom_question">Introduce el importe de la propina</string>
+    <string name="tip_selection_main_back">Atrás</string>
+    <string name="tip_selection_main_confirm">Confirmar</string>
+
 </resources>
