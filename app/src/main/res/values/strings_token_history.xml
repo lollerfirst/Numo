@@ -1,0 +1,12 @@
+<resources>
+    <!-- Token history: toolbar title & dialogs -->
+    <string name="token_history_toolbar_title">Token History</string>
+
+    <string name="token_history_dialog_delete_title">Delete Token</string>
+    <string name="token_history_dialog_delete_message">Are you sure you want to delete this token from history?</string>
+    <string name="token_history_dialog_delete_positive">Delete</string>
+
+    <string name="token_history_dialog_clear_title">Clear History</string>
+    <string name="token_history_dialog_clear_message">Are you sure you want to clear all token history? This action cannot be undone.</string>
+    <string name="token_history_dialog_clear_positive">Clear All</string>
+</resources>

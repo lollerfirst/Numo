@@ -266,15 +266,16 @@ public class MintsAdapter extends RecyclerView.Adapter<MintsAdapter.MintViewHold
             // Set up remove button
             removeButton.setOnClickListener(v -> {
                 // Show confirmation dialog before removal
-                new androidx.appcompat.app.AlertDialog.Builder(itemView.getContext())
-                    .setTitle("Remove Mint")
-                    .setMessage("Are you sure you want to remove this mint?\n\n" + mintUrl)
-                    .setPositiveButton("Remove", (dialog, which) -> {
+                Context context = itemView.getContext();
+                new androidx.appcompat.app.AlertDialog.Builder(context)
+                    .setTitle(R.string.mints_settings_dialog_remove_title)
+                    .setMessage(context.getString(R.string.mints_settings_dialog_remove_message, mintUrl))
+                    .setPositiveButton(R.string.mints_settings_dialog_remove_positive, (dialog, which) -> {
                         if (removeListener != null) {
                             removeListener.onMintRemoved(mintUrl);
                         }
                     })
-                    .setNegativeButton("Cancel", null)
+                    .setNegativeButton(R.string.common_cancel, null)
                     .show();
             });
             
