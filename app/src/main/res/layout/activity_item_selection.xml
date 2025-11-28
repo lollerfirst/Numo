@@ -496,7 +496,7 @@
                     android:background="@drawable/bg_save_button"
                     android:text="@string/item_selection_save_button"
                     android:textAllCaps="false"
-                    android:textColor="@color/color_text_primary"
+                    android:textColor="@color/color_bg_white"
                     android:textSize="18sp"
                     android:fontFamily="sans-serif-medium" />
 

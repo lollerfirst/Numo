@@ -386,8 +386,8 @@ class ItemSelectionActivity : AppCompatActivity() {
             toolbarTitle.text = getString(R.string.item_selection_toolbar_title)
         }
         
-        // Show/hide save button (only when editing existing basket AND has items)
-        saveButtonContainer.visibility = if (isEditing && hasItems) View.VISIBLE else View.GONE
+        // Show/hide save button whenever there are items in the basket
+        saveButtonContainer.visibility = if (hasItems) View.VISIBLE else View.GONE
     }
     
     private fun handleBackPress() {
