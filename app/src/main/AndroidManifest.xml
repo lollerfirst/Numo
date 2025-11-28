@@ -244,6 +244,17 @@
                 android:value=".feature.pin.PinEntryActivity" />
         </activity>
         
+        <activity android:name="com.electricdreams.numo.feature.settings.AboutActivity"
+            android:exported="false"
+            android:label="About"
+            android:theme="@style/Theme.Numo"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName=".feature.settings.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".feature.settings.SettingsActivity" />
+        </activity>
+        
         <activity android:name="com.electricdreams.numo.feature.settings.DeveloperSettingsActivity"
             android:exported="false"
             android:label="Developer Settings"

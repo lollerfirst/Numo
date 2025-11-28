@@ -14,9 +14,13 @@ import com.electricdreams.numo.feature.tips.TipsSettingsActivity
 
 /**
  * Main Settings screen.
+ * 
  * PIN-protected items:
  * - Mints Settings (can withdraw funds)
  * - Items Settings (can modify prices)
+ * 
+ * Developer section is hidden by default and only shown when
+ * developer mode is enabled (by tapping version 5 times in About).
  */
 class SettingsActivity : AppCompatActivity() {
 
@@ -29,39 +33,78 @@ class SettingsActivity : AppCompatActivity() {
 
         pinManager = PinManager.getInstance(this)
 
+        setupViews()
+        setupListeners()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Update developer section visibility when returning from About
+        updateDeveloperSectionVisibility()
+    }
+
+    private fun setupViews() {
+        updateDeveloperSectionVisibility()
+    }
+
+    private fun updateDeveloperSectionVisibility() {
+        val developerSection = findViewById<View>(R.id.developer_section)
+        developerSection.visibility = if (DeveloperPrefs.isDeveloperModeEnabled(this)) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
+
+    private fun setupListeners() {
         findViewById<View?>(R.id.back_button)?.setOnClickListener { finish() }
 
-        // Unprotected settings
-        findViewById<View>(R.id.theme_settings_item).setOnClickListener {
-            startActivity(Intent(this, ThemeSettingsActivity::class.java))
+        // === Terminal Section ===
+        
+        // Items - protected because it allows modifying prices
+        findViewById<View>(R.id.items_settings_item).setOnClickListener {
+            openProtectedActivity(ItemListActivity::class.java)
         }
+
+        // Tips - unprotected (tips just add to balance)
+        findViewById<View>(R.id.tips_settings_item).setOnClickListener {
+            startActivity(Intent(this, TipsSettingsActivity::class.java))
+        }
+
+        // === Payments Section ===
 
         findViewById<View>(R.id.currency_settings_item).setOnClickListener {
             startActivity(Intent(this, CurrencySettingsActivity::class.java))
         }
 
-        // Tips settings - unprotected (tips just add to balance)
-        findViewById<View>(R.id.tips_settings_item).setOnClickListener {
-            startActivity(Intent(this, TipsSettingsActivity::class.java))
+        // Mints - protected (can withdraw funds)
+        findViewById<View>(R.id.mints_settings_item).setOnClickListener {
+            openProtectedActivity(MintsSettingsActivity::class.java)
         }
+
+        // === Security Section ===
 
         // Security settings - always accessible (contains PIN setup itself)
         findViewById<View>(R.id.security_settings_item).setOnClickListener {
             startActivity(Intent(this, SecuritySettingsActivity::class.java))
         }
 
+        // === Appearance Section ===
+
+        findViewById<View>(R.id.theme_settings_item).setOnClickListener {
+            startActivity(Intent(this, ThemeSettingsActivity::class.java))
+        }
+
+        // === About Section ===
+
+        findViewById<View>(R.id.about_item).setOnClickListener {
+            startActivity(Intent(this, AboutActivity::class.java))
+        }
+
+        // === Developer Section (only visible if enabled) ===
+
         findViewById<View>(R.id.developer_settings_item).setOnClickListener {
             startActivity(Intent(this, DeveloperSettingsActivity::class.java))
-        }
-
-        // PIN-protected settings
-        findViewById<View>(R.id.mints_settings_item).setOnClickListener {
-            openProtectedActivity(MintsSettingsActivity::class.java)
-        }
-
-        // Item list - protected because it allows modifying prices
-        findViewById<View>(R.id.items_settings_item).setOnClickListener {
-            openProtectedActivity(ItemListActivity::class.java)
         }
     }
 
@@ -80,6 +123,7 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         
