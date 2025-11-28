@@ -1,0 +1,17 @@
+<resources>
+    <!-- Security &amp; Privacy screen: info card -->
+    <string name="security_settings_card_title">Protect Your Wallet</string>
+    <string name="security_settings_card_body">Your seed phrase is the only way to recover your wallet if you lose access to this device. Keep it safe and never share it with anyone.</string>
+
+    <!-- Security &amp; Privacy screen: sections -->
+    <string name="security_settings_section_backup">Wallet Backup</string>
+    <string name="security_settings_section_recovery">Wallet Recovery</string>
+
+    <!-- Security &amp; Privacy screen: backup mnemonic row -->
+    <string name="security_settings_backup_mnemonic_title">Backup Mnemonic</string>
+    <string name="security_settings_backup_mnemonic_subtitle">View your 12-word seed phrase</string>
+
+    <!-- Security &amp; Privacy screen: restore wallet row -->
+    <string name="security_settings_restore_wallet_title">Restore Wallet</string>
+    <string name="security_settings_restore_wallet_subtitle">Recover from seed phrase</string>
+</resources>
