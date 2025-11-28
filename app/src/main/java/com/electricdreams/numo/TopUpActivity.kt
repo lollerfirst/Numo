@@ -1,5 +1,4 @@
 package com.electricdreams.numo
-import com.electricdreams.numo.R
 
 import android.app.PendingIntent
 import android.content.Intent
@@ -56,7 +55,7 @@ class TopUpActivity : AppCompatActivity() {
             setSupportActionBar(it)
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
-                title = "Top Up"
+                title = getString(R.string.top_up_title)
             }
         }
 
@@ -73,7 +72,10 @@ class TopUpActivity : AppCompatActivity() {
                 if (!sharedText.isNullOrEmpty()) {
                     pendingProofToken = sharedText
                     proofTokenEditText.setText(sharedText)
-                    showStatusMessage("Token ready to be imported", success = true)
+                    showStatusMessage(
+                        getString(R.string.top_up_status_token_ready),
+                        success = true
+                    )
                     showNfcDialog()
                 }
             }
@@ -81,7 +83,10 @@ class TopUpActivity : AppCompatActivity() {
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         if (nfcAdapter == null) {
-            showStatusMessage("NFC is not available on this device", success = false)
+            showStatusMessage(
+                getString(R.string.top_up_status_nfc_not_available),
+                success = false
+            )
             topUpSubmitButton.isEnabled = false
         }
 
@@ -89,10 +94,16 @@ class TopUpActivity : AppCompatActivity() {
             val proofToken = proofTokenEditText.text.toString()
             if (proofToken.isNotEmpty()) {
                 pendingProofToken = proofToken
-                showStatusMessage("Tap your card to import the proofs", success = true)
+                showStatusMessage(
+                    getString(R.string.top_up_status_tap_card),
+                    success = true
+                )
                 showNfcDialog()
             } else {
-                showStatusMessage("Please enter a Cashu proof token", success = false)
+                showStatusMessage(
+                    getString(R.string.top_up_status_missing_token),
+                    success = false
+                )
             }
         }
     }
@@ -125,8 +136,6 @@ class TopUpActivity : AppCompatActivity() {
             val dialogView = layoutInflater.inflate(R.layout.dialog_nfc_modern, null)
             builder.setView(dialogView)
 
-            dialogView.findViewById<TextView>(R.id.nfc_amount_display)?.text = "Ready to import proofs"
-
             builder.setCancelable(true)
             nfcDialog = builder.create().also { it.show() }
         }
@@ -138,12 +147,14 @@ class TopUpActivity : AppCompatActivity() {
             val dialogView = layoutInflater.inflate(R.layout.dialog_nfc_modern, null)
             builder.setView(dialogView)
 
-            dialogView.findViewById<TextView>(R.id.nfc_amount_display)?.text = "Ready to import proofs"
+            dialogView.findViewById<TextView>(R.id.nfc_amount_display)?.text =
+                getString(R.string.top_up_dialog_ready_message)
 
-            dialogView.findViewById<TextView>(R.id.nfc_dialog_title)?.text = "Scan Card Again"
+            dialogView.findViewById<TextView>(R.id.nfc_dialog_title)?.text =
+                getString(R.string.top_up_dialog_rescan_title)
 
             dialogView.findViewById<TextView>(R.id.nfc_hint_text)?.apply {
-                text = "PIN accepted. Please scan your card again to complete import."
+                text = getString(R.string.top_up_dialog_rescan_hint)
                 visibility = View.VISIBLE
             }
 
@@ -163,8 +174,10 @@ class TopUpActivity : AppCompatActivity() {
             val dialogView = layoutInflater.inflate(R.layout.dialog_nfc_modern, null)
             builder.setView(dialogView)
 
-            dialogView.findViewById<TextView>(R.id.nfc_dialog_title)?.text = "Processing Import"
-            dialogView.findViewById<TextView>(R.id.nfc_amount_display)?.text = "Importing proofs..."
+            dialogView.findViewById<TextView>(R.id.nfc_dialog_title)?.text =
+                getString(R.string.top_up_dialog_processing_title)
+            dialogView.findViewById<TextView>(R.id.nfc_amount_display)?.text =
+                getString(R.string.top_up_dialog_processing_message)
 
             builder.setCancelable(false)
             processingDialog = builder.create().also { it.show() }
@@ -174,7 +187,7 @@ class TopUpActivity : AppCompatActivity() {
     private fun showPinDialog(callback: (String?) -> Unit) {
         mainHandler.post {
             val builder = AlertDialog.Builder(this)
-            builder.setTitle("Enter PIN")
+            builder.setTitle(R.string.dialog_title_enter_pin)
 
             val layout = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
@@ -186,7 +199,7 @@ class TopUpActivity : AppCompatActivity() {
 
             val input = EditText(this).apply {
                 inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
-                hint = "PIN"
+                hint = getString(R.string.dialog_pin_hint)
             }
             layout.addView(input)
 
@@ -246,14 +259,14 @@ class TopUpActivity : AppCompatActivity() {
             }
 
             val cancelButton = Button(this).apply {
-                text = "Cancel"
+                text = getString(R.string.common_cancel)
                 layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f).apply {
                     rightMargin = (8 * resources.displayMetrics.density).toInt()
                 }
             }
 
             val okButton = Button(this).apply {
-                text = "OK"
+                text = getString(R.string.common_ok)
                 layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f).apply {
                     leftMargin = (8 * resources.displayMetrics.density).toInt()
                 }
@@ -317,7 +330,10 @@ class TopUpActivity : AppCompatActivity() {
     private fun handleNfcImport(tag: Tag) {
         val token = pendingProofToken
         if (token.isNullOrEmpty()) {
-            showStatusMessage("No proof token set to import", success = false)
+            showStatusMessage(
+                getString(R.string.top_up_status_no_token_set),
+                success = false
+            )
             return
         }
 
@@ -346,7 +362,10 @@ class TopUpActivity : AppCompatActivity() {
 
                 try {
                     val importedCount = satocashWallet!!.importProofsFromToken(token).join()
-                    showStatusMessage("Success: Imported $importedCount proofs", success = true)
+                    showStatusMessage(
+                        getString(R.string.top_up_status_success_imported, importedCount),
+                        success = true
+                    )
 
                     mainHandler.post {
                         nfcDialog?.takeIf { it.isShowing }?.dismiss()
@@ -385,22 +404,37 @@ class TopUpActivity : AppCompatActivity() {
                                 waitingForRescan = true
                                 mainHandler.post { showRescanDialog() }
                             } else {
-                                showStatusMessage("Operation cancelled", success = false)
+                                showStatusMessage(
+                                    getString(R.string.top_up_status_operation_cancelled),
+                                    success = false
+                                )
                             }
                             return@Thread
                         } else {
-                            showStatusMessage("Card error: ${cause.message}", success = false)
+                            showStatusMessage(
+                                getString(R.string.top_up_status_card_error, cause.message ?: ""),
+                                success = false
+                            )
                         }
                     } else {
                         showStatusMessage("Error: ${e.message}", success = false)
                     }
                 }
             } catch (e: java.io.IOException) {
-                showStatusMessage("NFC Communication Error: ${e.message}", success = false)
+                showStatusMessage(
+                    getString(R.string.top_up_status_nfc_error, e.message ?: ""),
+                    success = false
+                )
             } catch (e: SatocashNfcClient.SatocashException) {
-                showStatusMessage("Satocash Card Error: ${e.message}", success = false)
+                showStatusMessage(
+                    getString(R.string.top_up_status_card_error, e.message ?: ""),
+                    success = false
+                )
             } catch (e: Exception) {
-                showStatusMessage("Error: ${e.message}", success = false)
+                showStatusMessage(
+                    getString(R.string.top_up_status_generic_error, e.message ?: ""),
+                    success = false
+                )
             } finally {
                 try {
                     if (satocashClient != null && !waitingForRescan) {
@@ -423,7 +457,10 @@ class TopUpActivity : AppCompatActivity() {
         val pin = savedPin
         if (pin.isNullOrEmpty()) {
             Log.e(TAG, "No saved PIN available for import")
-            showStatusMessage("No saved PIN available", success = false)
+            showStatusMessage(
+                getString(R.string.top_up_status_no_saved_pin),
+                success = false
+            )
             return
         }
 
@@ -461,14 +498,17 @@ class TopUpActivity : AppCompatActivity() {
                     waitingForRescan = false
                     savedPin = null
 
-                    showStatusMessage("Success: Imported $importedCount proofs", success = true)
+                    showStatusMessage(
+                        getString(R.string.top_up_status_success_imported, importedCount),
+                        success = true
+                    )
 
                     mainHandler.post {
                         pendingProofToken = ""
                         proofTokenEditText.setText("")
                     }
                 } else {
-                    val message = "PIN Verification Failed"
+                    val message = getString(R.string.top_up_status_pin_verification_failed)
                     Log.e(TAG, message)
                     waitingForRescan = false
                     savedPin = null
@@ -477,16 +517,23 @@ class TopUpActivity : AppCompatActivity() {
             } catch (re: RuntimeException) {
                 val reCause = re.cause
                 val message = if (reCause is SatocashNfcClient.SatocashException) {
-                    "PIN Verification Failed: ${reCause.message} (SW: 0x%04X)".format(reCause.sw)
+                    // Keep SW formatting in the logged message, user-facing string is separate
+                    getString(
+                        R.string.top_up_status_pin_verification_failed_detail,
+                        "${reCause.message} (SW: 0x%04X)".format(reCause.sw)
+                    )
                 } else {
-                    "Authentication Failed: ${re.message}"
+                    getString(R.string.top_up_status_auth_failed, re.message ?: "")
                 }
                 Log.e(TAG, message)
                 waitingForRescan = false
                 savedPin = null
                 showStatusMessage(message, success = false)
             } catch (e: Exception) {
-                val message = "An unexpected error occurred: ${e.message}"
+                val message = getString(
+                    R.string.top_up_status_unexpected_error,
+                    e.message ?: ""
+                )
                 Log.e(TAG, message)
                 waitingForRescan = false
                 savedPin = null

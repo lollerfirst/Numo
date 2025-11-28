@@ -1,94 +1,48 @@
-app/src/main/java/com/electricdreams/numo/TopUpActivity.kt:128:            dialogView.findViewById<TextView>(R.id.nfc_amount_display)?.text = "Ready to import proofs"
-app/src/main/java/com/electricdreams/numo/TopUpActivity.kt:141:            dialogView.findViewById<TextView>(R.id.nfc_amount_display)?.text = "Ready to import proofs"
-app/src/main/java/com/electricdreams/numo/TopUpActivity.kt:143:            dialogView.findViewById<TextView>(R.id.nfc_dialog_title)?.text = "Scan Card Again"
-app/src/main/java/com/electricdreams/numo/TopUpActivity.kt:146:                text = "PIN accepted. Please scan your card again to complete import."
-app/src/main/java/com/electricdreams/numo/TopUpActivity.kt:166:            dialogView.findViewById<TextView>(R.id.nfc_dialog_title)?.text = "Processing Import"
-app/src/main/java/com/electricdreams/numo/TopUpActivity.kt:167:            dialogView.findViewById<TextView>(R.id.nfc_amount_display)?.text = "Importing proofs..."
-app/src/main/java/com/electricdreams/numo/TopUpActivity.kt:177:            builder.setTitle("Enter PIN")
-app/src/main/java/com/electricdreams/numo/TopUpActivity.kt:249:                text = "Cancel"
-app/src/main/java/com/electricdreams/numo/TopUpActivity.kt:256:                text = "OK"
-app/src/main/java/com/electricdreams/numo/BalanceCheckActivity.kt:59:            balanceDisplay.text = "Balance: " + Amount(balance, Amount.Currency.BTC).toString()
-app/src/main/java/com/electricdreams/numo/BalanceCheckActivity.kt:73:            balanceDisplay.text = "Error: $message"
-app/src/main/java/com/electricdreams/numo/BalanceCheckActivity.kt:75:            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-app/src/main/java/com/electricdreams/numo/PaymentReceivedActivity.kt:139:        amountText.text = "$formattedAmount received."
-app/src/main/java/com/electricdreams/numo/PaymentReceivedActivity.kt:202:            Toast.makeText(this, "No token to share", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/PaymentReceivedActivity.kt:227:            Toast.makeText(this, "No apps available to share this token", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/PaymentReceivedActivity.kt:237:            Toast.makeText(this, "Transaction details not available", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:162:            Toast.makeText(this, "Invalid payment amount", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:209:                Toast.makeText(this, "Nothing to share yet", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:353:        statusText.text = "Preparing payment request..."
-app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:377:                Toast.makeText(this, "Failed to prepare NDEF payment data", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:446:                    statusText.text = "Waiting for payment..."
-app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:449:                    statusText.text = "Error generating QR code"
-app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:461:                statusText.text = "Error: $message"
+app/src/main/java/com/electricdreams/numo/PaymentReceivedActivity.kt:200:            Toast.makeText(this, R.string.payment_received_error_no_token, Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/PaymentReceivedActivity.kt:225:            Toast.makeText(this, R.string.payment_received_error_no_share_app, Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/PaymentReceivedActivity.kt:235:            Toast.makeText(this, R.string.payment_received_error_no_details, Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/BalanceCheckActivity.kt:78:            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:162:            Toast.makeText(this, R.string.payment_request_error_invalid_amount, Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:209:                Toast.makeText(this, R.string.payment_request_error_nothing_to_share, Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:377:                Toast.makeText(this, R.string.payment_request_error_ndef_prepare, Toast.LENGTH_SHORT).show()
 app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:539:                    Toast.makeText(
-app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:605:        statusText.text = "Payment successful!"
-app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:645:        statusText.text = "Payment successful!"
-app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:684:        statusText.text = "Payment failed: $errorMessage"
-app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:685:        Toast.makeText(this, "Payment failed: $errorMessage", Toast.LENGTH_LONG).show()
-app/src/main/java/com/electricdreams/numo/ui/components/AmountDisplayManager.kt:148:            submitButton.text = "Charge $amountDisplayText"
-app/src/main/java/com/electricdreams/numo/ui/components/AmountDisplayManager.kt:152:            submitButton.text = "Charge"
+app/src/main/java/com/electricdreams/numo/PaymentRequestActivity.kt:685:        Toast.makeText(this, getString(R.string.payment_request_status_failed, errorMessage), Toast.LENGTH_LONG).show()
 app/src/main/java/com/electricdreams/numo/payment/PaymentResultHandler.kt:63:            android.widget.Toast.makeText(activity, "Payment error: $message", android.widget.Toast.LENGTH_LONG).show()
 app/src/main/java/com/electricdreams/numo/payment/PaymentMethodHandler.kt:51:            Toast.makeText(activity, "Host Card Emulation is not available on this device", Toast.LENGTH_SHORT).show()
 app/src/main/java/com/electricdreams/numo/payment/PaymentMethodHandler.kt:59:                Toast.makeText(activity, "Failed to create payment request", Toast.LENGTH_SHORT).show()
 app/src/main/java/com/electricdreams/numo/payment/PaymentMethodHandler.kt:97:                        Toast.makeText(activity, "Payment failed: $errorMessage", Toast.LENGTH_LONG).show()
 app/src/main/java/com/electricdreams/numo/payment/PaymentMethodHandler.kt:116:            Toast.makeText(activity, "Error setting up NDEF payment: ${e.message}", Toast.LENGTH_LONG).show()
+app/src/main/java/com/electricdreams/numo/ui/components/AmountDisplayManager.kt:148:            submitButton.text = "Charge $amountDisplayText"
+app/src/main/java/com/electricdreams/numo/ui/components/AmountDisplayManager.kt:152:            submitButton.text = "Charge"
+app/src/main/java/com/electricdreams/numo/payment/NfcPaymentProcessor.kt:37:            Toast.makeText(
+app/src/main/java/com/electricdreams/numo/payment/NfcPaymentProcessor.kt:47:            Toast.makeText(
 app/src/main/java/com/electricdreams/numo/ui/components/PosUiCoordinator.kt:293:        submitButton.text = "Charge" // Restore button text
-app/src/main/java/com/electricdreams/numo/payment/NfcPaymentProcessor.kt:37:            Toast.makeText(activity, "Please enter an amount first", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/payment/NfcPaymentProcessor.kt:43:            Toast.makeText(activity, "PIN-based rescan not supported in this build", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/payment/NfcPaymentProcessor.kt:136:            builder.setTitle("Enter PIN")
-app/src/main/java/com/electricdreams/numo/payment/NfcPaymentProcessor.kt:238:                text = "Cancel"
-app/src/main/java/com/electricdreams/numo/payment/NfcPaymentProcessor.kt:245:                text = "OK"
-app/src/main/java/com/electricdreams/numo/ui/adapter/PaymentsHistoryAdapter.kt:101:            holder.statusText.text = "Tap to resume"
 app/src/main/java/com/electricdreams/numo/ui/adapter/TokenHistoryAdapter.kt:57:            Toast.makeText(context, "Token copied to clipboard", Toast.LENGTH_SHORT).show()
 app/src/main/java/com/electricdreams/numo/ui/adapter/TokenHistoryAdapter.kt:86:            Toast.makeText(context, "No apps available to handle this token", Toast.LENGTH_SHORT).show()
 app/src/main/java/com/electricdreams/numo/ui/adapter/MintsAdapter.java:270:                    .setTitle("Remove Mint")
 app/src/main/java/com/electricdreams/numo/ui/adapter/MintsAdapter.java:271:                    .setMessage("Are you sure you want to remove this mint?\n\n" + mintUrl)
-app/src/main/java/com/electricdreams/numo/feature/history/TokenHistoryActivity.kt:44:                    .setTitle("Delete Token")
-app/src/main/java/com/electricdreams/numo/feature/history/TokenHistoryActivity.kt:45:                    .setMessage("Are you sure you want to delete this token from history?")
-app/src/main/java/com/electricdreams/numo/feature/history/TokenHistoryActivity.kt:75:            .setTitle("Clear History")
-app/src/main/java/com/electricdreams/numo/feature/history/TokenHistoryActivity.kt:76:            .setMessage("Are you sure you want to clear all token history? This action cannot be undone.")
+app/src/main/java/com/electricdreams/numo/ui/adapter/PaymentsHistoryAdapter.kt:101:            holder.statusText.text = "Tap to resume"
 app/src/main/java/com/electricdreams/numo/feature/history/PaymentsHistoryActivity.kt:158:            Toast.makeText(this, "No apps available to handle this payment", Toast.LENGTH_SHORT).show()
 app/src/main/java/com/electricdreams/numo/feature/history/PaymentsHistoryActivity.kt:164:            .setTitle("Delete Payment")
 app/src/main/java/com/electricdreams/numo/feature/history/PaymentsHistoryActivity.kt:165:            .setMessage("Are you sure you want to delete this payment from history?")
 app/src/main/java/com/electricdreams/numo/feature/history/PaymentsHistoryActivity.kt:173:            .setTitle("Clear History")
 app/src/main/java/com/electricdreams/numo/feature/history/PaymentsHistoryActivity.kt:174:            .setMessage("Are you sure you want to clear all payment history? This action cannot be undone.")
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:301:            .setTitle("Terms of Service")
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:302:            .setMessage("""
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:364:            text = "$index"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:513:        generatingStatus.text = "Creating your wallet..."
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:521:                    generatingStatus.text = "Generating seed phrase..."
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:533:                    generatingStatus.text = "Setting up default mints..."
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:559:                    Toast.makeText(
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:572:        generatingStatus.text = "Initializing wallet..."
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:584:                    generatingStatus.text = "Connecting to mints..."
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:593:                    generatingStatus.text = "Fetching mint information..."
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:619:                    Toast.makeText(
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:646:                seedValidationText.text = "Invalid characters detected"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:653:                seedValidationText.text = "$filledCount of 12 words entered"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:660:                seedValidationText.text = "Ready to continue"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:677:            Toast.makeText(this, "Clipboard is empty", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:685:            Toast.makeText(this, "Please paste a valid 12-word seed phrase", Toast.LENGTH_LONG).show()
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:696:        Toast.makeText(this, "Seed phrase pasted", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:709:        fetchingStatus.text = "Searching for backup on Nostr..."
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:766:        restoringStatus.text = "Initializing restore..."
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:804:                    Toast.makeText(
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:825:                backupStatusTitle.text = "Backup Found"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:831:                backupStatusSubtitle.text = "Last backed up $dateStr"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:836:                backupStatusTitle.text = "No Backup Found"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:838:                backupStatusSubtitle.text = "Using default mints"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:840:            mintsSubtitle.text = "Select which mints to restore"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:841:            mintsContinueButton.text = "Restore Wallet"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:844:            mintsSubtitle.text = "These mints will store your ecash tokens"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:845:            mintsContinueButton.text = "Continue"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:938:        mintsCountText.text = "$count mint${if (count != 1) "s" else ""} selected"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:1004:            text = "Waiting..."
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:1088:            successTitle.text = "Wallet Restored"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:1090:                successSubtitle.text = "Recovered $totalRecovered sats"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:1092:                successSubtitle.text = "Total balance: $totalBalance sats"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:1111:            successTitle.text = "Wallet Created"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:1112:            successSubtitle.text = "Your wallet is ready to use"
-app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:1150:            text = "$after sats"
+app/src/main/java/com/electricdreams/numo/feature/history/TokenHistoryActivity.kt:44:                    .setTitle("Delete Token")
+app/src/main/java/com/electricdreams/numo/feature/history/TokenHistoryActivity.kt:45:                    .setMessage("Are you sure you want to delete this token from history?")
+app/src/main/java/com/electricdreams/numo/feature/history/TokenHistoryActivity.kt:75:            .setTitle("Clear History")
+app/src/main/java/com/electricdreams/numo/feature/history/TokenHistoryActivity.kt:76:            .setMessage("Are you sure you want to clear all token history? This action cannot be undone.")
+app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:112:                transactionType.text = "Lightning Payment"
+app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:116:                transactionType.text = "Cashu Payment"
+app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:120:                transactionType.text = "Payment Received"
+app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:148:                amountSubtitleText.text = "≈ $fiatAmount"
+app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:177:            mintNameText.text = "From $mintName"
+app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:181:            mintUrlText.text = "Unknown"
+app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:266:                tipFiatText.text = "≈ $tipFiatAmount"
+app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:383:        Toast.makeText(this, "Token copied to clipboard", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:391:        Toast.makeText(this, "Invoice copied to clipboard", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:412:            Toast.makeText(this, "No apps available to handle this payment", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:447:            .setTitle("Delete Payment")
+app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:448:            .setMessage("Are you sure you want to delete this payment from history?")
 app/src/main/java/com/electricdreams/numo/feature/history/BasketReceiptActivity.kt:230:                totalSubtitleText.text = "≈ $fiatEquiv"
 app/src/main/java/com/electricdreams/numo/feature/history/BasketReceiptActivity.kt:258:                totalSubtitleText.text = "$currentSubtitle • incl. $vatAmount VAT"
 app/src/main/java/com/electricdreams/numo/feature/history/BasketReceiptActivity.kt:260:                totalSubtitleText.text = "incl. $vatAmount VAT"
@@ -106,20 +60,25 @@ app/src/main/java/com/electricdreams/numo/feature/history/BasketReceiptActivity.
 app/src/main/java/com/electricdreams/numo/feature/history/BasketReceiptActivity.kt:479:            finalTotalLabel.text = "Total"
 app/src/main/java/com/electricdreams/numo/feature/history/BasketReceiptActivity.kt:512:            text = "Total Paid"
 app/src/main/java/com/electricdreams/numo/feature/history/BasketReceiptActivity.kt:582:            text = "VAT ($rate%)"
-app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:112:                transactionType.text = "Lightning Payment"
-app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:116:                transactionType.text = "Cashu Payment"
-app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:120:                transactionType.text = "Payment Received"
-app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:148:                amountSubtitleText.text = "≈ $fiatAmount"
-app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:177:            mintNameText.text = "From $mintName"
-app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:181:            mintUrlText.text = "Unknown"
-app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:266:                tipFiatText.text = "≈ $tipFiatAmount"
-app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:383:        Toast.makeText(this, "Token copied to clipboard", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:391:        Toast.makeText(this, "Invoice copied to clipboard", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:412:            Toast.makeText(this, "No apps available to handle this payment", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:447:            .setTitle("Delete Payment")
-app/src/main/java/com/electricdreams/numo/feature/history/TransactionDetailActivity.kt:448:            .setMessage("Are you sure you want to delete this payment from history?")
-app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawSuccessActivity.kt:62:        amountText.text = "${amountObj} sent."
-app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawSuccessActivity.kt:63:        destinationText.text = "To $destination"
+app/src/main/java/com/electricdreams/numo/feature/items/CheckoutScannerActivity.kt:184:                Toast.makeText(this, "No more stock available", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/items/CheckoutScannerActivity.kt:234:                Toast.makeText(
+app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:138:            .setTitle("Clear All Items")
+app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:139:            .setMessage("Are you sure you want to delete ALL items from your catalog? This cannot be undone.")
+app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:144:                Toast.makeText(this, "All items cleared", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:159:                Toast.makeText(this, "Failed to open CSV file", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:166:                Toast.makeText(this, "Imported $importedCount items", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:170:                Toast.makeText(this, "No items imported from CSV", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:174:            Toast.makeText(this, "Error importing CSV file: ${e.message}", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:411:                    quantityView.text = "${item.quantity} in stock"
+app/src/main/java/com/electricdreams/numo/feature/items/ItemSelectionActivity.kt:246:            .setTitle("Clear Basket")
+app/src/main/java/com/electricdreams/numo/feature/items/ItemSelectionActivity.kt:247:            .setMessage("Remove all items from basket?")
+app/src/main/java/com/electricdreams/numo/feature/items/adapters/SelectionItemsAdapter.kt:247:                stockView.text = "${item.quantity} in stock"
+app/src/main/java/com/electricdreams/numo/feature/items/adapters/SelectionItemsAdapter.kt:280:                    Toast.makeText(itemView.context, "No more stock available", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/items/adapters/SelectionItemsAdapter.kt:353:                    Toast.makeText(itemView.context, "Enter a variation name", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/items/ItemEntryActivity.kt:232:        findViewById<TextView>(R.id.toolbar_title)?.text = "Edit Item"
+app/src/main/java/com/electricdreams/numo/feature/items/ItemEntryActivity.kt:234:            text = "Delete Item"
+app/src/main/java/com/electricdreams/numo/feature/items/ItemEntryActivity.kt:332:            Toast.makeText(this, "Failed to save item", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/items/ItemEntryActivity.kt:344:                Toast.makeText(this, "Item saved but image could not be saved", Toast.LENGTH_LONG).show()
 app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawLightningActivity.kt:74:            Toast.makeText(this, "Invalid mint URL", Toast.LENGTH_SHORT).show()
 app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawLightningActivity.kt:202:            Toast.makeText(this, "Please enter a Lightning invoice", Toast.LENGTH_SHORT).show()
 app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawLightningActivity.kt:214:                        Toast.makeText(this@WithdrawLightningActivity, "Wallet not initialized", Toast.LENGTH_SHORT).show()
@@ -130,47 +89,17 @@ app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawLightningActi
 app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawLightningActivity.kt:275:                        Toast.makeText(this@WithdrawLightningActivity, "Wallet not initialized", Toast.LENGTH_SHORT).show()
 app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawLightningActivity.kt:294:                        Toast.makeText(
 app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawLightningActivity.kt:312:                    Toast.makeText(this@WithdrawLightningActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
-app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawMeltQuoteActivity.kt:71:            Toast.makeText(this, "Invalid melt quote data", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawMeltQuoteActivity.kt:125:        summaryText.text = "Withdraw from $mintName"
-app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawMeltQuoteActivity.kt:138:                        Toast.makeText(this@WithdrawMeltQuoteActivity, "Wallet not initialized", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawMeltQuoteActivity.kt:269:        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:107:        percentageText.text = "$percentage%"
-app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:145:            .setTitle("Add Tip Preset")
-app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:152:                    Toast.makeText(this, "Please enter a valid percentage (1-100)", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:159:                    Toast.makeText(this, "Could not add preset (may already exist or at max capacity)", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:180:            .setTitle("Edit Tip Preset")
-app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:187:                    Toast.makeText(this, "Please enter a valid percentage (1-100)", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:200:            .setTitle("Remove Preset")
-app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:201:            .setMessage("Remove $percentage% from tip presets?")
-app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:212:            .setTitle("Reset to Defaults")
-app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:213:            .setMessage("Reset tip presets to default values (5%, 10%, 15%, 20%)?")
-app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:217:                Toast.makeText(this, "Presets reset to defaults", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:336:            text = "$index"
+app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:531:                    Toast.makeText(
+app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:590:                    Toast.makeText(
+app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:648:            Toast.makeText(this, R.string.onboarding_clipboard_empty, Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:656:            Toast.makeText(this, R.string.onboarding_seed_paste_invalid, Toast.LENGTH_LONG).show()
+app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:667:        Toast.makeText(this, R.string.onboarding_seed_paste_success, Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/onboarding/OnboardingActivity.kt:775:                    Toast.makeText(
 app/src/main/java/com/electricdreams/numo/feature/settings/DeveloperSettingsActivity.kt:27:            .setTitle("Restart Onboarding")
 app/src/main/java/com/electricdreams/numo/feature/settings/DeveloperSettingsActivity.kt:28:            .setMessage("This will clear your onboarding completion status and take you back to the welcome screen. Are you sure you want to continue?")
-app/src/main/java/com/electricdreams/numo/feature/items/adapters/SelectionItemsAdapter.kt:247:                stockView.text = "${item.quantity} in stock"
-app/src/main/java/com/electricdreams/numo/feature/items/adapters/SelectionItemsAdapter.kt:280:                    Toast.makeText(itemView.context, "No more stock available", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/items/adapters/SelectionItemsAdapter.kt:353:                    Toast.makeText(itemView.context, "Enter a variation name", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/settings/MintsSettingsActivity.kt:187:            Toast.makeText(this, "Please enter a valid mint URL", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/settings/MintsSettingsActivity.kt:205:                Toast.makeText(
-app/src/main/java/com/electricdreams/numo/feature/settings/MintsSettingsActivity.kt:226:                Toast.makeText(this@MintsSettingsActivity, "Mint already in the list", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/settings/MintsSettingsActivity.kt:240:        Toast.makeText(this, "Mints reset to defaults", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/settings/MintsSettingsActivity.kt:256:            Toast.makeText(this, "Lightning payments will use this mint", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/items/handlers/CheckoutHandler.kt:30:            Toast.makeText(activity, "Your basket is empty", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/items/handlers/CheckoutHandler.kt:42:            Toast.makeText(activity, "Invalid payment amount", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/settings/SeedPhraseActivity.kt:49:                Toast.makeText(
-app/src/main/java/com/electricdreams/numo/feature/settings/SeedPhraseActivity.kt:70:            Toast.makeText(this, "Wallet not initialized", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/settings/SeedPhraseActivity.kt:91:            indexText.text = "${index + 1}"
-app/src/main/java/com/electricdreams/numo/feature/settings/SeedPhraseActivity.kt:109:            toggleVisibilityButton.text = "Hide"
-app/src/main/java/com/electricdreams/numo/feature/settings/SeedPhraseActivity.kt:112:            toggleVisibilityButton.text = "Show"
-app/src/main/java/com/electricdreams/numo/feature/settings/SeedPhraseActivity.kt:123:            Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/tips/TipSelectionActivity.kt:243:        percentageText.text = "$percentage%"
-app/src/main/java/com/electricdreams/numo/feature/tips/TipSelectionActivity.kt:453:            customCurrencyToggle.text = "Switch to ${entryCurrency.symbol}"
-app/src/main/java/com/electricdreams/numo/feature/tips/TipSelectionActivity.kt:456:            customCurrencyToggle.text = "Switch to ₿"
-app/src/main/java/com/electricdreams/numo/feature/tips/TipSelectionActivity.kt:605:                questionText.text = "Enter tip amount"
-app/src/main/java/com/electricdreams/numo/feature/tips/TipSelectionActivity.kt:648:                questionText.text = "Would you like to add a tip?"
-app/src/main/java/com/electricdreams/numo/feature/items/BarcodeScannerActivity.kt:118:                Toast.makeText(
-app/src/main/java/com/electricdreams/numo/feature/items/ItemSelectionActivity.kt:246:            .setTitle("Clear Basket")
-app/src/main/java/com/electricdreams/numo/feature/items/ItemSelectionActivity.kt:247:            .setMessage("Remove all items from basket?")
+app/src/main/java/com/electricdreams/numo/feature/items/handlers/ItemFormValidator.kt:48:            Toast.makeText(activity, "Please use a unique SKU", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/items/handlers/ItemFormValidator.kt:55:            Toast.makeText(activity, "Please use a unique GTIN", Toast.LENGTH_SHORT).show()
 app/src/main/java/com/electricdreams/numo/feature/settings/RestoreWalletActivity.kt:188:            text = "$index"
 app/src/main/java/com/electricdreams/numo/feature/settings/RestoreWalletActivity.kt:290:                titleText.text = "Restore Wallet"
 app/src/main/java/com/electricdreams/numo/feature/settings/RestoreWalletActivity.kt:295:                titleText.text = "Fetching Backup"
@@ -197,22 +126,30 @@ app/src/main/java/com/electricdreams/numo/feature/settings/RestoreWalletActivity
 app/src/main/java/com/electricdreams/numo/feature/items/handlers/ImageHandler.kt:118:            Toast.makeText(activity, "Camera permission is required to take pictures", Toast.LENGTH_SHORT).show()
 app/src/main/java/com/electricdreams/numo/feature/items/handlers/ImageHandler.kt:184:            Toast.makeText(activity, "Error creating image file: ${ex.message}", Toast.LENGTH_SHORT).show()
 app/src/main/java/com/electricdreams/numo/feature/items/handlers/ImageHandler.kt:207:                Toast.makeText(activity, "Failed to load image", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/items/CheckoutScannerActivity.kt:184:                Toast.makeText(this, "No more stock available", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/items/CheckoutScannerActivity.kt:234:                Toast.makeText(
-app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:138:            .setTitle("Clear All Items")
-app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:139:            .setMessage("Are you sure you want to delete ALL items from your catalog? This cannot be undone.")
-app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:144:                Toast.makeText(this, "All items cleared", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:159:                Toast.makeText(this, "Failed to open CSV file", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:166:                Toast.makeText(this, "Imported $importedCount items", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:170:                Toast.makeText(this, "No items imported from CSV", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:174:            Toast.makeText(this, "Error importing CSV file: ${e.message}", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/items/ItemListActivity.kt:411:                    quantityView.text = "${item.quantity} in stock"
-app/src/main/java/com/electricdreams/numo/feature/items/handlers/CategoryTagHandler.kt:131:            text = "+ Add New"
-app/src/main/java/com/electricdreams/numo/feature/items/ItemEntryActivity.kt:232:        findViewById<TextView>(R.id.toolbar_title)?.text = "Edit Item"
-app/src/main/java/com/electricdreams/numo/feature/items/ItemEntryActivity.kt:234:            text = "Delete Item"
-app/src/main/java/com/electricdreams/numo/feature/items/ItemEntryActivity.kt:332:            Toast.makeText(this, "Failed to save item", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/items/ItemEntryActivity.kt:344:                Toast.makeText(this, "Item saved but image could not be saved", Toast.LENGTH_LONG).show()
+app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawSuccessActivity.kt:62:        amountText.text = "${amountObj} sent."
+app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawSuccessActivity.kt:63:        destinationText.text = "To $destination"
+app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawMeltQuoteActivity.kt:71:            Toast.makeText(this, "Invalid melt quote data", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawMeltQuoteActivity.kt:125:        summaryText.text = "Withdraw from $mintName"
+app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawMeltQuoteActivity.kt:138:                        Toast.makeText(this@WithdrawMeltQuoteActivity, "Wallet not initialized", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/settings/WithdrawMeltQuoteActivity.kt:269:        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 app/src/main/java/com/electricdreams/numo/feature/items/handlers/GtinHandler.kt:75:                Toast.makeText(activity, "This GTIN is already used by another item", Toast.LENGTH_LONG).show()
 app/src/main/java/com/electricdreams/numo/feature/items/handlers/GtinHandler.kt:78:                Toast.makeText(activity, "GTIN scanned successfully", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/items/handlers/ItemFormValidator.kt:48:            Toast.makeText(activity, "Please use a unique SKU", Toast.LENGTH_SHORT).show()
-app/src/main/java/com/electricdreams/numo/feature/items/handlers/ItemFormValidator.kt:55:            Toast.makeText(activity, "Please use a unique GTIN", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/items/BarcodeScannerActivity.kt:118:                Toast.makeText(
+app/src/main/java/com/electricdreams/numo/feature/settings/MintsSettingsActivity.kt:187:            Toast.makeText(this, "Please enter a valid mint URL", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/settings/MintsSettingsActivity.kt:205:                Toast.makeText(
+app/src/main/java/com/electricdreams/numo/feature/settings/MintsSettingsActivity.kt:226:                Toast.makeText(this@MintsSettingsActivity, "Mint already in the list", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/settings/MintsSettingsActivity.kt:240:        Toast.makeText(this, "Mints reset to defaults", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/settings/MintsSettingsActivity.kt:256:            Toast.makeText(this, "Lightning payments will use this mint", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:152:                    Toast.makeText(this, R.string.tips_error_invalid_percentage, Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:159:                    Toast.makeText(this, R.string.tips_error_could_not_add_preset, Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:187:                    Toast.makeText(this, R.string.tips_error_invalid_percentage, Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/tips/TipsSettingsActivity.kt:217:                Toast.makeText(this, R.string.tips_toast_reset_to_defaults, Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/settings/SeedPhraseActivity.kt:49:                Toast.makeText(
+app/src/main/java/com/electricdreams/numo/feature/settings/SeedPhraseActivity.kt:70:            Toast.makeText(this, "Wallet not initialized", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/settings/SeedPhraseActivity.kt:91:            indexText.text = "${index + 1}"
+app/src/main/java/com/electricdreams/numo/feature/settings/SeedPhraseActivity.kt:109:            toggleVisibilityButton.text = "Hide"
+app/src/main/java/com/electricdreams/numo/feature/settings/SeedPhraseActivity.kt:112:            toggleVisibilityButton.text = "Show"
+app/src/main/java/com/electricdreams/numo/feature/settings/SeedPhraseActivity.kt:123:            Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/items/handlers/CategoryTagHandler.kt:131:            text = "+ Add New"
+app/src/main/java/com/electricdreams/numo/feature/items/handlers/CheckoutHandler.kt:30:            Toast.makeText(activity, "Your basket is empty", Toast.LENGTH_SHORT).show()
+app/src/main/java/com/electricdreams/numo/feature/items/handlers/CheckoutHandler.kt:42:            Toast.makeText(activity, "Invalid payment amount", Toast.LENGTH_SHORT).show()
