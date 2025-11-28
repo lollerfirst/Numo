@@ -53,13 +53,29 @@
             android:orientation="vertical"
             android:paddingBottom="32dp">
 
+            <!-- ==================== -->
+            <!-- WALLET BACKUP SECTION -->
+            <!-- ==================== -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="Wallet Backup"
+                android:textSize="13sp"
+                android:textColor="@color/color_text_secondary"
+                android:fontFamily="sans-serif-medium"
+                android:textAllCaps="true"
+                android:letterSpacing="0.05" />
+
             <!-- Security Info Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
                 android:padding="20dp"
                 android:background="@drawable/bg_warning_card">
@@ -97,20 +113,7 @@
 
             </LinearLayout>
 
-            <!-- Wallet Backup Section -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="24dp"
-                android:paddingTop="24dp"
-                android:paddingBottom="8dp"
-                android:text="@string/security_settings_section_backup"
-                android:textSize="13sp"
-                android:textColor="@color/color_text_secondary"
-                android:fontFamily="sans-serif-medium"
-                android:textAllCaps="true"
-                android:letterSpacing="0.05" />
-
+            <!-- Backup Mnemonic Item -->
             <LinearLayout
                 android:id="@+id/backup_mnemonic_item"
                 android:layout_width="match_parent"
@@ -173,6 +176,7 @@
                 android:textAllCaps="true"
                 android:letterSpacing="0.05" />
 
+            <!-- Restore Wallet Item -->
             <LinearLayout
                 android:id="@+id/restore_wallet_item"
                 android:layout_width="match_parent"
@@ -209,6 +213,217 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/security_settings_restore_wallet_subtitle"
+                        android:textSize="14sp"
+                        android:textColor="@color/color_text_secondary"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_chevron_forward"
+                    app:tint="@color/color_icon_secondary" />
+            </LinearLayout>
+
+            <!-- ===================== -->
+            <!-- PIN PROTECTION SECTION -->
+            <!-- ===================== -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="32dp"
+                android:paddingBottom="8dp"
+                android:text="@string/security_settings_section_pin_protection"
+                android:textSize="13sp"
+                android:textColor="@color/color_text_secondary"
+                android:fontFamily="sans-serif-medium"
+                android:textAllCaps="true"
+                android:letterSpacing="0.05" />
+
+            <!-- PIN Info Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginBottom="8dp"
+                android:padding="16dp"
+                android:background="@drawable/bg_pin_info_card">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/ic_lock"
+                        app:tint="#388E3C" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/security_settings_pin_info_title"
+                        android:textSize="14sp"
+                        android:textColor="#388E3C"
+                        android:fontFamily="sans-serif-medium" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/security_settings_pin_info_body"
+                    android:textSize="13sp"
+                    android:textColor="#6F6F73"
+                    android:lineSpacingMultiplier="1.3" />
+
+            </LinearLayout>
+
+            <!-- Set PIN Item -->
+            <LinearLayout
+                android:id="@+id/setup_pin_item"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_lock"
+                    app:tint="@color/color_icon_secondary" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/pin_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/security_settings_setup_pin_title"
+                        android:textSize="17sp"
+                        android:textColor="@color/color_text_primary"
+                        android:fontFamily="sans-serif-medium" />
+
+                    <TextView
+                        android:id="@+id/pin_subtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/security_settings_setup_pin_subtitle"
+                        android:textSize="14sp"
+                        android:textColor="@color/color_text_secondary"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_chevron_forward"
+                    app:tint="@color/color_icon_secondary" />
+            </LinearLayout>
+
+            <!-- Change PIN Item (shown when PIN is set) -->
+            <LinearLayout
+                android:id="@+id/change_pin_item"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_edit"
+                    app:tint="@color/color_icon_secondary" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/security_settings_change_pin_title"
+                        android:textSize="17sp"
+                        android:textColor="@color/color_text_primary"
+                        android:fontFamily="sans-serif-medium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/security_settings_change_pin_subtitle"
+                        android:textSize="14sp"
+                        android:textColor="@color/color_text_secondary"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_chevron_forward"
+                    app:tint="@color/color_icon_secondary" />
+            </LinearLayout>
+
+            <!-- Remove PIN Item (shown when PIN is set) -->
+            <LinearLayout
+                android:id="@+id/remove_pin_item"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_close"
+                    app:tint="@color/color_warning_red" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/security_settings_remove_pin_title"
+                        android:textSize="17sp"
+                        android:textColor="@color/color_warning_red"
+                        android:fontFamily="sans-serif-medium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/security_settings_remove_pin_subtitle"
                         android:textSize="14sp"
                         android:textColor="@color/color_text_secondary"
                         android:layout_marginTop="2dp" />

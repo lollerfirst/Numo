@@ -224,6 +224,46 @@
                 android:value=".feature.settings.SettingsActivity" />
         </activity>
         
+        <!-- PIN Security Activities -->
+        <activity android:name="com.electricdreams.numo.feature.pin.PinEntryActivity"
+            android:exported="false"
+            android:label="Enter PIN"
+            android:theme="@style/Theme.Numo"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden" />
+        
+        <activity android:name="com.electricdreams.numo.feature.pin.PinSetupActivity"
+            android:exported="false"
+            android:label="Set Up PIN"
+            android:theme="@style/Theme.Numo"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName=".feature.settings.SecuritySettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".feature.settings.SecuritySettingsActivity" />
+        </activity>
+        
+        <activity android:name="com.electricdreams.numo.feature.pin.PinResetActivity"
+            android:exported="false"
+            android:label="Reset PIN"
+            android:theme="@style/Theme.Numo"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName=".feature.pin.PinEntryActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".feature.pin.PinEntryActivity" />
+        </activity>
+        
+        <activity android:name="com.electricdreams.numo.feature.settings.AboutActivity"
+            android:exported="false"
+            android:label="About"
+            android:theme="@style/Theme.Numo"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName=".feature.settings.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".feature.settings.SettingsActivity" />
+        </activity>
+        
         <activity android:name="com.electricdreams.numo.feature.settings.DeveloperSettingsActivity"
             android:exported="false"
             android:label="@string/developer_settings_title"

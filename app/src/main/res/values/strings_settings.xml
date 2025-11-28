@@ -3,8 +3,11 @@
     <string name="settings_title">Settings</string>
 
     <!-- Settings sections -->
-    <string name="settings_section_general">General</string>
+    <string name="settings_section_terminal">Terminal</string>
+    <string name="settings_section_payments">Payments</string>
     <string name="settings_section_security">Security &amp; Privacy</string>
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_section_general">General</string>
     <string name="settings_section_developer">Developer</string>
 
     <!-- Settings items: language -->
@@ -46,10 +49,17 @@
     <string name="settings_item_developer_title">Developer Settings</string>
     <string name="settings_item_developer_subtitle">Advanced settings and debugging tools</string>
 
+    <!-- Settings items: about -->
+    <string name="settings_item_about_title">About</string>
+    <string name="settings_item_about_subtitle">Version, terms, and contact</string>
+
     <!-- Settings sub-activity labels -->
     <string name="settings_theme_title">Theme</string>
     <string name="settings_currency_title">Fiat Currency</string>
     <string name="settings_language_title">Language</string>
     <string name="settings_mints_title">Mints</string>
     <string name="settings_security_title">Security &amp; Privacy</string>
+
+    <!-- Settings PIN verification -->
+    <string name="settings_verify_pin_subtitle">Verify to access settings</string>
 </resources>

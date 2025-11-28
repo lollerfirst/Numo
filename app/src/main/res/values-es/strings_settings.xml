@@ -3,8 +3,11 @@
     <string name="settings_title">Ajustes</string>
 
     <!-- Settings sections -->
-    <string name="settings_section_general">General</string>
+    <string name="settings_section_terminal">Terminal</string>
+    <string name="settings_section_payments">Pagos</string>
     <string name="settings_section_security">Seguridad y privacidad</string>
+    <string name="settings_section_appearance">Apariencia</string>
+    <string name="settings_section_general">General</string>
     <string name="settings_section_developer">Desarrollador</string>
 
     <!-- Settings items: language -->
@@ -46,10 +49,17 @@
     <string name="settings_item_developer_title">Opciones de desarrollo</string>
     <string name="settings_item_developer_subtitle">Opciones avanzadas y herramientas de depuración</string>
 
+    <!-- Settings items: about -->
+    <string name="settings_item_about_title">Acerca de</string>
+    <string name="settings_item_about_subtitle">Versión, términos y contacto</string>
+
     <!-- Settings sub-activity labels -->
     <string name="settings_theme_title">Tema</string>
     <string name="settings_currency_title">Moneda fiduciaria</string>
     <string name="settings_language_title">Idioma</string>
     <string name="settings_mints_title">Mints</string>
     <string name="settings_security_title">Seguridad y privacidad</string>
+
+    <!-- Settings PIN verification -->
+    <string name="settings_verify_pin_subtitle">Verifica para acceder a la configuración</string>
 </resources>
