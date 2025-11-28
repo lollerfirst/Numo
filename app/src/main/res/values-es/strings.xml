@@ -232,4 +232,66 @@
     <string name="nfc_dialog_waiting_message">Esperando NFC...</string>
     <string name="common_cancel">Cancelar</string>
 
+    <!-- History & transaction rows/dialogs -->
+    <string name="history_toolbar_title">Actividad</string>
+    <string name="history_section_payment_history">HISTORIAL DE PAGOS</string>
+    <string name="history_empty">Sin historial de pagos</string>
+
+    <string name="transaction_row_copy">Copiar</string>
+    <string name="transaction_row_open">Abrir</string>
+    <string name="transaction_row_delete">Eliminar</string>
+
+    <string name="token_history_copy">Copiar token</string>
+    <string name="token_history_open_with">Abrir token con...</string>
+    <string name="token_history_delete">Eliminar token</string>
+
+    <string name="transaction_details_amount_placeholder">$0</string>
+    <string name="transaction_details_date_label">Fecha</string>
+    <string name="transaction_details_token_placeholder">Token...</string>
+    <string name="transaction_details_copy_token">Copiar token</string>
+    <string name="transaction_details_open_with">Abrir con...</string>
+    <string name="transaction_details_delete_transaction">Eliminar transacción</string>
+
+    <string name="payment_history_title">Pago</string>
+    <string name="payment_history_status_pending">Pendiente</string>
+
+    <string name="transaction_detail_toolbar_back">Atrás</string>
+    <string name="transaction_detail_toolbar_title">Detalles de la transacción</string>
+    <string name="transaction_detail_toolbar_share">Compartir</string>
+
+    <string name="transaction_detail_type_payment_received">Pago recibido</string>
+    <string name="transaction_detail_mint_label">Desde mint</string>
+    <string name="transaction_detail_view_receipt">Ver recibo</string>
+    <string name="transaction_detail_section_transaction_details">DETALLES DE LA TRANSACCIÓN</string>
+
+    <string name="transaction_detail_payment_type_label">Tipo de pago</string>
+    <string name="transaction_detail_payment_type_cashu">Cashu</string>
+    <string name="transaction_detail_amount_label">Importe</string>
+    <string name="transaction_detail_token_unit_label">Unidad del token</string>
+    <string name="transaction_detail_entered_as_label">Introducido como</string>
+    <string name="transaction_detail_entered_amount_label">Importe introducido</string>
+    <string name="transaction_detail_bitcoin_price_label">Precio de Bitcoin</string>
+    <string name="transaction_detail_tip_label">Propina</string>
+    <string name="transaction_detail_tip_equivalent_label">  (equivalente)</string>
+    <string name="transaction_detail_total_paid_label">Total pagado</string>
+    <string name="transaction_detail_mint_label_short">Mint</string>
+
+    <string name="transaction_detail_lightning_invoice_header">FACTURA LIGHTNING</string>
+    <string name="transaction_detail_lightning_invoice_placeholder">lnbc...</string>
+    <string name="transaction_detail_copy_invoice_hint">Toca para copiar la factura</string>
+
+    <string name="transaction_detail_token_header">TOKEN CASHU</string>
+    <string name="transaction_detail_token_placeholder">cashuA...</string>
+
+    <string name="transaction_detail_payment_request_header">SOLICITUD DE PAGO</string>
+    <string name="transaction_detail_payment_request_placeholder">...</string>
+
+    <string name="transaction_detail_button_copy_token">Copiar token</string>
+    <string name="transaction_detail_button_open_with">Abrir con...</string>
+    <string name="transaction_detail_button_delete">Eliminar transacción</string>
+
+    <string name="mint_restore_name_placeholder">Nombre del mint</string>
+    <string name="mint_restore_status_restoring">Restaurando...</string>
+    <string name="mint_restore_balance_change_placeholder">+0 sats</string>
+
 </resources>

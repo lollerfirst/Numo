@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
@@ -42,7 +43,7 @@
             style="@style/Text.BodyBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Payment"
+            android:text="@string/payment_history_title"
             android:maxLines="1"
             android:ellipsize="end" />
 
@@ -52,9 +53,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="Aug 24"
             android:maxLines="1"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            tools:text="Aug 24" />
 
         <TextView
             android:id="@+id/subtitle_text"
@@ -62,10 +63,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="Lightning"
             android:visibility="gone"
             android:maxLines="1"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            tools:text="Lightning" />
     </LinearLayout>
 
     <LinearLayout
@@ -83,7 +84,7 @@
             style="@style/Text.BodyBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="$0" />
+            tools:text="$0" />
 
         <TextView
             android:id="@+id/status_text"
@@ -91,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="Pending"
+            android:text="@string/payment_history_status_pending"
             android:textColor="@color/color_warning"
             android:visibility="gone" />
     </LinearLayout>

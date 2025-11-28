@@ -242,4 +242,66 @@
     <string name="nfc_dialog_waiting_message">Waiting for NFC...</string>
     <string name="common_cancel">Cancel</string>
 
+    <!-- History & transaction rows/dialogs -->
+    <string name="history_toolbar_title">Activity</string>
+    <string name="history_section_payment_history">PAYMENT HISTORY</string>
+    <string name="history_empty">No payment history</string>
+
+    <string name="transaction_row_copy">Copy</string>
+    <string name="transaction_row_open">Open</string>
+    <string name="transaction_row_delete">Delete</string>
+
+    <string name="token_history_copy">Copy token</string>
+    <string name="token_history_open_with">Open token with...</string>
+    <string name="token_history_delete">Delete token</string>
+
+    <string name="transaction_details_amount_placeholder">$0</string>
+    <string name="transaction_details_date_label">Date</string>
+    <string name="transaction_details_token_placeholder">Token...</string>
+    <string name="transaction_details_copy_token">Copy Token</string>
+    <string name="transaction_details_open_with">Open With...</string>
+    <string name="transaction_details_delete_transaction">Delete Transaction</string>
+
+    <string name="payment_history_title">Payment</string>
+    <string name="payment_history_status_pending">Pending</string>
+
+    <string name="transaction_detail_toolbar_back">Back</string>
+    <string name="transaction_detail_toolbar_title">Transaction Details</string>
+    <string name="transaction_detail_toolbar_share">Share</string>
+
+    <string name="transaction_detail_type_payment_received">Payment Received</string>
+    <string name="transaction_detail_mint_label">From Mint</string>
+    <string name="transaction_detail_view_receipt">View Receipt</string>
+    <string name="transaction_detail_section_transaction_details">TRANSACTION DETAILS</string>
+
+    <string name="transaction_detail_payment_type_label">Payment Type</string>
+    <string name="transaction_detail_payment_type_cashu">Cashu</string>
+    <string name="transaction_detail_amount_label">Amount</string>
+    <string name="transaction_detail_token_unit_label">Token Unit</string>
+    <string name="transaction_detail_entered_as_label">Entered As</string>
+    <string name="transaction_detail_entered_amount_label">Entered Amount</string>
+    <string name="transaction_detail_bitcoin_price_label">Bitcoin Price</string>
+    <string name="transaction_detail_tip_label">Tip</string>
+    <string name="transaction_detail_tip_equivalent_label">  (equivalent)</string>
+    <string name="transaction_detail_total_paid_label">Total Paid</string>
+    <string name="transaction_detail_mint_label_short">Mint</string>
+
+    <string name="transaction_detail_lightning_invoice_header">LIGHTNING INVOICE</string>
+    <string name="transaction_detail_lightning_invoice_placeholder">lnbc...</string>
+    <string name="transaction_detail_copy_invoice_hint">Tap to copy invoice</string>
+
+    <string name="transaction_detail_token_header">CASHU TOKEN</string>
+    <string name="transaction_detail_token_placeholder">cashuA...</string>
+
+    <string name="transaction_detail_payment_request_header">PAYMENT REQUEST</string>
+    <string name="transaction_detail_payment_request_placeholder">...</string>
+
+    <string name="transaction_detail_button_copy_token">Copy Token</string>
+    <string name="transaction_detail_button_open_with">Open With...</string>
+    <string name="transaction_detail_button_delete">Delete Transaction</string>
+
+    <string name="mint_restore_name_placeholder">Mint Name</string>
+    <string name="mint_restore_status_restoring">Restoring...</string>
+    <string name="mint_restore_balance_change_placeholder">+0 sats</string>
+
 </resources>
