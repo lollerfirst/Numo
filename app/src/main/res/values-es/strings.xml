@@ -216,4 +216,20 @@
     <string name="dialog_terms_body">NUMO WALLET - TÉRMINOS DE SERVICIO&#x0A;&#x0A;1. ACEPTACIÓN&#x0A;Al usar esta aplicación de monedero, aceptas estos términos.&#x0A;&#x0A;2. NATURALEZA DEL SERVICIO&#x0A;Este es un monedero de Bitcoin autocustodiado que utiliza la tecnología Cashu ecash. Tú eres el único responsable de tus fondos y de tu frase semilla.&#x0A;&#x0A;3. FRASE SEMILLA&#x0A;Tu frase semilla de 12 palabras es la ÚNICA forma de recuperar tu monedero. Nunca la compartas. Guárdala de forma segura fuera de línea. No podemos recuperar frases semilla perdidas.&#x0A;&#x0A;4. SIN GARANTÍA&#x0A;Este software se proporciona "tal cual", sin ningún tipo de garantía. Úsalo bajo tu propia responsabilidad.&#x0A;&#x0A;5. LIMITACIÓN DE RESPONSABILIDAD&#x0A;No somos responsables de ninguna pérdida de fondos, ya sea por errores de software, errores de usuario o fallos de mints de terceros.&#x0A;&#x0A;6. MINTS DE ECASH&#x0A;Los tokens ecash son custodiados por mints de terceros. Estos mints pueden fallar o dejar de estar disponibles. Distribuye tus fondos entre varios mints.&#x0A;&#x0A;7. PRIVACIDAD&#x0A;Este monedero no recopila datos personales. Las transacciones se procesan a través de mints de ecash que pueden tener sus propias políticas de privacidad.&#x0A;&#x0A;8. ACTUALIZACIONES&#x0A;Estos términos pueden actualizarse. El uso continuado implica la aceptación de los cambios.&#x0A;&#x0A;Última actualización: noviembre de 2024</string>
     <string name="common_close">Cerrar</string>
 
+    <!-- Developer settings -->
+    <string name="common_back">Atrás</string>
+    <string name="developer_settings_title">Opciones de desarrollo</string>
+    <string name="developer_settings_section_debugging">Depuración</string>
+    <string name="developer_settings_restart_onboarding_title">Reiniciar onboarding</string>
+    <string name="developer_settings_restart_onboarding_subtitle">Iniciar de nuevo el flujo de onboarding</string>
+    <string name="developer_settings_warning">⚠️ Las opciones de desarrollo son solo para pruebas y depuración. Úsalas con precaución.</string>
+
+    <!-- NFC dialogs -->
+    <string name="nfc_dialog_title_scan_to_pay">Pagar con NFC</string>
+    <string name="nfc_dialog_content_description_contactless">Pago sin contacto</string>
+    <string name="nfc_dialog_content_description_cashu">Cashu</string>
+    <string name="nfc_dialog_subtitle_or_scan_qr">o escanear código QR</string>
+    <string name="nfc_dialog_waiting_message">Esperando NFC...</string>
+    <string name="common_cancel">Cancelar</string>
+
 </resources>
