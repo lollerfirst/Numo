@@ -53,117 +53,24 @@
             android:orientation="vertical"
             android:paddingBottom="32dp">
 
-            <!-- General Section -->
+            <!-- ================ -->
+            <!-- TERMINAL SECTION -->
+            <!-- ================ -->
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="24dp"
                 android:paddingTop="16dp"
                 android:paddingBottom="8dp"
-                android:text="General"
+                android:text="Terminal"
                 android:textSize="13sp"
                 android:textColor="@color/color_text_secondary"
                 android:fontFamily="sans-serif-medium"
                 android:textAllCaps="true"
                 android:letterSpacing="0.05" />
 
-            <!-- Settings Items -->
-            <LinearLayout
-                android:id="@+id/currency_settings_item"
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="24dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/ic_switch_currency"
-                    app:tint="@color/color_icon_secondary" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Fiat Currency"
-                        android:textSize="17sp"
-                        android:textColor="@color/color_text_primary"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Choose your default fiat currency"
-                        android:textSize="14sp"
-                        android:textColor="@color/color_text_secondary"
-                        android:layout_marginTop="2dp" />
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_chevron_forward"
-                    app:tint="@color/color_icon_secondary" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/mints_settings_item"
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="24dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/ic_bank"
-                    app:tint="@color/color_icon_secondary" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Mints"
-                        android:textSize="17sp"
-                        android:textColor="@color/color_text_primary"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Manage Cashu mints and Lightning settings"
-                        android:textSize="14sp"
-                        android:textColor="@color/color_text_secondary"
-                        android:layout_marginTop="2dp" />
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_chevron_forward"
-                    app:tint="@color/color_icon_secondary" />
-            </LinearLayout>
-
+            <!-- Items -->
             <LinearLayout
                 android:id="@+id/items_settings_item"
                 android:layout_width="match_parent"
@@ -212,6 +119,7 @@
                     app:tint="@color/color_icon_secondary" />
             </LinearLayout>
 
+            <!-- Tips -->
             <LinearLayout
                 android:id="@+id/tips_settings_item"
                 android:layout_width="match_parent"
@@ -260,8 +168,26 @@
                     app:tint="@color/color_icon_secondary" />
             </LinearLayout>
 
+            <!-- ================= -->
+            <!-- PAYMENTS SECTION -->
+            <!-- ================= -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="24dp"
+                android:paddingBottom="8dp"
+                android:text="Payments"
+                android:textSize="13sp"
+                android:textColor="@color/color_text_secondary"
+                android:fontFamily="sans-serif-medium"
+                android:textAllCaps="true"
+                android:letterSpacing="0.05" />
+
+            <!-- Fiat Currency -->
             <LinearLayout
-                android:id="@+id/theme_settings_item"
+                android:id="@+id/currency_settings_item"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
                 android:background="?attr/selectableItemBackground"
@@ -275,7 +201,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginEnd="16dp"
-                    android:src="@drawable/ic_dark_mode"
+                    android:src="@drawable/ic_switch_currency"
                     app:tint="@color/color_icon_secondary" />
 
                 <LinearLayout
@@ -287,7 +213,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Theme"
+                        android:text="Fiat Currency"
                         android:textSize="17sp"
                         android:textColor="@color/color_text_primary"
                         android:fontFamily="sans-serif-medium" />
@@ -295,7 +221,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Switch between light and dark mode"
+                        android:text="Choose your default fiat currency"
                         android:textSize="14sp"
                         android:textColor="@color/color_text_secondary"
                         android:layout_marginTop="2dp" />
@@ -308,7 +234,59 @@
                     app:tint="@color/color_icon_secondary" />
             </LinearLayout>
 
-            <!-- Security Section -->
+            <!-- Mints -->
+            <LinearLayout
+                android:id="@+id/mints_settings_item"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_bank"
+                    app:tint="@color/color_icon_secondary" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mints"
+                        android:textSize="17sp"
+                        android:textColor="@color/color_text_primary"
+                        android:fontFamily="sans-serif-medium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Manage Cashu mints and Lightning settings"
+                        android:textSize="14sp"
+                        android:textColor="@color/color_text_secondary"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_chevron_forward"
+                    app:tint="@color/color_icon_secondary" />
+            </LinearLayout>
+
+            <!-- =========================== -->
+            <!-- SECURITY & PRIVACY SECTION -->
+            <!-- =========================== -->
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -357,7 +335,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Backup seed phrase, restore wallet"
+                        android:text="Backup, recovery, and PIN protection"
                         android:textSize="14sp"
                         android:textColor="@color/color_text_secondary"
                         android:layout_marginTop="2dp" />
@@ -370,7 +348,76 @@
                     app:tint="@color/color_icon_secondary" />
             </LinearLayout>
 
-            <!-- Developer Section -->
+            <!-- =================== -->
+            <!-- APPEARANCE SECTION -->
+            <!-- =================== -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="24dp"
+                android:paddingBottom="8dp"
+                android:text="Appearance"
+                android:textSize="13sp"
+                android:textColor="@color/color_text_secondary"
+                android:fontFamily="sans-serif-medium"
+                android:textAllCaps="true"
+                android:letterSpacing="0.05" />
+
+            <!-- Theme -->
+            <LinearLayout
+                android:id="@+id/theme_settings_item"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_dark_mode"
+                    app:tint="@color/color_icon_secondary" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Theme"
+                        android:textSize="17sp"
+                        android:textColor="@color/color_text_primary"
+                        android:fontFamily="sans-serif-medium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Switch between light and dark mode"
+                        android:textSize="14sp"
+                        android:textColor="@color/color_text_secondary"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_chevron_forward"
+                    app:tint="@color/color_icon_secondary" />
+            </LinearLayout>
+
+            <!-- ==================== -->
+            <!-- DEVELOPER SECTION -->
+            <!-- ==================== -->
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
