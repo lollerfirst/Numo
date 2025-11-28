@@ -283,11 +283,10 @@ class ItemSelectionActivity : AppCompatActivity() {
         }
 
         checkoutButton.setOnClickListener {
-            // Delete the saved basket after successful checkout
-            val editingId = savedBasketManager.currentEditingBasketId
-            if (editingId != null) {
-                savedBasketManager.deleteBasket(editingId)
-                savedBasketManager.clearEditingState()
+            // Save basket before checkout if not already saved, or update existing
+            val basketId = ensureBasketSaved()
+            if (basketId != null) {
+                checkoutHandler.savedBasketId = basketId
             }
             checkoutHandler.proceedToCheckout()
         }
@@ -320,6 +319,28 @@ class ItemSelectionActivity : AppCompatActivity() {
     }
 
     // ----- Saved Baskets -----
+    
+    /**
+     * Ensure basket is saved before checkout.
+     * - If editing existing basket: update and return its ID
+     * - If new basket: save silently and return new ID
+     * @return The basket ID, or null if basket is empty
+     */
+    private fun ensureBasketSaved(): String? {
+        if (basketManager.getBasketItems().isEmpty()) return null
+        
+        val existingBasket = savedBasketManager.getCurrentEditingBasket()
+        
+        return if (existingBasket != null) {
+            // Update existing basket
+            savedBasketManager.saveCurrentBasket(existingBasket.name, basketManager)
+            existingBasket.id
+        } else {
+            // Create new basket silently (no dialog, just save with timestamp name)
+            val basket = savedBasketManager.saveCurrentBasket(null, basketManager)
+            basket.id
+        }
+    }
     
     private fun loadSavedBasket(basketId: String) {
         if (savedBasketManager.loadBasketForEditing(basketId, basketManager)) {

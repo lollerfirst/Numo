@@ -5,6 +5,16 @@ import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
 /**
+ * Status of a saved basket.
+ */
+enum class BasketStatus {
+    /** Basket is active and can be edited */
+    ACTIVE,
+    /** Basket has been paid and is archived */
+    PAID
+}
+
+/**
  * Model class for a saved basket (tab/table).
  * 
  * Allows merchants to save baskets for later checkout, useful for:
@@ -19,7 +29,10 @@ data class SavedBasket(
     var name: String? = null,
     var items: List<BasketItem> = emptyList(),
     val createdAt: Long = System.currentTimeMillis(),
-    var updatedAt: Long = System.currentTimeMillis()
+    var updatedAt: Long = System.currentTimeMillis(),
+    var status: BasketStatus = BasketStatus.ACTIVE,
+    var paymentId: String? = null,
+    var paidAt: Long? = null
 ) : Parcelable {
     
     /**
@@ -58,6 +71,16 @@ data class SavedBasket(
         val hasSats = items.any { it.isSatsPrice() }
         return hasFiat && hasSats
     }
+    
+    /**
+     * Check if basket is paid/archived.
+     */
+    fun isPaid(): Boolean = status == BasketStatus.PAID
+    
+    /**
+     * Check if basket is active and editable.
+     */
+    fun isActive(): Boolean = status == BasketStatus.ACTIVE
     
     /**
      * Get a short summary of items (e.g., "4 × Coffee, 2 × Pizza + 2 more").

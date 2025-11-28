@@ -381,6 +381,17 @@
                 android:value=".feature.items.ItemSelectionActivity" />
         </activity>
         
+        <activity android:name="com.electricdreams.numo.feature.baskets.BasketArchiveActivity"
+            android:exported="false"
+            android:label="@string/basket_archive_title"
+            android:theme="@style/Theme.Numo"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName=".feature.baskets.SavedBasketsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".feature.baskets.SavedBasketsActivity" />
+        </activity>
+        
         <!-- HCE Service for NDEF tag emulation -->
         <service android:name=".ndef.NdefHostCardEmulationService"
             android:exported="true"

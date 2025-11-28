@@ -3,6 +3,7 @@ package com.electricdreams.numo.core.util
 import android.content.Context
 import android.content.SharedPreferences
 import com.electricdreams.numo.core.model.BasketItem
+import com.electricdreams.numo.core.model.BasketStatus
 import com.electricdreams.numo.core.model.Item
 import com.electricdreams.numo.core.model.PriceType
 import com.electricdreams.numo.core.model.SavedBasket
@@ -10,13 +11,14 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * Manager class for persisting saved baskets.
+ * Manager class for persisting saved baskets and archived (paid) baskets.
  * Uses SharedPreferences with JSON serialization.
  */
 class SavedBasketManager private constructor(context: Context) {
     
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val savedBaskets: MutableList<SavedBasket> = mutableListOf()
+    private val archivedBaskets: MutableList<SavedBasket> = mutableListOf()
     
     // Currently editing basket ID (null if creating new)
     var currentEditingBasketId: String? = null
@@ -25,6 +27,7 @@ class SavedBasketManager private constructor(context: Context) {
     companion object {
         private const val PREFS_NAME = "saved_baskets"
         private const val KEY_BASKETS = "baskets"
+        private const val KEY_ARCHIVED = "archived_baskets"
         
         @Volatile
         private var instance: SavedBasketManager? = null
@@ -45,16 +48,34 @@ class SavedBasketManager private constructor(context: Context) {
      */
     private fun loadBaskets() {
         savedBaskets.clear()
-        val json = prefs.getString(KEY_BASKETS, null) ?: return
+        archivedBaskets.clear()
         
-        try {
-            val jsonArray = JSONArray(json)
-            for (i in 0 until jsonArray.length()) {
-                val basketJson = jsonArray.getJSONObject(i)
-                savedBaskets.add(deserializeBasket(basketJson))
+        // Load active baskets
+        val json = prefs.getString(KEY_BASKETS, null)
+        if (json != null) {
+            try {
+                val jsonArray = JSONArray(json)
+                for (i in 0 until jsonArray.length()) {
+                    val basketJson = jsonArray.getJSONObject(i)
+                    savedBaskets.add(deserializeBasket(basketJson))
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        }
+        
+        // Load archived baskets
+        val archivedJson = prefs.getString(KEY_ARCHIVED, null)
+        if (archivedJson != null) {
+            try {
+                val jsonArray = JSONArray(archivedJson)
+                for (i in 0 until jsonArray.length()) {
+                    val basketJson = jsonArray.getJSONObject(i)
+                    archivedBaskets.add(deserializeBasket(basketJson))
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
     
@@ -74,19 +95,51 @@ class SavedBasketManager private constructor(context: Context) {
     }
     
     /**
-     * Get all saved baskets.
+     * Save archived baskets to storage.
+     */
+    private fun saveArchivedBaskets() {
+        try {
+            val jsonArray = JSONArray()
+            archivedBaskets.forEach { basket ->
+                jsonArray.put(serializeBasket(basket))
+            }
+            prefs.edit().putString(KEY_ARCHIVED, jsonArray.toString()).apply()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    
+    /**
+     * Get all saved (active) baskets.
      */
     fun getSavedBaskets(): List<SavedBasket> = savedBaskets.toList()
     
     /**
-     * Get a saved basket by ID.
+     * Get all archived (paid) baskets.
      */
-    fun getBasket(id: String): SavedBasket? = savedBaskets.find { it.id == id }
+    fun getArchivedBaskets(): List<SavedBasket> = archivedBaskets.sortedByDescending { it.paidAt ?: it.updatedAt }
+    
+    /**
+     * Get a saved basket by ID (searches both active and archived).
+     */
+    fun getBasket(id: String): SavedBasket? = 
+        savedBaskets.find { it.id == id } ?: archivedBaskets.find { it.id == id }
+    
+    /**
+     * Get a basket by its associated payment ID.
+     */
+    fun getBasketByPaymentId(paymentId: String): SavedBasket? =
+        archivedBaskets.find { it.paymentId == paymentId } ?: savedBaskets.find { it.paymentId == paymentId }
     
     /**
      * Get the index of a basket for display name fallback.
      */
     fun getBasketIndex(id: String): Int = savedBaskets.indexOfFirst { it.id == id }
+    
+    /**
+     * Get the index of an archived basket for display name fallback.
+     */
+    fun getArchivedBasketIndex(id: String): Int = archivedBaskets.indexOfFirst { it.id == id }
     
     /**
      * Save current basket from BasketManager.
@@ -99,7 +152,7 @@ class SavedBasketManager private constructor(context: Context) {
         
         val existingBasket = currentEditingBasketId?.let { getBasket(it) }
         
-        return if (existingBasket != null) {
+        return if (existingBasket != null && existingBasket.isActive()) {
             // Update existing basket
             existingBasket.name = name
             existingBasket.items = items
@@ -110,7 +163,8 @@ class SavedBasketManager private constructor(context: Context) {
             // Create new basket
             val basket = SavedBasket(
                 name = name,
-                items = items
+                items = items,
+                status = BasketStatus.ACTIVE
             )
             savedBaskets.add(basket)
             saveBaskets()
@@ -126,6 +180,9 @@ class SavedBasketManager private constructor(context: Context) {
      */
     fun loadBasketForEditing(basketId: String, basketManager: BasketManager): Boolean {
         val basket = getBasket(basketId) ?: return false
+        
+        // Can't edit paid baskets
+        if (basket.isPaid()) return false
         
         basketManager.clearBasket()
         basket.items.forEach { item ->
@@ -144,7 +201,7 @@ class SavedBasketManager private constructor(context: Context) {
     }
     
     /**
-     * Delete a saved basket after successful checkout.
+     * Delete a saved basket.
      */
     fun deleteBasket(basketId: String): Boolean {
         val removed = savedBaskets.removeAll { it.id == basketId }
@@ -158,13 +215,60 @@ class SavedBasketManager private constructor(context: Context) {
     }
     
     /**
+     * Delete an archived basket.
+     */
+    fun deleteArchivedBasket(basketId: String): Boolean {
+        val removed = archivedBaskets.removeAll { it.id == basketId }
+        if (removed) {
+            saveArchivedBaskets()
+        }
+        return removed
+    }
+    
+    /**
+     * Mark a basket as paid and move it to archive.
+     * @param basketId ID of the basket to mark as paid
+     * @param paymentId ID of the associated payment
+     * @return The updated basket, or null if not found
+     */
+    fun markBasketAsPaid(basketId: String, paymentId: String): SavedBasket? {
+        val basket = savedBaskets.find { it.id == basketId } ?: return null
+        
+        // Update basket status
+        basket.status = BasketStatus.PAID
+        basket.paymentId = paymentId
+        basket.paidAt = System.currentTimeMillis()
+        basket.updatedAt = System.currentTimeMillis()
+        
+        // Move from active to archived
+        savedBaskets.remove(basket)
+        archivedBaskets.add(0, basket)
+        
+        // Clear editing state if this was being edited
+        if (currentEditingBasketId == basketId) {
+            currentEditingBasketId = null
+        }
+        
+        // Persist changes
+        saveBaskets()
+        saveArchivedBaskets()
+        
+        return basket
+    }
+    
+    /**
      * Update the name of a saved basket.
      */
     fun updateBasketName(basketId: String, newName: String?): Boolean {
         val basket = getBasket(basketId) ?: return false
         basket.name = newName
         basket.updatedAt = System.currentTimeMillis()
-        saveBaskets()
+        
+        if (basket.isPaid()) {
+            saveArchivedBaskets()
+        } else {
+            saveBaskets()
+        }
         return true
     }
     
@@ -172,6 +276,11 @@ class SavedBasketManager private constructor(context: Context) {
      * Get total count of saved baskets.
      */
     fun getBasketCount(): Int = savedBaskets.size
+    
+    /**
+     * Get total count of archived baskets.
+     */
+    fun getArchivedBasketCount(): Int = archivedBaskets.size
     
     /**
      * Check if we're currently editing an existing basket.
@@ -191,6 +300,9 @@ class SavedBasketManager private constructor(context: Context) {
             put("name", basket.name ?: JSONObject.NULL)
             put("createdAt", basket.createdAt)
             put("updatedAt", basket.updatedAt)
+            put("status", basket.status.name)
+            put("paymentId", basket.paymentId ?: JSONObject.NULL)
+            put("paidAt", basket.paidAt ?: JSONObject.NULL)
             put("items", JSONArray().apply {
                 basket.items.forEach { item ->
                     put(serializeBasketItem(item))
@@ -211,6 +323,13 @@ class SavedBasketManager private constructor(context: Context) {
             name = if (json.isNull("name")) null else json.getString("name"),
             createdAt = json.getLong("createdAt"),
             updatedAt = json.getLong("updatedAt"),
+            status = try { 
+                BasketStatus.valueOf(json.optString("status", "ACTIVE")) 
+            } catch (e: Exception) { 
+                BasketStatus.ACTIVE 
+            },
+            paymentId = if (json.isNull("paymentId")) null else json.optString("paymentId"),
+            paidAt = if (json.isNull("paidAt")) null else json.optLong("paidAt"),
             items = items
         )
     }

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_rounded"
+    android:padding="20dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/basket_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_text_primary"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-medium"
+                tools:text="Table 5" />
+
+            <TextView
+                android:id="@+id/basket_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/color_text_tertiary"
+                android:textSize="13sp"
+                tools:text="Mar 15, 2024 at 2:30 PM" />
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/close_button"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_circle_secondary"
+            android:src="@drawable/ic_close"
+            android:contentDescription="@string/common_close"
+            app:tint="@color/color_text_secondary" />
+
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/color_divider" />
+
+    <!-- Items -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="12dp"
+        android:maxHeight="300dp">
+
+        <LinearLayout
+            android:id="@+id/items_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </ScrollView>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/color_divider" />
+
+    <!-- Total -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/basket_archive_total_label"
+            android:textColor="@color/color_text_primary"
+            android:textSize="17sp"
+            android:fontFamily="sans-serif-medium" />
+
+        <TextView
+            android:id="@+id/basket_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_text_primary"
+            android:textSize="20sp"
+            android:fontFamily="sans-serif-medium"
+            tools:text="$45.00" />
+
+    </LinearLayout>
+
+    <!-- View Payment Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/view_payment_button"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/basket_archive_view_payment"
+        android:textColor="@color/color_bg_white"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif-medium"
+        app:backgroundTint="@color/color_accent_blue"
+        app:cornerRadius="14dp"
+        app:icon="@drawable/ic_receipt"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        app:iconTint="@color/color_bg_white"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton" />
+
+</LinearLayout>

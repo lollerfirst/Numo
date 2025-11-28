@@ -557,6 +557,20 @@
     <string name="saved_baskets_delete_title">Delete Basket</string>
     <string name="saved_baskets_delete_message">Delete \"%1$s\"? This cannot be undone.</string>
 
+    <!-- Basket Archive -->
+    <string name="basket_archive_back">Back</string>
+    <string name="basket_archive_title">Order History</string>
+    <string name="basket_archive_empty_icon">No archived orders</string>
+    <string name="basket_archive_empty_title">No completed orders</string>
+    <string name="basket_archive_empty_subtitle">Completed orders will appear here.\nPerfect for tracking sales history.</string>
+    <string name="basket_archive_paid_badge">PAID</string>
+    <string name="basket_archive_view_payment">View Payment</string>
+    <string name="basket_archive_delete">Delete</string>
+    <string name="basket_archive_delete_title">Delete Order</string>
+    <string name="basket_archive_delete_message">Delete \"%1$s\"? This cannot be undone.</string>
+    <string name="basket_archive_total_label">Total</string>
+    <string name="saved_baskets_view_archive">View Archive</string>
+
     <!-- Common -->
     <string name="common_save">Save</string>
     <string name="common_delete">Delete</string>

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +26,7 @@ class SavedBasketsActivity : AppCompatActivity() {
 
     private lateinit var basketsRecyclerView: RecyclerView
     private lateinit var emptyView: LinearLayout
+    private lateinit var viewArchiveButton: TextView
     private lateinit var adapter: SavedBasketsAdapter
 
     companion object {
@@ -57,6 +59,13 @@ class SavedBasketsActivity : AppCompatActivity() {
 
         basketsRecyclerView = findViewById(R.id.baskets_recycler_view)
         emptyView = findViewById(R.id.empty_view)
+        
+        // View Archive button in header
+        viewArchiveButton = findViewById(R.id.view_archive_button)
+        viewArchiveButton.setOnClickListener {
+            startActivity(Intent(this, BasketArchiveActivity::class.java))
+        }
+        updateArchiveButtonVisibility()
     }
 
     private fun setupRecyclerView() {
@@ -82,6 +91,9 @@ class SavedBasketsActivity : AppCompatActivity() {
             basketsRecyclerView.visibility = View.VISIBLE
             emptyView.visibility = View.GONE
         }
+        
+        // Update archive button visibility
+        updateArchiveButtonVisibility()
     }
 
     private fun loadBasketForEditing(basket: SavedBasket) {
@@ -124,5 +136,10 @@ class SavedBasketsActivity : AppCompatActivity() {
             }
             .setNegativeButton(R.string.common_cancel, null)
             .show()
+    }
+    
+    private fun updateArchiveButtonVisibility() {
+        val archiveCount = savedBasketManager.getArchivedBasketCount()
+        viewArchiveButton.visibility = if (archiveCount > 0) View.VISIBLE else View.GONE
     }
 }
