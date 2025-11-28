@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.max
 import com.electricdreams.numo.R
 import com.electricdreams.numo.core.util.BasketManager
 import com.electricdreams.numo.core.util.CurrencyManager
@@ -62,6 +63,9 @@ class ItemSelectionActivity : AppCompatActivity() {
     private lateinit var noResultsView: LinearLayout
     private lateinit var checkoutContainer: CardView
     private lateinit var checkoutButton: Button
+    private lateinit var bottomSpacer: View
+    private lateinit var bottomBasketCheckoutContainer: LinearLayout
+    private var originalBottomSpacerHeight: Int = 0
 
     // ----- Category State -----
     private var categoryChipViews: MutableMap<String, TextView> = mutableMapOf()
@@ -140,6 +144,9 @@ class ItemSelectionActivity : AppCompatActivity() {
         noResultsView = findViewById(R.id.no_results_view)
         checkoutContainer = findViewById(R.id.checkout_container)
         checkoutButton = findViewById(R.id.checkout_button)
+        bottomSpacer = findViewById(R.id.bottom_spacer)
+        bottomBasketCheckoutContainer = findViewById(R.id.bottom_basket_checkout_container)
+        originalBottomSpacerHeight = bottomSpacer.layoutParams.height
     }
 
     private fun initializeHandlers() {
@@ -233,6 +240,31 @@ class ItemSelectionActivity : AppCompatActivity() {
 
     private fun refreshBasket() {
         basketUIHandler.refreshBasket()
+        updateBottomSpacer()
+    }
+
+    /**
+     * Ensure the scrollable content leaves enough space at the bottom so it
+     * doesn't get covered by the basket/checkout container.
+     */
+    private fun updateBottomSpacer() {
+        // Run after layout so we have accurate heights
+        bottomBasketCheckoutContainer.post {
+            val hasBasketOrCheckout =
+                animationHandler.isBasketSectionVisible() || animationHandler.isCheckoutContainerVisible()
+
+            val targetHeight = if (hasBasketOrCheckout) {
+                max(bottomBasketCheckoutContainer.height, originalBottomSpacerHeight)
+            } else {
+                originalBottomSpacerHeight
+            }
+
+            val params = bottomSpacer.layoutParams
+            if (params.height != targetHeight) {
+                params.height = targetHeight
+                bottomSpacer.layoutParams = params
+            }
+        }
     }
 
     private fun handleItemRemoved(itemId: String) {

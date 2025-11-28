@@ -8,264 +8,273 @@
     android:background="@color/color_bg_white"
     android:fitsSystemWindows="true">
 
-    <!-- Main Scrollable Content -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/main_scroll_view"
+    <!-- Main Content: fixed top bar + scrollable items -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:clipToPadding="false">
+        android:orientation="vertical">
 
+        <!-- Top Bar with Search (fixed at top) -->
         <LinearLayout
+            android:id="@+id/top_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@color/color_bg_white"
+            android:paddingTop="8dp">
 
-            <!-- Top Bar with Search (Fixed at top visually but scrolls) -->
-            <LinearLayout
-                android:id="@+id/top_bar"
+            <!-- Header Row -->
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@color/color_bg_white"
-                android:paddingTop="8dp">
+                android:layout_height="48dp"
+                android:paddingHorizontal="8dp">
 
-                <!-- Header Row -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:paddingHorizontal="8dp">
-
-                    <ImageButton
-                        android:id="@+id/back_button"
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@string/item_selection_toolbar_back"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_chevron_back"
-                        app:tint="@color/color_text_primary"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/item_selection_toolbar_title"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="17sp"
-                        android:fontFamily="sans-serif-medium"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- Search Bar with Barcode Scanner / Clear Button -->
-                <LinearLayout
-                    android:id="@+id/search_bar_container"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:id="@+id/back_button"
+                    android:layout_width="44dp"
                     android:layout_height="44dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_search_field"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="4dp">
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/item_selection_toolbar_back"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_chevron_back"
+                    app:tint="@color/color_text_primary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
-                        android:id="@+id/search_icon"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:contentDescription="@string/item_selection_search_icon_description"
-                        android:src="@drawable/ic_search"
-                        app:tint="@color/color_text_tertiary" />
-
-                    <!-- Category Badge (shown when category selected) -->
-                    <TextView
-                        android:id="@+id/category_badge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="24dp"
-                        android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_category_badge"
-                        android:gravity="center"
-                        android:paddingHorizontal="8dp"
-                        android:textColor="@color/color_bg_white"
-                        android:textSize="13sp"
-                        android:fontFamily="sans-serif-medium"
-                        android:maxLines="1"
-                        android:ellipsize="end"
-                        android:visibility="gone"
-                        tools:text="Electronics"
-                        tools:visibility="visible" />
-
-                    <EditText
-                        android:id="@+id/search_input"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:layout_marginStart="10dp"
-                        android:background="@null"
-                        android:hint="@string/item_selection_search_hint"
-                        android:imeOptions="actionSearch"
-                        android:inputType="text"
-                        android:maxLines="1"
-                        android:textColor="@color/color_text_primary"
-                        android:textColorHint="@color/color_text_tertiary"
-                        android:textSize="16sp" />
-
-                    <!-- Scan Button (default) -->
-                    <ImageButton
-                        android:id="@+id/scan_button"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@string/item_selection_scan_barcode"
-                        android:padding="8dp"
-                        android:src="@drawable/ic_barcode_scan"
-                        app:tint="@color/color_text_secondary" />
-
-                    <!-- Clear Filters Button (shown when filters active) -->
-                    <ImageButton
-                        android:id="@+id/clear_filters_button"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@string/item_selection_clear_filters"
-                        android:padding="10dp"
-                        android:src="@drawable/ic_close_circle"
-                        app:tint="@color/color_text_secondary"
-                        android:visibility="gone" />
-
-                </LinearLayout>
-
-                <!-- Category Chips (shown when search focused and categories exist) -->
-                <com.google.android.flexbox.FlexboxLayout
-                    android:id="@+id/category_chips_container"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="4dp"
-                    android:paddingHorizontal="16dp"
+                    android:text="@string/item_selection_toolbar_title"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="17sp"
+                    android:fontFamily="sans-serif-medium"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Search Bar with Barcode Scanner / Clear Button -->
+            <LinearLayout
+                android:id="@+id/search_bar_container"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_search_field"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="4dp">
+
+                <ImageView
+                    android:id="@+id/search_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="@string/item_selection_search_icon_description"
+                    android:src="@drawable/ic_search"
+                    app:tint="@color/color_text_tertiary" />
+
+                <!-- Category Badge (shown when category selected) -->
+                <TextView
+                    android:id="@+id/category_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_category_badge"
+                    android:gravity="center"
+                    android:paddingHorizontal="8dp"
+                    android:textColor="@color/color_bg_white"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:visibility="gone"
-                    app:flexWrap="wrap"
-                    app:alignItems="flex_start"
-                    app:justifyContent="flex_start"
+                    tools:text="Electronics"
                     tools:visibility="visible" />
 
-                <!-- Spacer below search bar -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp" />
+                <EditText
+                    android:id="@+id/search_input"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:background="@null"
+                    android:hint="@string/item_selection_search_hint"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textColor="@color/color_text_primary"
+                    android:textColorHint="@color/color_text_tertiary"
+                    android:textSize="16sp" />
+
+                <!-- Scan Button (default) -->
+                <ImageButton
+                    android:id="@+id/scan_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/item_selection_scan_barcode"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_barcode_scan"
+                    app:tint="@color/color_text_secondary" />
+
+                <!-- Clear Filters Button (shown when filters active) -->
+                <ImageButton
+                    android:id="@+id/clear_filters_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/item_selection_clear_filters"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_close_circle"
+                    app:tint="@color/color_text_secondary"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
-            <!-- Items List Section -->
-            <FrameLayout
-                android:id="@+id/items_container"
+            <!-- Category Chips (shown when search focused and categories exist) -->
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/category_chips_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="300dp">
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:paddingHorizontal="16dp"
+                android:visibility="gone"
+                app:flexWrap="wrap"
+                app:alignItems="flex_start"
+                app:justifyContent="flex_start"
+                tools:visibility="visible" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/items_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:paddingTop="8dp"
-                    android:nestedScrollingEnabled="false"
-                    tools:listitem="@layout/item_product_selection" />
-
-                <!-- Empty State -->
-                <LinearLayout
-                    android:id="@+id/empty_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="32dp"
-                    android:visibility="gone">
-
-                    <ImageView
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:src="@drawable/ic_shopping_bag"
-                        app:tint="@color/color_icon_tertiary"
-                        android:contentDescription="@string/item_selection_empty_icon_description" />
-
-                    <TextView
-                        android:id="@+id/empty_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="@string/item_selection_empty_title"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="17sp"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <TextView
-                        android:id="@+id/empty_subtitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/item_selection_empty_subtitle"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="15sp"
-                        android:gravity="center" />
-
-                </LinearLayout>
-
-                <!-- No Search Results -->
-                <LinearLayout
-                    android:id="@+id/no_results_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="32dp"
-                    android:visibility="gone">
-
-                    <ImageView
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:src="@drawable/ic_search"
-                        app:tint="@color/color_icon_tertiary"
-                        android:contentDescription="@string/item_selection_no_results_icon_description" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="@string/item_selection_no_results_title"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="17sp"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <TextView
-                        android:id="@+id/no_results_subtitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/item_selection_no_results_subtitle"
-                        android:textColor="@color/color_text_tertiary"
-                        android:textSize="15sp" />
-
-                </LinearLayout>
-
-            </FrameLayout>
-
-            <!-- Bottom spacing so content doesn't sit under basket/checkout -->
+            <!-- Spacer below search bar -->
             <View
-                android:id="@+id/bottom_spacer"
                 android:layout_width="match_parent"
-                android:layout_height="140dp" />
+                android:layout_height="8dp" />
 
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+        <!-- Scrollable items and spacer -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/main_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:clipToPadding="false">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Items List Section -->
+                <FrameLayout
+                    android:id="@+id/items_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="300dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/items_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingTop="8dp"
+                        android:nestedScrollingEnabled="false"
+                        tools:listitem="@layout/item_product_selection" />
+
+                    <!-- Empty State -->
+                    <LinearLayout
+                        android:id="@+id/empty_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="32dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:src="@drawable/ic_shopping_bag"
+                            app:tint="@color/color_icon_tertiary"
+                            android:contentDescription="@string/item_selection_empty_icon_description" />
+
+                        <TextView
+                            android:id="@+id/empty_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="@string/item_selection_empty_title"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="17sp"
+                            android:fontFamily="sans-serif-medium" />
+
+                        <TextView
+                            android:id="@+id/empty_subtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/item_selection_empty_subtitle"
+                            android:textColor="@color/color_text_tertiary"
+                            android:textSize="15sp"
+                            android:gravity="center" />
+
+                    </LinearLayout>
+
+                    <!-- No Search Results -->
+                    <LinearLayout
+                        android:id="@+id/no_results_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="32dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:src="@drawable/ic_search"
+                            app:tint="@color/color_icon_tertiary"
+                            android:contentDescription="@string/item_selection_no_results_icon_description" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="@string/item_selection_no_results_title"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="17sp"
+                            android:fontFamily="sans-serif-medium" />
+
+                        <TextView
+                            android:id="@+id/no_results_subtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/item_selection_no_results_subtitle"
+                            android:textColor="@color/color_text_tertiary"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+                <!-- Bottom spacing so content doesn't sit under basket/checkout -->
+                <View
+                    android:id="@+id/bottom_spacer"
+                    android:layout_width="match_parent"
+                    android:layout_height="140dp" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>
 
     <!-- Bottom Basket + Checkout Container (fixed to bottom, grows upward) -->
     <LinearLayout
