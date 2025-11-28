@@ -276,7 +276,9 @@
 
     </LinearLayout>
 
-    <!-- Bottom Basket + Checkout Container (fixed to bottom, grows upward) -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- BOTTOM BASKET + CHECKOUT: Apple-style unified card with smooth animation -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
     <LinearLayout
         android:id="@+id/bottom_basket_checkout_container"
         android:layout_width="match_parent"
@@ -286,220 +288,168 @@
         android:paddingHorizontal="16dp"
         android:paddingBottom="24dp"
         android:paddingTop="8dp"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        android:clipChildren="false">
 
-        <!-- Basket Section (collapsible, above charge button) -->
-        <LinearLayout
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- UNIFIED BASKET CARD: Single container that animates height      -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <androidx.cardview.widget.CardView
             android:id="@+id/basket_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_basket_section"
+            app:cardBackgroundColor="@color/color_bg_elevated"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
             android:visibility="gone"
             android:clipChildren="true"
             android:clipToPadding="true"
             tools:visibility="visible">
 
-            <!-- ═══════════════════════════════════════════════════════════════ -->
-            <!-- COLLAPSED VIEW: Total summary bar with expand button            -->
-            <!-- ═══════════════════════════════════════════════════════════════ -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/basket_collapsed_view"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:paddingHorizontal="16dp"
-                android:background="?attr/selectableItemBackground"
-                android:visibility="visible">
-
-                <!-- Shopping bag icon -->
-                <ImageView
-                    android:id="@+id/collapsed_basket_icon"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_shopping_bag"
-                    app:tint="@color/color_text_primary"
-                    android:contentDescription="@string/item_selection_basket_icon_description"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
-
-                <!-- Item count badge -->
-                <TextView
-                    android:id="@+id/collapsed_item_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textColor="@color/color_text_secondary"
-                    android:textSize="15sp"
-                    android:fontFamily="sans-serif"
-                    tools:text="3 items"
-                    app:layout_constraintStart_toEndOf="@id/collapsed_basket_icon"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
-
-                <!-- Total amount (prominent) -->
-                <TextView
-                    android:id="@+id/collapsed_total"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="18sp"
-                    android:fontFamily="sans-serif-medium"
-                    tools:text="$74.97"
-                    app:layout_constraintEnd_toStartOf="@id/expand_chevron"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
-
-                <!-- Expand chevron -->
-                <ImageView
-                    android:id="@+id/expand_chevron"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_chevron_up"
-                    app:tint="@color/color_text_tertiary"
-                    android:contentDescription="@string/item_selection_basket_expand"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <!-- ═══════════════════════════════════════════════════════════════ -->
-            <!-- EXPANDED VIEW: Full basket with items, clear, and total         -->
-            <!-- ═══════════════════════════════════════════════════════════════ -->
             <LinearLayout
-                android:id="@+id/basket_expanded_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
+                android:clipChildren="true"
+                android:clipToPadding="true">
 
-                <!-- Expanded Header with collapse button -->
+                <!-- ═══════════════════════════════════════════════════════ -->
+                <!-- HEADER ROW: Always visible, tappable to expand/collapse -->
+                <!-- ═══════════════════════════════════════════════════════ -->
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/basket_expanded_header"
+                    android:id="@+id/basket_header"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="56dp"
                     android:paddingHorizontal="16dp"
                     android:background="?attr/selectableItemBackground">
 
-                    <!-- Collapse chevron (left) -->
+                    <!-- Shopping bag icon -->
                     <ImageView
-                        android:id="@+id/collapse_chevron"
+                        android:id="@+id/basket_icon"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_shopping_bag"
+                        app:tint="@color/color_text_primary"
+                        android:contentDescription="@string/item_selection_basket_icon_description"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <!-- Item count text -->
+                    <TextView
+                        android:id="@+id/basket_item_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="15sp"
+                        android:fontFamily="sans-serif"
+                        tools:text="3 items"
+                        app:layout_constraintStart_toEndOf="@id/basket_icon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <!-- Total amount -->
+                    <TextView
+                        android:id="@+id/basket_total"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="18sp"
+                        android:fontFamily="sans-serif-medium"
+                        tools:text="$74.97"
+                        app:layout_constraintEnd_toStartOf="@id/basket_chevron"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <!-- Chevron (rotates on expand/collapse) -->
+                    <ImageView
+                        android:id="@+id/basket_chevron"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:src="@drawable/ic_chevron_down"
+                        android:src="@drawable/ic_chevron_up"
                         app:tint="@color/color_text_tertiary"
-                        android:contentDescription="@string/item_selection_basket_collapse"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
-
-                    <!-- Basket title (center) -->
-                    <TextView
-                        android:id="@+id/basket_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/item_selection_basket_title"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="15sp"
-                        android:fontFamily="sans-serif-medium"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
-
-                    <!-- Clear button (right) -->
-                    <TextView
-                        android:id="@+id/clear_basket_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:text="@string/item_selection_basket_clear"
-                        android:textColor="@color/color_warning_red"
-                        android:textSize="14sp"
-                        android:fontFamily="sans-serif-medium"
-                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/item_selection_basket_expand"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- Thin divider below header -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:background="@color/color_divider" />
-
-                <!-- Scrollable basket items container (max height for long lists) -->
-                <androidx.core.widget.NestedScrollView
-                    android:id="@+id/basket_scroll_view"
+                <!-- ═══════════════════════════════════════════════════════ -->
+                <!-- EXPANDABLE CONTENT: Items list with clear button        -->
+                <!-- This entire section animates height from 0 to measured  -->
+                <!-- ═══════════════════════════════════════════════════════ -->
+                <LinearLayout
+                    android:id="@+id/basket_expandable_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fillViewport="false"
-                    android:scrollbars="none"
-                    android:overScrollMode="never"
-                    android:fadingEdge="vertical"
-                    android:fadingEdgeLength="24dp"
-                    android:requiresFadingEdge="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
+                    <!-- Divider below header -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:background="@color/color_divider" />
+
+                    <!-- Clear button row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="16dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/item_selection_basket_title"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="13sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.05" />
+
+                        <TextView
+                            android:id="@+id/clear_basket_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="4dp"
+                            android:text="@string/item_selection_basket_clear"
+                            android:textColor="@color/color_warning_red"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:background="?attr/selectableItemBackgroundBorderless" />
+
+                    </LinearLayout>
+
+                    <!-- Items list (no max height - expands fully) -->
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/basket_recycler_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clipToPadding="false"
                         android:paddingVertical="4dp"
+                        android:paddingHorizontal="8dp"
                         android:nestedScrollingEnabled="false"
                         android:overScrollMode="never"
                         tools:listitem="@layout/item_basket_compact"
-                        tools:itemCount="5" />
-
-                </androidx.core.widget.NestedScrollView>
-
-                <!-- Bottom divider above total -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:background="@color/color_divider" />
-
-                <!-- Basket Total Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="14dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/item_selection_basket_total_label"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="17sp"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <TextView
-                        android:id="@+id/basket_total"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="20sp"
-                        android:fontFamily="sans-serif-medium"
-                        tools:text="$74.97" />
+                        tools:itemCount="3" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-        <!-- Checkout Button directly at bottom -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- CHECKOUT BUTTON: Prominent action at bottom                     -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
         <androidx.cardview.widget.CardView
             android:id="@+id/checkout_container"
             android:layout_width="match_parent"
@@ -521,7 +471,7 @@
                 android:textColor="@color/color_bg_white"
                 android:textSize="18sp"
                 android:fontFamily="sans-serif-medium"
-                tools:text="Charge $74.97" />
+                tools:text="Charge" />
 
         </androidx.cardview.widget.CardView>
 

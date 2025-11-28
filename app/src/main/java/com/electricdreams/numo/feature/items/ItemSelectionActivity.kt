@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.Button
 import android.widget.EditText
@@ -56,9 +55,10 @@ class ItemSelectionActivity : AppCompatActivity() {
     private lateinit var clearFiltersButton: ImageButton
     private lateinit var categoryBadge: TextView
     private lateinit var categoryChipsContainer: FlexboxLayout
-    private lateinit var basketSection: LinearLayout
+    private lateinit var basketSection: CardView
     private lateinit var basketRecyclerView: RecyclerView
     private lateinit var basketTotalView: TextView
+    private lateinit var basketItemCountView: TextView
     private lateinit var clearBasketButton: TextView
     private lateinit var itemsRecyclerView: RecyclerView
     private lateinit var emptyView: LinearLayout
@@ -69,15 +69,10 @@ class ItemSelectionActivity : AppCompatActivity() {
     private lateinit var bottomBasketCheckoutContainer: LinearLayout
     private var originalBottomSpacerHeight: Int = 0
     
-    // ----- Collapsed/Expanded Basket Views -----
-    private lateinit var basketCollapsedView: ConstraintLayout
-    private lateinit var basketExpandedView: LinearLayout
-    private lateinit var collapsedItemCount: TextView
-    private lateinit var collapsedTotal: TextView
-    private lateinit var expandChevron: ImageView
-    private lateinit var collapseChevron: ImageView
-    private lateinit var basketScrollView: NestedScrollView
-    private lateinit var basketExpandedHeader: ConstraintLayout
+    // ----- Basket Header & Expandable Views -----
+    private lateinit var basketHeader: ConstraintLayout
+    private lateinit var basketExpandableContent: LinearLayout
+    private lateinit var basketChevron: ImageView
 
     // ----- Category State -----
     private var categoryChipViews: MutableMap<String, TextView> = mutableMapOf()
@@ -150,6 +145,7 @@ class ItemSelectionActivity : AppCompatActivity() {
         basketSection = findViewById(R.id.basket_section)
         basketRecyclerView = findViewById(R.id.basket_recycler_view)
         basketTotalView = findViewById(R.id.basket_total)
+        basketItemCountView = findViewById(R.id.basket_item_count)
         clearBasketButton = findViewById(R.id.clear_basket_button)
         itemsRecyclerView = findViewById(R.id.items_recycler_view)
         emptyView = findViewById(R.id.empty_view)
@@ -160,15 +156,10 @@ class ItemSelectionActivity : AppCompatActivity() {
         bottomBasketCheckoutContainer = findViewById(R.id.bottom_basket_checkout_container)
         originalBottomSpacerHeight = bottomSpacer.layoutParams.height
         
-        // Collapsed/Expanded basket views
-        basketCollapsedView = findViewById(R.id.basket_collapsed_view)
-        basketExpandedView = findViewById(R.id.basket_expanded_view)
-        collapsedItemCount = findViewById(R.id.collapsed_item_count)
-        collapsedTotal = findViewById(R.id.collapsed_total)
-        expandChevron = findViewById(R.id.expand_chevron)
-        collapseChevron = findViewById(R.id.collapse_chevron)
-        basketScrollView = findViewById(R.id.basket_scroll_view)
-        basketExpandedHeader = findViewById(R.id.basket_expanded_header)
+        // Basket header and expandable content
+        basketHeader = findViewById(R.id.basket_header)
+        basketExpandableContent = findViewById(R.id.basket_expandable_content)
+        basketChevron = findViewById(R.id.basket_chevron)
     }
 
     private fun initializeHandlers() {
@@ -177,13 +168,11 @@ class ItemSelectionActivity : AppCompatActivity() {
             checkoutContainer = checkoutContainer
         )
         
-        // Set up expand/collapse views for animation handler
-        animationHandler.setExpandCollapseViews(
-            collapsed = basketCollapsedView,
-            expanded = basketExpandedView,
-            expandChev = expandChevron,
-            collapseChev = collapseChevron,
-            scrollView = basketScrollView
+        // Set up basket views for expand/collapse animation
+        animationHandler.setBasketViews(
+            header = basketHeader,
+            expandableContent = basketExpandableContent,
+            chevron = basketChevron
         )
 
         basketUIHandler = BasketUIHandler(
@@ -197,11 +186,8 @@ class ItemSelectionActivity : AppCompatActivity() {
             }
         )
         
-        // Set up collapsed views for the UI handler
-        basketUIHandler.setCollapsedViews(
-            totalView = collapsedTotal,
-            itemCountView = collapsedItemCount
-        )
+        // Set up item count view for the UI handler
+        basketUIHandler.setItemCountView(basketItemCountView)
 
         searchHandler = ItemSearchHandler(
             itemManager = itemManager,
@@ -274,16 +260,8 @@ class ItemSelectionActivity : AppCompatActivity() {
             selectCategory(null)
         }
         
-        // ----- Basket Expand/Collapse Click Listeners -----
-        
-        // Collapsed view - tap to expand
-        basketCollapsedView.setOnClickListener {
-            animationHandler.toggleBasketExpansion()
-            updateBottomSpacer()
-        }
-        
-        // Expanded header - tap to collapse
-        basketExpandedHeader.setOnClickListener {
+        // ----- Basket Expand/Collapse: Single tap target on header -----
+        basketHeader.setOnClickListener {
             animationHandler.toggleBasketExpansion()
             updateBottomSpacer()
         }

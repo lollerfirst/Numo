@@ -10,7 +10,7 @@ import com.electricdreams.numo.core.util.CurrencyManager
 
 /**
  * Handles basket UI updates including total display and checkout button text.
- * Supports both collapsed and expanded basket views.
+ * Works with the unified basket card layout that animates height on expand/collapse.
  */
 class BasketUIHandler(
     private val basketManager: BasketManager,
@@ -21,16 +21,14 @@ class BasketUIHandler(
     private val onBasketUpdated: () -> Unit
 ) {
     
-    // Collapsed view elements (set via setCollapsedViews)
-    private var collapsedTotalView: TextView? = null
-    private var collapsedItemCountView: TextView? = null
+    // Item count view in header (set via setItemCountView)
+    private var itemCountView: TextView? = null
     
     /**
-     * Set the collapsed view elements for updating.
+     * Set the item count view in the basket header.
      */
-    fun setCollapsedViews(totalView: TextView, itemCountView: TextView) {
-        collapsedTotalView = totalView
-        collapsedItemCountView = itemCountView
+    fun setItemCountView(view: TextView) {
+        itemCountView = view
     }
 
     /**
@@ -68,7 +66,7 @@ class BasketUIHandler(
     /**
      * Update the basket total display text.
      * Handles mixed fiat and sats pricing.
-     * Updates both expanded and collapsed views.
+     * Updates header total and item count.
      */
     fun updateBasketTotal() {
         val itemCount = basketManager.getTotalItemCount()
@@ -92,19 +90,18 @@ class BasketUIHandler(
             "0.00"
         }
 
-        // Update expanded view total
+        // Update the header total display
         basketTotalView.text = formattedTotal
         
-        // Update collapsed view total and item count
-        collapsedTotalView?.text = formattedTotal
-        updateCollapsedItemCount(itemCount)
+        // Update item count in header
+        updateItemCount(itemCount)
     }
     
     /**
-     * Update the item count text in the collapsed view.
+     * Update the item count text in the basket header.
      */
-    private fun updateCollapsedItemCount(count: Int) {
-        collapsedItemCountView?.let { view ->
+    private fun updateItemCount(count: Int) {
+        itemCountView?.let { view ->
             val context = view.context
             view.text = if (count == 1) {
                 context.getString(R.string.item_selection_basket_item_count, count)
