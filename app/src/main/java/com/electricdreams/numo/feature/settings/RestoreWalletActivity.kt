@@ -287,28 +287,28 @@ class RestoreWalletActivity : AppCompatActivity() {
 
         when (step) {
             RestoreStep.ENTER_SEED -> {
-                titleText.text = "Restore Wallet"
+                titleText.text = getString(R.string.restore_progress_title)
                 seedEntryContainer.visibility = View.VISIBLE
                 backButton.isEnabled = true
             }
             RestoreStep.FETCHING_BACKUP -> {
-                titleText.text = "Fetching Backup"
+                titleText.text = getString(R.string.restore_fetching_title)
                 fetchingOverlay.visibility = View.VISIBLE
                 backButton.isEnabled = false
             }
             RestoreStep.REVIEW_MINTS -> {
-                titleText.text = "Review Mints"
+                titleText.text = getString(R.string.restore_mints_title)
                 reviewMintsContainer.visibility = View.VISIBLE
                 backButton.isEnabled = true
                 updateMintsUI()
             }
             RestoreStep.RESTORING -> {
-                titleText.text = "Restoring"
+                titleText.text = getString(R.string.restore_progress_title)
                 progressOverlay.visibility = View.VISIBLE
                 backButton.isEnabled = false
             }
             RestoreStep.SUCCESS -> {
-                titleText.text = "Restored"
+                titleText.text = getString(R.string.restore_success_title)
                 successOverlay.visibility = View.VISIBLE
                 backButton.isEnabled = false
             }
@@ -320,7 +320,7 @@ class RestoreWalletActivity : AppCompatActivity() {
         val clipData = clipboard.primaryClip
 
         if (clipData == null || clipData.itemCount == 0) {
-            Toast.makeText(this, "Clipboard is empty", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.onboarding_clipboard_empty), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -328,7 +328,7 @@ class RestoreWalletActivity : AppCompatActivity() {
         val words = pastedText.split("\\s+".toRegex()).filter { it.isNotBlank() }
 
         if (words.size != 12) {
-            Toast.makeText(this, "Please paste a valid 12-word seed phrase", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.restore_error_failed), Toast.LENGTH_LONG).show()
             return
         }
 
@@ -340,7 +340,7 @@ class RestoreWalletActivity : AppCompatActivity() {
         }
 
         validateInputs()
-        Toast.makeText(this, "Seed phrase pasted", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.onboarding_seed_paste_success), Toast.LENGTH_SHORT).show()
     }
 
     private fun validateInputs(): Boolean {
@@ -358,21 +358,21 @@ class RestoreWalletActivity : AppCompatActivity() {
                 validationStatus.visibility = View.VISIBLE
                 validationIcon.setImageResource(R.drawable.ic_close)
                 validationIcon.setColorFilter(ContextCompat.getColor(this, R.color.color_warning_red))
-                validationText.text = "Invalid characters detected"
+                validationText.text = getString(R.string.onboarding_seed_invalid_characters)
                 validationText.setTextColor(ContextCompat.getColor(this, R.color.color_warning_red))
             }
             !allFilled -> {
                 validationStatus.visibility = View.VISIBLE
                 validationIcon.setImageResource(R.drawable.ic_warning)
                 validationIcon.setColorFilter(ContextCompat.getColor(this, R.color.color_warning))
-                validationText.text = "$filledCount of 12 words entered"
+                validationText.text = getString(R.string.onboarding_seed_words_entered_count, filledCount)
                 validationText.setTextColor(ContextCompat.getColor(this, R.color.color_warning))
             }
             else -> {
                 validationStatus.visibility = View.VISIBLE
                 validationIcon.setImageResource(R.drawable.ic_check)
                 validationIcon.setColorFilter(ContextCompat.getColor(this, R.color.color_success_green))
-                validationText.text = "Ready to continue"
+                validationText.text = getString(R.string.onboarding_seed_validation_ready)
                 validationText.setTextColor(ContextCompat.getColor(this, R.color.color_success_green))
             }
         }
@@ -396,7 +396,7 @@ class RestoreWalletActivity : AppCompatActivity() {
 
         // Show fetching overlay
         updateUIForStep(RestoreStep.FETCHING_BACKUP)
-        fetchingStatus.text = "Searching for mint backup on Nostr..."
+        fetchingStatus.text = getString(R.string.onboarding_fetching_searching_backup)
 
         lifecycleScope.launch {
             // Fetch backup from Nostr
@@ -451,21 +451,21 @@ class RestoreWalletActivity : AppCompatActivity() {
             backupStatusCard.background = ContextCompat.getDrawable(this, R.drawable.bg_success_card)
             backupStatusIcon.setImageResource(R.drawable.ic_cloud_done)
             backupStatusIcon.setColorFilter(ContextCompat.getColor(this, R.color.color_success_green))
-            backupStatusTitle.text = "Backup Found"
+            backupStatusTitle.text = getString(R.string.restore_backup_found_title)
             backupStatusTitle.setTextColor(ContextCompat.getColor(this, R.color.color_success_green))
 
             val dateStr = backupTimestamp?.let {
                 SimpleDateFormat("MMM d, yyyy 'at' h:mm a", Locale.getDefault()).format(Date(it * 1000))
-            } ?: "Unknown date"
-            backupStatusSubtitle.text = "Last backed up $dateStr"
+            } ?: getString(R.string.restore_backup_unknown_date)
+            backupStatusSubtitle.text = getString(R.string.restore_backup_found_subtitle, dateStr)
             backupStatusSubtitle.setTextColor(ContextCompat.getColor(this, R.color.color_text_secondary))
         } else {
             backupStatusCard.background = ContextCompat.getDrawable(this, R.drawable.bg_info_card)
             backupStatusIcon.setImageResource(R.drawable.ic_cloud_off)
             backupStatusIcon.setColorFilter(ContextCompat.getColor(this, R.color.color_text_tertiary))
-            backupStatusTitle.text = "No Backup Found"
+            backupStatusTitle.text = getString(R.string.onboarding_backup_not_found_title)
             backupStatusTitle.setTextColor(ContextCompat.getColor(this, R.color.color_text_primary))
-            backupStatusSubtitle.text = "Using your currently configured mints"
+            backupStatusSubtitle.text = getString(R.string.onboarding_backup_not_found_subtitle)
             backupStatusSubtitle.setTextColor(ContextCompat.getColor(this, R.color.color_text_secondary))
         }
 
@@ -563,7 +563,7 @@ class RestoreWalletActivity : AppCompatActivity() {
 
     private fun updateMintsCount() {
         val count = selectedMints.size
-        mintsCountText.text = "$count mint${if (count != 1) "s" else ""} selected"
+        mintsCountText.text = getString(R.string.onboarding_mints_count, count, if (count != 1) "s" else "")
 
         // Update button state
         startRestoreButton.isEnabled = count > 0
@@ -572,7 +572,7 @@ class RestoreWalletActivity : AppCompatActivity() {
 
     private fun showRestoreConfirmationDialog() {
         if (selectedMints.isEmpty()) {
-            Toast.makeText(this, "Please select at least one mint", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.onboarding_error_initializing_wallet), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -591,12 +591,12 @@ class RestoreWalletActivity : AppCompatActivity() {
         }
 
         AlertDialog.Builder(this)
-            .setTitle("Confirm Restore")
+            .setTitle(R.string.restore_confirm_dialog_title)
             .setMessage(message)
-            .setPositiveButton("Restore") { _, _ ->
+            .setPositiveButton(R.string.restore_confirm_dialog_positive) { _, _ ->
                 performRestore()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(R.string.common_cancel, null)
             .show()
     }
 
@@ -628,7 +628,7 @@ class RestoreWalletActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                progressStatus.text = "Initializing restore..."
+                progressStatus.text = getString(R.string.onboarding_restoring_initializing)
 
                 // Create custom restore that only uses selected mints
                 val balanceChanges = restoreWithSelectedMints(mnemonic, selectedMints.toList())
@@ -728,9 +728,9 @@ class RestoreWalletActivity : AppCompatActivity() {
         val totalDiff = totalAfter - totalBefore
 
         successSummaryText.text = when {
-            totalDiff > 0 -> "Recovered $totalDiff sats across ${relevantChanges.size} mint(s)"
-            totalDiff < 0 -> "Balance changed by $totalDiff sats"
-            else -> "Wallet restored with $totalAfter sats total"
+            totalDiff > 0 -> getString(R.string.restore_success_recovered_summary, totalDiff, relevantChanges.size)
+            totalDiff < 0 -> getString(R.string.restore_success_balance_changed_summary, totalDiff)
+            else -> getString(R.string.restore_success_restored_with_balance_summary, totalAfter)
         }
 
         // Show balance changes per mint
@@ -773,7 +773,7 @@ class RestoreWalletActivity : AppCompatActivity() {
         }
 
         val detailText = TextView(this).apply {
-            text = "$before → $after sats"
+            text = getString(R.string.restore_success_balance_change_line, before, after)
             setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
             textSize = 13f
         }

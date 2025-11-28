@@ -10,4 +10,528 @@
 
     <!-- QR-based PaymentRequest -->
     <string name="payment_request_qr_description">Cashu payment request QR code</string>
+
+    <!-- Balance check -->
+    <string name="balance_check_toolbar_back">Back</string>
+    <string name="balance_check_actionbar_title">NFC Balance Check</string>
+    <string name="balance_check_title">Check Balance</string>
+    <string name="balance_check_cta_tap_card">Tap Card</string>
+    <string name="balance_check_instructions">Hold your NFC card near the back of the device to check balance</string>
+    <string name="balance_check_card_info_tap_card">Tap your NFC card to check balance</string>
+    <string name="balance_check_status_balance">Balance: %1$s</string>
+    <string name="balance_check_status_error">Error: %1$s</string>
+    <string name="balance_check_info_no_proofs">Card has no proofs</string>
+    <string name="balance_check_info_no_state_data">No proof state data available</string>
+    <string name="balance_check_info_inconsistent_proofs">Proof data inconsistent</string>
+    <string name="balance_check_error_card_does_not_support_isodep">Card does not support IsoDep</string>
+    <string name="balance_check_error_invalid_nfc_tag">Invalid NFC tag</string>
+
+    <!-- Tips settings -->
+    <string name="tips_settings_toolbar_back">Back</string>
+    <string name="tips_settings_title">Tips</string>
+    <string name="tips_settings_description">Allow customers to add a tip when paying. Tip presets will appear as quick-select buttons on the payment screen.</string>
+    <string name="tips_settings_enable_label">Enable Tips</string>
+    <string name="tips_settings_presets_header">TIP PRESETS</string>
+    <string name="tips_settings_presets_description">Configure quick-select tip percentages. Customers can also enter a custom amount.</string>
+    <string name="tips_settings_add_preset">Add Preset</string>
+    <string name="tips_settings_reset_defaults">Reset to Defaults</string>
+
+    <!-- Tips dialogs & toasts -->
+    <string name="tip_percentage_format">%1$d%%</string>
+    <string name="tips_dialog_add_preset_title">Add Tip Preset</string>
+    <string name="tips_dialog_add_preset_hint">Enter percentage (1-100)</string>
+    <string name="tips_dialog_add_preset_positive">Add</string>
+    <string name="tips_dialog_add_preset_negative">Cancel</string>
+    <string name="tips_error_invalid_percentage">Please enter a valid percentage (1-100)</string>
+    <string name="tips_error_could_not_add_preset">Could not add preset (may already exist or at max capacity)</string>
+
+    <string name="tips_dialog_edit_preset_title">Edit Tip Preset</string>
+    <string name="tips_dialog_edit_preset_positive">Save</string>
+
+    <string name="tips_dialog_remove_preset_title">Remove Preset</string>
+    <string name="tips_dialog_remove_preset_message">Remove %1$d%% from tip presets?</string>
+    <string name="tips_dialog_remove_preset_positive">Remove</string>
+
+    <string name="tips_dialog_reset_defaults_title">Reset to Defaults</string>
+    <string name="tips_dialog_reset_defaults_message" formatted="false">Reset tip presets to default values (5%, 10%, 15%, 20%)?</string>
+    <string name="tips_dialog_reset_defaults_positive">Reset</string>
+    <string name="tips_toast_reset_to_defaults">Presets reset to defaults</string>
+
+    <!-- Tip selection screen -->
+    <string name="tip_selection_close_content_description">Close</string>
+    <string name="tip_selection_order_total_label">Order Total</string>
+    <string name="tip_selection_question_add_tip">Would you like to add a tip?</string>
+    <string name="tip_selection_custom_tip_label">Custom Tip</string>
+    <string name="tip_selection_custom_tip_subtitle">Enter amount</string>
+    <string name="tip_selection_no_tip_button">No Tip</string>
+    <string name="tip_selection_custom_currency_switch_to_btc">Switch to ₿</string>
+    <string name="tip_selection_custom_currency_switch_to_fiat">Switch to %1$s</string>
+    <string name="tip_selection_custom_question">Enter tip amount</string>
+    <string name="tip_selection_main_back">Back</string>
+    <string name="tip_selection_main_confirm">Confirm</string>
+
+    <!-- Payment request -->
+    <string name="payment_request_close_content_description">Close</string>
+    <string name="payment_request_share_content_description">Share</string>
+    <string name="payment_request_pay_label">Pay</string>
+    <string name="payment_request_instruction_scan_or_tap">Scan or Tap to Pay</string>
+    <string name="payment_request_nfc_reading">Reading from NFC...</string>
+
+    <string name="payment_request_error_invalid_amount">Invalid payment amount</string>
+    <string name="payment_request_error_ndef_prepare">Failed to prepare NDEF payment data</string>
+    <string name="payment_request_error_nothing_to_share">Nothing to share yet</string>
+
+    <string name="payment_request_status_preparing">Preparing payment request...</string>
+    <string name="payment_request_status_waiting_for_payment">Waiting for payment...</string>
+    <string name="payment_request_status_error_qr">Error generating QR code</string>
+    <string name="payment_request_status_error_generic">Error: %1$s</string>
+    <string name="payment_request_status_success">Payment successful!</string>
+    <string name="payment_request_status_failed">Payment failed: %1$s</string>
+    <string name="payment_request_lightning_error_failed">Lightning payment failed: %1$s</string>
+
+    <string name="payment_request_tip_info_with_percentage">includes %1$s tip (%2$d%%)</string>
+    <string name="payment_request_tip_info_no_percentage">includes %1$s tip</string>
+
+    <string name="payment_request_share_chooser_title">Share Payment Request</string>
+
+    <!-- Payment received -->
+    <string name="payment_received_amount">%1$s received.</string>
+    <string name="payment_received_button_view_details">View Details</string>
+    <string name="payment_received_button_close">Close</string>
+    <string name="payment_received_close_content_description">Close</string>
+    <string name="payment_received_share_content_description">Share</string>
+    <string name="payment_received_success_background_description">Success background</string>
+    <string name="payment_received_success_icon_description">Success</string>
+
+    <string name="payment_received_error_no_token">No token to share</string>
+    <string name="payment_received_share_chooser_title">Share token</string>
+    <string name="payment_received_error_no_share_app">No apps available to share this token</string>
+    <string name="payment_received_error_no_details">Transaction details not available</string>
+
+    <!-- Onboarding / Welcome -->
+    <string name="onboarding_welcome_tagline">Bitcoin POS with Cashu ecash</string>
+    <string name="onboarding_welcome_message">Accept Bitcoin payments instantly with zero fees using Cashu ecash technology.</string>
+    <string name="onboarding_terms_text">By continuing, you agree to our Terms of Service and Privacy Policy</string>
+    <string name="onboarding_get_started">Get Started</string>
+
+    <!-- Onboarding / Choose Path -->
+    <string name="onboarding_setup_title">Set Up Your Wallet</string>
+    <string name="onboarding_setup_subtitle">Choose how you would like to get started</string>
+    <string name="onboarding_create_wallet_title">Create New Wallet</string>
+    <string name="onboarding_create_wallet_subtitle">Start fresh with a new seed phrase</string>
+    <string name="onboarding_restore_wallet_title">Restore from Backup</string>
+    <string name="onboarding_restore_wallet_subtitle">Use your existing seed phrase</string>
+
+    <!-- Onboarding / Restore Seed Entry -->
+    <string name="onboarding_seed_toolbar_back">Back</string>
+    <string name="onboarding_seed_toolbar_title">Restore Wallet</string>
+    <string name="onboarding_seed_instruction_title">Enter your 12-word seed phrase</string>
+    <string name="onboarding_seed_instruction_body">Enter the words in the correct order to restore your wallet.</string>
+    <string name="onboarding_seed_paste_button">Paste from Clipboard</string>
+    <string name="onboarding_seed_validation_ready">Ready to continue</string>
+    <string name="onboarding_seed_invalid_characters">Invalid characters detected</string>
+    <string name="onboarding_seed_words_entered_count">%1$d of 12 words entered</string>
+    <string name="onboarding_seed_continue">Continue</string>
+    <string name="onboarding_clipboard_empty">Clipboard is empty</string>
+    <string name="onboarding_seed_paste_invalid">Please paste a valid 12-word seed phrase</string>
+    <string name="onboarding_seed_paste_success">Seed phrase pasted</string>
+
+    <!-- Onboarding / Generating Wallet -->
+    <string name="onboarding_status_creating_wallet">Creating your wallet...</string>
+    <string name="onboarding_status_generating_seed">Generating seed phrase...</string>
+    <string name="onboarding_status_setting_up_mints">Setting up default mints...</string>
+    <string name="onboarding_status_initializing_wallet">Initializing wallet...</string>
+    <string name="onboarding_status_connecting_mints">Connecting to mints...</string>
+    <string name="onboarding_status_fetching_mints">Fetching mint information...</string>
+    <string name="onboarding_generating_hint">This will only take a moment</string>
+
+    <!-- Onboarding / Fetching Backup -->
+    <string name="onboarding_fetching_searching_backup">Searching for backup...</string>
+    <string name="onboarding_fetching_checking_relays">Checking Nostr relays for your mint configuration</string>
+
+    <!-- Onboarding / Review Mints -->
+    <string name="onboarding_mints_toolbar_back">Back</string>
+    <string name="onboarding_mints_toolbar_title">Your Mints</string>
+    <string name="onboarding_backup_found_title">Backup Found</string>
+    <string name="onboarding_backup_found_subtitle">Last backed up %1$s</string>
+    <string name="onboarding_backup_not_found_title">No Backup Found</string>
+    <string name="onboarding_backup_not_found_subtitle">Using default mints</string>
+    <string name="onboarding_mints_title">Select Mints</string>
+    <string name="onboarding_mints_subtitle_restore">Select which mints to restore</string>
+    <string name="onboarding_mints_subtitle_description">These mints will store your ecash tokens</string>
+    <string name="onboarding_mints_count">%1$d mint%2$s selected</string>
+    <string name="onboarding_mints_continue_restore">Restore Wallet</string>
+    <string name="onboarding_mints_continue_new_wallet">Continue</string>
+
+    <!-- Onboarding / Restoring -->
+    <string name="onboarding_restoring_title">Restoring Wallet</string>
+    <string name="onboarding_restoring_initializing">Initializing restore...</string>
+
+    <!-- Onboarding / Success -->
+    <string name="onboarding_success_restored_title">Wallet Restored</string>
+    <string name="onboarding_success_restored_recovered">Recovered %1$d sats</string>
+    <string name="onboarding_success_restored_total_balance">Total balance: %1$d sats</string>
+    <string name="onboarding_success_created_title">Wallet Created</string>
+    <string name="onboarding_success_created_subtitle">Your wallet is ready to use</string>
+    <string name="onboarding_success_balance_by_mint">BALANCE BY MINT</string>
+    <string name="onboarding_enter_wallet_button">Enter Wallet</string>
+
+    <!-- Onboarding / Errors -->
+    <string name="onboarding_error_creating_wallet">Error creating wallet: %1$s</string>
+    <string name="onboarding_error_initializing_wallet">Error initializing wallet: %1$s</string>
+
+    <!-- Restore Wallet (standalone screen) -->
+    <string name="restore_warning_title">Important Warning</string>
+    <string name="restore_warning_body">Restoring from a seed phrase will replace your current wallet. Make sure you have backed up your current seed phrase before proceeding.</string>
+    <string name="restore_seed_instruction_title">Enter your 12-word seed phrase</string>
+    <string name="restore_seed_paste_button">Paste from Clipboard</string>
+    <string name="restore_seed_continue">Continue</string>
+
+    <string name="restore_fetching_title">Checking for Backup</string>
+    <string name="restore_fetching_status">Searching Nostr relays...</string>
+
+    <string name="restore_backup_found_title">Backup Found</string>
+    <string name="restore_backup_found_subtitle">Last backed up Jan 1, 2024</string>
+    <string name="restore_backup_unknown_date">Unknown date</string>
+
+    <string name="restore_mints_title">Select mints to restore</string>
+    <string name="restore_mints_count">0 mints selected</string>
+    <string name="restore_mints_start_button">Start Restore</string>
+
+    <string name="restore_progress_title">Restoring Wallet</string>
+    <string name="restore_progress_status">Connecting to mints...</string>
+    <string name="restore_progress_status_waiting">Waiting...</string>
+    <string name="restore_progress_balance_increase">+%1$d sats</string>
+    <string name="restore_progress_balance_decrease">%1$d sats</string>
+
+    <string name="restore_success_title">Wallet Restored</string>
+    <string name="restore_success_subtitle">Your wallet has been successfully restored</string>
+    <string name="restore_success_balance_line">%1$d sats</string>
+    <string name="restore_success_done_button">Done</string>
+
+    <string name="restore_error_failed">Restore failed: %1$s</string>
+
+    <!-- Seed Phrase screen -->
+    <string name="seed_phrase_toolbar_back">Back</string>
+    <string name="seed_phrase_toolbar_title">Seed Phrase</string>
+    <string name="seed_phrase_warning_title">Keep this secret!</string>
+    <string name="seed_phrase_warning_body">Anyone with these 12 words can access your funds. Write them down and store them in a safe place. Never share them with anyone.</string>
+    <string name="seed_phrase_title">Your Recovery Phrase</string>
+    <string name="seed_phrase_show_button">Show</string>
+    <string name="seed_phrase_copy_button">Copy to Clipboard</string>
+    <string name="seed_phrase_clipboard_disclaimer">Make sure to clear your clipboard after pasting</string>
+
+    <!-- Terms dialog / common -->
+    <string name="dialog_terms_title">Terms of Service</string>
+    <string name="dialog_terms_body">NUMO WALLET - TERMS OF SERVICE&#x0A;&#x0A;1. ACCEPTANCE&#x0A;By using this wallet application, you agree to these terms.&#x0A;&#x0A;2. NATURE OF SERVICE&#x0A;This is a self-custodial Bitcoin wallet using Cashu ecash technology. You are solely responsible for your funds and seed phrase.&#x0A;&#x0A;3. SEED PHRASE&#x0A;Your 12-word seed phrase is the ONLY way to recover your wallet. Never share it. Store it securely offline. We cannot recover lost seed phrases.&#x0A;&#x0A;4. NO WARRANTY&#x0A;This software is provided "as is" without warranty of any kind. Use at your own risk.&#x0A;&#x0A;5. LIMITATION OF LIABILITY&#x0A;We are not liable for any loss of funds, whether through bugs, user error, or third-party mint failures.&#x0A;&#x0A;6. ECASH MINTS&#x0A;Ecash tokens are held by third-party mints. These mints may fail or become unavailable. Diversify across multiple mints.&#x0A;&#x0A;7. PRIVACY&#x0A;This wallet does not collect personal data. Transactions are processed through ecash mints which may have their own privacy policies.&#x0A;&#x0A;8. UPDATES&#x0A;These terms may be updated. Continued use constitutes acceptance.&#x0A;&#x0A;Last updated: November 2024</string>
+    <string name="common_close">Close</string>
+
+    <!-- Developer settings -->
+    <string name="common_back">Back</string>
+    <string name="developer_settings_title">Developer Settings</string>
+    <string name="developer_settings_section_debugging">Debugging</string>
+    <string name="developer_settings_restart_onboarding_title">Restart Onboarding</string>
+    <string name="developer_settings_restart_onboarding_subtitle">Start the onboarding flow again</string>
+    <string name="developer_settings_warning">⚠️ Developer settings are for testing and debugging purposes only. Use with caution.</string>
+
+    <!-- NFC dialogs -->
+    <string name="nfc_dialog_title_scan_to_pay">Scan to Pay</string>
+    <string name="nfc_dialog_content_description_contactless">Contactless payment</string>
+    <string name="nfc_dialog_content_description_cashu">Cashu</string>
+    <string name="nfc_dialog_subtitle_or_scan_qr">or scan QR code</string>
+    <string name="nfc_dialog_waiting_message">Waiting for NFC...</string>
+    <string name="common_cancel">Cancel</string>
+
+    <!-- Top up / import Cashu token -->
+    <string name="top_up_toolbar_back">Back</string>
+    <string name="top_up_title">Top Up</string>
+    <string name="top_up_instruction_title">Enter Cashu Token</string>
+    <string name="top_up_instruction_subtitle">Paste a Cashu token to add funds to the card</string>
+    <string name="top_up_hint_token">cashuA...</string>
+    <string name="top_up_button_submit">Submit</string>
+
+    <string name="top_up_status_token_ready">Token ready to be imported</string>
+    <string name="top_up_status_nfc_not_available">NFC is not available on this device</string>
+    <string name="top_up_status_tap_card">Tap your card to import the proofs</string>
+    <string name="top_up_status_missing_token">Please enter a Cashu proof token</string>
+    <string name="top_up_status_no_token_set">No proof token set to import</string>
+    <string name="top_up_status_operation_cancelled">Operation cancelled</string>
+    <string name="top_up_status_nfc_error">NFC Communication Error: %1$s</string>
+    <string name="top_up_status_card_error">Satocash Card Error: %1$s</string>
+    <string name="top_up_status_generic_error">Error: %1$s</string>
+    <string name="top_up_status_success_imported">Success: Imported %1$d proofs</string>
+    <string name="top_up_status_pin_verification_failed">PIN Verification Failed</string>
+    <string name="top_up_status_pin_verification_failed_detail">PIN Verification Failed: %1$s</string>
+    <string name="top_up_status_auth_failed">Authentication Failed: %1$s</string>
+    <string name="top_up_status_unexpected_error">An unexpected error occurred: %1$s</string>
+    <string name="top_up_status_no_saved_pin">No saved PIN available</string>
+
+    <!-- Top up NFC dialogs -->
+    <string name="top_up_dialog_ready_title">Scan NFC Card</string>
+    <string name="top_up_dialog_ready_message">Ready to import proofs</string>
+    <string name="top_up_dialog_rescan_title">Scan Card Again</string>
+    <string name="top_up_dialog_rescan_hint">PIN accepted. Please scan your card again to complete import.</string>
+    <string name="top_up_dialog_processing_title">Processing Import</string>
+    <string name="top_up_dialog_processing_message">Importing proofs...</string>
+
+    <!-- Common PIN dialog -->
+    <string name="dialog_title_enter_pin">Enter PIN</string>
+    <string name="dialog_pin_hint">PIN</string>
+
+    <!-- NFC payment errors -->
+    <string name="nfc_payment_error_enter_amount_first">Please enter an amount first</string>
+    <string name="nfc_payment_error_rescan_not_supported">PIN-based rescan not supported in this build</string>
+    <string name="nfc_payment_error_insufficient_funds">Insufficient funds on card</string>
+    <string name="nfc_payment_error_pin_flow_not_implemented">PIN-required flow not implemented in this build</string>
+    <string name="nfc_payment_error_card_sw">Card Error: (SW: 0x%04X)</string>
+    <string name="nfc_payment_error_generic">Payment failed: %1$s</string>
+    <string name="nfc_payment_error_nfc_comm">NFC Communication Error: %1$s</string>
+    <string name="nfc_payment_error_satocash">Satocash Card Error: %1$s (SW: 0x%04X)</string>
+    <string name="nfc_payment_error_unexpected">An unexpected error occurred: %1$s</string>
+
+    <!-- Common buttons -->
+    <string name="common_ok">OK</string>
+
+    <!-- Withdraw - Lightning selection screen -->
+    <string name="withdraw_lightning_toolbar_back">Back</string>
+    <string name="withdraw_lightning_title">Withdraw</string>
+    <string name="withdraw_lightning_balance_label">Available Balance</string>
+    <string name="withdraw_lightning_mint_name_label">Mint Name</string>
+    <string name="withdraw_lightning_section_withdraw_to">WITHDRAW TO</string>
+    <string name="withdraw_lightning_option_invoice">⚡ Lightning Invoice</string>
+    <string name="withdraw_lightning_invoice_hint_label">Enter a Lightning invoice (BOLT11)</string>
+    <string name="withdraw_lightning_invoice_hint_value">lnbc...</string>
+    <string name="withdraw_lightning_option_address">📧 Lightning Address</string>
+    <string name="withdraw_lightning_address_hint_label">Enter a Lightning address</string>
+    <string name="withdraw_lightning_address_hint_value">user@domain.com</string>
+    <string name="withdraw_lightning_amount_label">Amount (sats)</string>
+    <string name="withdraw_lightning_amount_hint">1000</string>
+    <string name="withdraw_lightning_button_continue">Continue</string>
+
+    <!-- Withdraw - errors and toasts -->
+    <string name="withdraw_lightning_error_invalid_mint_url">Invalid mint URL</string>
+    <string name="withdraw_lightning_error_enter_invoice">Please enter a Lightning invoice</string>
+    <string name="withdraw_lightning_error_wallet_not_initialized">Wallet not initialized</string>
+    <string name="withdraw_lightning_error_insufficient_balance">Insufficient balance. Amount + fees (%1$d sats) exceeds your balance (%2$d sats). Try an amount under %3$d sats.</string>
+    <string name="withdraw_lightning_error_enter_address">Please enter a Lightning address</string>
+    <string name="withdraw_lightning_error_enter_valid_amount">Please enter a valid amount</string>
+    <string name="withdraw_lightning_error_generic">Error: %1$s</string>
+
+    <!-- Withdraw - melt quote screen -->
+    <string name="withdraw_melt_toolbar_back">Back</string>
+    <string name="withdraw_melt_title">Confirm Withdrawal</string>
+    <string name="withdraw_melt_summary">Withdraw from %1$s</string>
+    <string name="withdraw_melt_destination_label">TO</string>
+    <string name="withdraw_melt_destination_placeholder">user@domain.com</string>
+    <string name="withdraw_melt_amount_label">Amount</string>
+    <string name="withdraw_melt_fee_label">Fee Reserve</string>
+    <string name="withdraw_melt_total_label">Total</string>
+    <string name="withdraw_melt_fee_note">The fee reserve will be returned if the actual Lightning fee is lower.</string>
+    <string name="withdraw_melt_loading">Processing withdrawal...</string>
+
+    <!-- Withdraw - melt errors and states -->
+    <string name="withdraw_melt_error_invalid_data">Invalid melt quote data</string>
+    <string name="withdraw_melt_error_wallet_not_initialized">Wallet not initialized</string>
+    <string name="withdraw_melt_error_invoice_not_paid">Payment failed: Invoice not paid</string>
+    <string name="withdraw_melt_error_pending">Payment is pending. Please check back later.</string>
+    <string name="withdraw_melt_error_unknown_state">Payment failed: Unknown state</string>
+    <string name="withdraw_melt_error_generic">Error: %1$s</string>
+    <string name="withdraw_melt_destination_unknown">Unknown</string>
+    <string name="withdraw_melt_destination_invoice_fallback">Lightning Invoice</string>
+
+    <!-- Withdraw - success screen -->
+    <string name="withdraw_success_amount">%1$s sent.</string>
+    <string name="withdraw_success_destination">To %1$s</string>
+    <string name="withdraw_success_destination_fallback">Lightning</string>
+    <string name="withdraw_success_close">Close</string>
+    <string name="withdraw_success_background_description">Success background</string>
+    <string name="withdraw_success_icon_description">Success</string>
+
+    <!-- History & transaction rows/dialogs -->
+    <string name="history_toolbar_title">Activity</string>
+    <string name="history_section_payment_history">PAYMENT HISTORY</string>
+    <string name="history_empty">No payment history</string>
+
+    <string name="transaction_row_copy">Copy</string>
+    <string name="transaction_row_open">Open</string>
+    <string name="transaction_row_delete">Delete</string>
+
+    <string name="token_history_copy">Copy token</string>
+    <string name="token_history_open_with">Open token with...</string>
+    <string name="token_history_delete">Delete token</string>
+
+    <string name="transaction_details_amount_placeholder">$0</string>
+    <string name="transaction_details_date_label">Date</string>
+    <string name="transaction_details_token_placeholder">Token...</string>
+    <string name="transaction_details_copy_token">Copy Token</string>
+    <string name="transaction_details_open_with">Open With...</string>
+    <string name="transaction_details_delete_transaction">Delete Transaction</string>
+
+    <string name="payment_history_title">Payment</string>
+    <string name="payment_history_status_pending">Pending</string>
+
+    <string name="transaction_detail_toolbar_back">Back</string>
+    <string name="transaction_detail_toolbar_title">Transaction Details</string>
+    <string name="transaction_detail_toolbar_share">Share</string>
+
+    <string name="transaction_detail_type_payment_received">Payment Received</string>
+    <string name="transaction_detail_mint_label">From Mint</string>
+    <string name="transaction_detail_view_receipt">View Receipt</string>
+    <string name="transaction_detail_section_transaction_details">TRANSACTION DETAILS</string>
+
+    <string name="transaction_detail_payment_type_label">Payment Type</string>
+    <string name="transaction_detail_payment_type_cashu">Cashu</string>
+    <string name="transaction_detail_amount_label">Amount</string>
+    <string name="transaction_detail_token_unit_label">Token Unit</string>
+    <string name="transaction_detail_entered_as_label">Entered As</string>
+    <string name="transaction_detail_entered_amount_label">Entered Amount</string>
+    <string name="transaction_detail_bitcoin_price_label">Bitcoin Price</string>
+    <string name="transaction_detail_tip_label">Tip</string>
+    <string name="transaction_detail_tip_equivalent_label">  (equivalent)</string>
+    <string name="transaction_detail_total_paid_label">Total Paid</string>
+    <string name="transaction_detail_mint_label_short">Mint</string>
+
+    <string name="transaction_detail_lightning_invoice_header">LIGHTNING INVOICE</string>
+    <string name="transaction_detail_lightning_invoice_placeholder">lnbc...</string>
+    <string name="transaction_detail_copy_invoice_hint">Tap to copy invoice</string>
+
+    <string name="transaction_detail_token_header">CASHU TOKEN</string>
+    <string name="transaction_detail_token_placeholder">cashuA...</string>
+
+    <string name="transaction_detail_payment_request_header">PAYMENT REQUEST</string>
+    <string name="transaction_detail_payment_request_placeholder">...</string>
+
+    <string name="transaction_detail_button_copy_token">Copy Token</string>
+    <string name="transaction_detail_button_open_with">Open With...</string>
+    <string name="transaction_detail_button_delete">Delete Transaction</string>
+
+    <string name="mint_restore_name_placeholder">Mint Name</string>
+    <string name="mint_restore_status_restoring">Restoring...</string>
+    <string name="mint_restore_balance_change_placeholder">+0 sats</string>
+
+    <!-- Items & catalog / settings section -->
+    <string name="items_settings_section_title">ITEMS CATALOG</string>
+    <string name="items_settings_status_empty">No items in catalog</string>
+    <string name="items_settings_description">Manage your product catalog for quick checkout.</string>
+    <string name="items_settings_import_csv">Import CSV</string>
+    <string name="items_settings_manage">Manage</string>
+    <string name="items_settings_clear_all">Clear All Items</string>
+
+    <!-- Item list screen -->
+    <string name="item_list_toolbar_back">Back</string>
+    <string name="item_list_toolbar_title">Items</string>
+    <string name="item_list_add_item">Add item</string>
+    <string name="item_list_done_reordering">Done reordering</string>
+    <string name="item_list_empty_icon_description">No items</string>
+    <string name="item_list_empty_title">No Items</string>
+    <string name="item_list_empty_subtitle">Tap + to add your first item</string>
+    <string name="item_list_import_from_csv">Import from CSV</string>
+    <string name="item_list_clear_all">Clear All Items</string>
+
+    <!-- Item entry / edit -->
+    <string name="item_entry_toolbar_back">Back</string>
+    <string name="item_entry_title_add">Add Item</string>
+    <string name="item_entry_button_save">Save</string>
+    <string name="item_entry_image_description">Item image</string>
+    <string name="item_entry_image_placeholder">No image</string>
+    <string name="item_entry_button_add_photo">Add Photo</string>
+    <string name="item_entry_button_remove_photo">Remove Photo</string>
+
+    <string name="item_entry_section_basic_information">BASIC INFORMATION</string>
+    <string name="item_entry_label_name">Name</string>
+    <string name="item_entry_hint_name">Item Name</string>
+    <string name="item_entry_label_variation">Variation</string>
+    <string name="item_entry_hint_variation">e.g. Small, Large</string>
+    <string name="item_entry_label_description">Description</string>
+    <string name="item_entry_hint_description">Optional</string>
+
+    <string name="item_entry_section_category">CATEGORY</string>
+    <string name="item_entry_hint_new_category">New category name</string>
+    <string name="item_entry_category_confirm">Confirm</string>
+    <string name="item_entry_category_cancel">Cancel</string>
+    <string name="item_entry_category_helper">Select an existing category or create a new one.</string>
+
+    <string name="item_entry_section_pricing">PRICING</string>
+    <string name="item_entry_price_type_fiat">Fiat</string>
+    <string name="item_entry_price_type_bitcoin">Bitcoin</string>
+    <string name="item_entry_currency_symbol_default">$</string>
+    <string name="item_entry_hint_price_fiat">0.00</string>
+    <string name="item_entry_currency_code_default">USD</string>
+    <string name="item_entry_bitcoin_symbol">₿</string>
+    <string name="item_entry_hint_price_sats">0</string>
+    <string name="item_entry_label_sats">sats</string>
+
+    <string name="item_entry_label_apply_vat">Apply VAT</string>
+    <string name="item_entry_label_price_includes_vat">Price includes VAT</string>
+    <string name="item_entry_label_vat_rate">VAT Rate</string>
+    <string name="item_entry_hint_vat_rate">20</string>
+
+    <string name="item_entry_price_breakdown_title">Price Breakdown</string>
+    <string name="item_entry_price_breakdown_net_label">Net Price (excl. VAT)</string>
+    <string name="item_entry_price_breakdown_net_value_default">$0.00</string>
+    <string name="item_entry_price_breakdown_vat_label">VAT (20%)</string>
+    <string name="item_entry_price_breakdown_vat_value_default">$0.00</string>
+    <string name="item_entry_price_breakdown_total_label">Total (incl. VAT)</string>
+    <string name="item_entry_price_breakdown_total_value_default">$0.00</string>
+
+    <string name="item_entry_price_helper">Set a fixed price in your preferred currency. Bitcoin prices are in satoshis (sats).</string>
+
+    <string name="item_entry_section_identification">IDENTIFICATION</string>
+    <string name="item_entry_label_gtin">GTIN</string>
+    <string name="item_entry_hint_gtin">Scan or enter barcode</string>
+    <string name="item_entry_scan_barcode">Scan barcode</string>
+    <string name="item_entry_label_sku">SKU</string>
+    <string name="item_entry_hint_sku">Internal stock code</string>
+    <string name="item_entry_error_gtin_exists">This GTIN already exists</string>
+    <string name="item_entry_error_sku_exists">This SKU already exists</string>
+
+    <string name="item_entry_section_inventory">INVENTORY</string>
+    <string name="item_entry_label_track_quantity">Track Quantity</string>
+    <string name="item_entry_label_current_stock">Current Stock</string>
+    <string name="item_entry_hint_current_stock">0</string>
+    <string name="item_entry_label_low_stock_alert">Low Stock Alert</string>
+    <string name="item_entry_label_alert_when_below">Alert When Below</string>
+    <string name="item_entry_hint_alert_threshold">5</string>
+    <string name="item_entry_inventory_helper">Enable inventory tracking to monitor stock levels and receive low stock alerts.</string>
+
+    <string name="item_entry_button_cancel">Cancel</string>
+
+    <!-- Item product row -->
+    <string name="item_product_drag_handle_description">Drag to reorder</string>
+    <string name="item_product_image_description">Item image</string>
+    <string name="item_product_image_placeholder">No image</string>
+    <string name="item_product_chevron_more">More</string>
+
+    <!-- Item selection row -->
+    <string name="item_selection_image_description">Item image</string>
+    <string name="item_selection_image_placeholder">No image</string>
+    <string name="item_selection_decrease_quantity">Decrease quantity</string>
+    <string name="item_selection_increase_quantity">Increase quantity</string>
+    <string name="item_selection_variation_hint">Add custom variation...</string>
+    <string name="item_selection_add_variation">Add</string>
+    <string name="item_selection_variation_helper">Creates a new item with this variation</string>
+
+    <!-- Item selection screen -->
+    <string name="item_selection_toolbar_back">Back</string>
+    <string name="item_selection_toolbar_title">Checkout</string>
+    <string name="item_selection_search_icon_description">Search</string>
+    <string name="item_selection_search_hint">Search items...</string>
+    <string name="item_selection_scan_barcode">Scan barcode</string>
+    <string name="item_selection_clear_filters">Clear filters</string>
+
+    <string name="item_selection_empty_icon_description">No items</string>
+    <string name="item_selection_empty_title">No items found</string>
+    <string name="item_selection_empty_subtitle">Add items in Settings → Items</string>
+
+    <string name="item_selection_no_results_icon_description">No results</string>
+    <string name="item_selection_no_results_title">No matching items</string>
+    <string name="item_selection_no_results_subtitle">Try a different search term</string>
+
+    <string name="item_selection_basket_icon_description">Basket</string>
+    <string name="item_selection_basket_title">Basket</string>
+    <string name="item_selection_basket_clear">Clear</string>
+    <string name="item_selection_basket_total_label">Total</string>
+    <string name="item_selection_charge_button">Charge %1$s</string>
+    <string name="item_selection_charge_button_default">Charge $0.00</string>
+
 </resources>

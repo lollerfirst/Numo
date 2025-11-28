@@ -104,7 +104,7 @@ class TipsSettingsActivity : AppCompatActivity() {
         val percentageText = view.findViewById<TextView>(R.id.preset_percentage)
         val deleteButton = view.findViewById<ImageButton>(R.id.delete_button)
         
-        percentageText.text = "$percentage%"
+        percentageText.text = getString(R.string.tip_percentage_format, percentage)
         
         // Make the row clickable to edit
         view.setOnClickListener { showEditPresetDialog(index, percentage) }
@@ -132,7 +132,7 @@ class TipsSettingsActivity : AppCompatActivity() {
     private fun showAddPresetDialog() {
         val input = EditText(this).apply {
             inputType = InputType.TYPE_CLASS_NUMBER
-            hint = "Enter percentage (1-100)"
+            hint = getString(R.string.tips_dialog_add_preset_hint)
             setPadding(
                 (24 * resources.displayMetrics.density).toInt(),
                 (16 * resources.displayMetrics.density).toInt(),
@@ -142,24 +142,24 @@ class TipsSettingsActivity : AppCompatActivity() {
         }
         
         AlertDialog.Builder(this)
-            .setTitle("Add Tip Preset")
+            .setTitle(R.string.tips_dialog_add_preset_title)
             .setView(input)
-            .setPositiveButton("Add") { _, _ ->
+            .setPositiveButton(R.string.tips_dialog_add_preset_positive) { _, _ ->
                 val percentageStr = input.text.toString()
                 val percentage = percentageStr.toIntOrNull()
                 
                 if (percentage == null || percentage !in 1..100) {
-                    Toast.makeText(this, "Please enter a valid percentage (1-100)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.tips_error_invalid_percentage, Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
                 
                 if (tipsManager.addPreset(percentage)) {
                     refreshPresetsList()
                 } else {
-                    Toast.makeText(this, "Could not add preset (may already exist or at max capacity)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.tips_error_could_not_add_preset, Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(R.string.tips_dialog_add_preset_negative, null)
             .show()
     }
     
@@ -177,46 +177,46 @@ class TipsSettingsActivity : AppCompatActivity() {
         }
         
         AlertDialog.Builder(this)
-            .setTitle("Edit Tip Preset")
+            .setTitle(R.string.tips_dialog_edit_preset_title)
             .setView(input)
-            .setPositiveButton("Save") { _, _ ->
+            .setPositiveButton(R.string.tips_dialog_edit_preset_positive) { _, _ ->
                 val percentageStr = input.text.toString()
                 val percentage = percentageStr.toIntOrNull()
                 
                 if (percentage == null || percentage !in 1..100) {
-                    Toast.makeText(this, "Please enter a valid percentage (1-100)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.tips_error_invalid_percentage, Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
                 
                 tipsManager.updatePreset(index, percentage)
                 refreshPresetsList()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(R.string.tips_dialog_add_preset_negative, null)
             .show()
     }
     
     private fun deletePreset(percentage: Int) {
         AlertDialog.Builder(this)
-            .setTitle("Remove Preset")
-            .setMessage("Remove $percentage% from tip presets?")
-            .setPositiveButton("Remove") { _, _ ->
+            .setTitle(R.string.tips_dialog_remove_preset_title)
+            .setMessage(getString(R.string.tips_dialog_remove_preset_message, percentage))
+            .setPositiveButton(R.string.tips_dialog_remove_preset_positive) { _, _ ->
                 tipsManager.removePreset(percentage)
                 refreshPresetsList()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(R.string.tips_dialog_add_preset_negative, null)
             .show()
     }
     
     private fun showResetConfirmation() {
         AlertDialog.Builder(this)
-            .setTitle("Reset to Defaults")
-            .setMessage("Reset tip presets to default values (5%, 10%, 15%, 20%)?")
-            .setPositiveButton("Reset") { _, _ ->
+            .setTitle(R.string.tips_dialog_reset_defaults_title)
+            .setMessage(R.string.tips_dialog_reset_defaults_message)
+            .setPositiveButton(R.string.tips_dialog_reset_defaults_positive) { _, _ ->
                 tipsManager.resetToDefaults()
                 refreshPresetsList()
-                Toast.makeText(this, "Presets reset to defaults", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.tips_toast_reset_to_defaults, Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(R.string.tips_dialog_add_preset_negative, null)
             .show()
     }
 }

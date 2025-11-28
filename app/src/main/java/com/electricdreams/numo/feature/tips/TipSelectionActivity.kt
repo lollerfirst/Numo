@@ -240,7 +240,7 @@ class TipSelectionActivity : AppCompatActivity() {
         val percentageText = button.findViewById<TextView>(R.id.percentage_text)
         val totalText = button.findViewById<TextView>(R.id.total_text)
 
-        percentageText.text = "$percentage%"
+        percentageText.text = getString(R.string.tip_percentage_format, percentage)
         
         // Calculate tip and total
         val tipSats = (paymentAmountSats * percentage) / 100
@@ -263,7 +263,7 @@ class TipSelectionActivity : AppCompatActivity() {
         } else {
             if (bitcoinPrice > 0) {
                 val fiatValue = (totalSats.toDouble() / 100_000_000.0) * bitcoinPrice
-                bitcoinPriceWorker?.formatFiatAmount(fiatValue) ?: "$${String.format("%.2f", fiatValue)}"
+                bitcoinPriceWorker?.formatFiatAmount(fiatValue) ?: "${entryCurrency.symbol}${String.format("%.2f", fiatValue)}"
             } else {
                 Amount(totalSats, Currency.BTC).toString()
             }
@@ -450,10 +450,10 @@ class TipSelectionActivity : AppCompatActivity() {
     private fun updateCustomCurrencyDisplay() {
         if (customInputIsBtc) {
             customCurrencyPrefix.text = "₿"
-            customCurrencyToggle.text = "Switch to ${entryCurrency.symbol}"
+            customCurrencyToggle.text = getString(R.string.tip_selection_custom_currency_switch_to_fiat, entryCurrency.symbol)
         } else {
             customCurrencyPrefix.text = entryCurrency.symbol
-            customCurrencyToggle.text = "Switch to ₿"
+            customCurrencyToggle.text = getString(R.string.tip_selection_custom_currency_switch_to_btc)
         }
     }
 
@@ -602,7 +602,7 @@ class TipSelectionActivity : AppCompatActivity() {
             .alpha(0f)
             .setDuration(150)
             .withEndAction {
-                questionText.text = "Enter tip amount"
+                questionText.text = getString(R.string.tip_selection_custom_question)
                 questionText.animate()
                     .alpha(1f)
                     .setDuration(150)
@@ -645,7 +645,7 @@ class TipSelectionActivity : AppCompatActivity() {
             .alpha(0f)
             .setDuration(150)
             .withEndAction {
-                questionText.text = "Would you like to add a tip?"
+                questionText.text = getString(R.string.tip_selection_question_add_tip)
                 questionText.animate()
                     .alpha(1f)
                     .setDuration(150)
@@ -830,7 +830,7 @@ class TipSelectionActivity : AppCompatActivity() {
                 val totalFiat = (enteredAmountFiat / 100.0) + tipFiat
                 // Format as currency
                 val symbol = entryCurrency.symbol
-                "$symbol${String.format("%.2f", totalFiat)}"
+                "${symbol}${String.format("%.2f", totalFiat)}"
             } else {
                 formattedAmount
             }

@@ -22,7 +22,7 @@
             android:minHeight="48dp"
             android:padding="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back"
+            android:contentDescription="@string/common_back"
             android:src="@drawable/ic_chevron_back"
             android:tint="@color/color_text_primary"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -32,7 +32,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Security &amp; Privacy"
+            android:text="@string/settings_security_title"
             android:textAppearance="@style/Text.Title"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -96,7 +96,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Protect Your Wallet"
+                        android:text="@string/security_settings_card_title"
                         android:textSize="16sp"
                         android:textColor="#111111"
                         android:fontFamily="sans-serif-medium" />
@@ -106,7 +106,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Your seed phrase is the only way to recover your wallet if you lose access to this device. Keep it safe and never share it with anyone."
+                    android:text="@string/security_settings_card_body"
                     android:textSize="14sp"
                     android:textColor="#6F6F73"
                     android:lineSpacingMultiplier="1.3" />
@@ -141,7 +141,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Backup Seed Phrase"
+                        android:text="@string/security_settings_backup_mnemonic_title"
                         android:textSize="17sp"
                         android:textColor="@color/color_text_primary"
                         android:fontFamily="sans-serif-medium" />
@@ -149,7 +149,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="View your 12-word recovery phrase"
+                        android:text="@string/security_settings_backup_mnemonic_subtitle"
                         android:textSize="14sp"
                         android:textColor="@color/color_text_secondary"
                         android:layout_marginTop="2dp" />
@@ -161,6 +161,20 @@
                     android:src="@drawable/ic_chevron_forward"
                     app:tint="@color/color_icon_secondary" />
             </LinearLayout>
+
+            <!-- Wallet Recovery Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="24dp"
+                android:paddingBottom="8dp"
+                android:text="@string/security_settings_section_recovery"
+                android:textSize="13sp"
+                android:textColor="@color/color_text_secondary"
+                android:fontFamily="sans-serif-medium"
+                android:textAllCaps="true"
+                android:letterSpacing="0.05" />
 
             <!-- Restore Wallet Item -->
             <LinearLayout
@@ -190,7 +204,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Restore Wallet"
+                        android:text="@string/security_settings_restore_wallet_title"
                         android:textSize="17sp"
                         android:textColor="@color/color_text_primary"
                         android:fontFamily="sans-serif-medium" />
@@ -198,7 +212,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Recover from seed phrase"
+                        android:text="@string/security_settings_restore_wallet_subtitle"
                         android:textSize="14sp"
                         android:textColor="@color/color_text_secondary"
                         android:layout_marginTop="2dp" />
@@ -221,7 +235,7 @@
                 android:paddingHorizontal="24dp"
                 android:paddingTop="32dp"
                 android:paddingBottom="8dp"
-                android:text="PIN Protection"
+                android:text="@string/security_settings_section_pin_protection"
                 android:textSize="13sp"
                 android:textColor="@color/color_text_secondary"
                 android:fontFamily="sans-serif-medium"
@@ -254,7 +268,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Employee Mode"
+                        android:text="@string/security_settings_pin_info_title"
                         android:textSize="14sp"
                         android:textColor="#388E3C"
                         android:fontFamily="sans-serif-medium" />
@@ -264,7 +278,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Set a PIN to let employees use Numo safely. They can accept payments and manage transactions, but won't be able to withdraw funds, access mints, view your seed phrase, or modify item prices."
+                    android:text="@string/security_settings_pin_info_body"
                     android:textSize="13sp"
                     android:textColor="#6F6F73"
                     android:lineSpacingMultiplier="1.3" />
@@ -300,7 +314,7 @@
                         android:id="@+id/pin_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Set Up PIN"
+                        android:text="@string/security_settings_setup_pin_title"
                         android:textSize="17sp"
                         android:textColor="@color/color_text_primary"
                         android:fontFamily="sans-serif-medium" />
@@ -309,7 +323,7 @@
                         android:id="@+id/pin_subtitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Protect sensitive features"
+                        android:text="@string/security_settings_setup_pin_subtitle"
                         android:textSize="14sp"
                         android:textColor="@color/color_text_secondary"
                         android:layout_marginTop="2dp" />
@@ -351,7 +365,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Change PIN"
+                        android:text="@string/security_settings_change_pin_title"
                         android:textSize="17sp"
                         android:textColor="@color/color_text_primary"
                         android:fontFamily="sans-serif-medium" />
@@ -359,7 +373,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Update your security PIN"
+                        android:text="@string/security_settings_change_pin_subtitle"
                         android:textSize="14sp"
                         android:textColor="@color/color_text_secondary"
                         android:layout_marginTop="2dp" />
@@ -401,7 +415,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Remove PIN"
+                        android:text="@string/security_settings_remove_pin_title"
                         android:textSize="17sp"
                         android:textColor="@color/color_warning_red"
                         android:fontFamily="sans-serif-medium" />
@@ -409,7 +423,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Disable PIN protection"
+                        android:text="@string/security_settings_remove_pin_subtitle"
                         android:textSize="14sp"
                         android:textColor="@color/color_text_secondary"
                         android:layout_marginTop="2dp" />

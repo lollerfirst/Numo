@@ -31,7 +31,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Numo"
-        tools:targetApi="31">
+        android:localeConfig="@xml/locales_config"
+        tools:targetApi="33">
         <!-- Onboarding Activity - First Launch -->
         <activity
             android:name="com.electricdreams.numo.feature.onboarding.OnboardingActivity"
@@ -127,7 +128,7 @@
         
         <activity android:name="com.electricdreams.numo.feature.history.PaymentsHistoryActivity"
             android:exported="false"
-            android:label="Payments History"
+            android:label="@string/history_toolbar_title"
             android:theme="@style/Theme.Numo"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:parentActivityName=".ModernPOSActivity">
@@ -138,7 +139,7 @@
         
         <activity android:name="com.electricdreams.numo.feature.history.TransactionDetailActivity"
             android:exported="false"
-            android:label="Transaction Details"
+            android:label="@string/transaction_detail_toolbar_title"
             android:theme="@style/Theme.Numo"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:parentActivityName=".feature.history.PaymentsHistoryActivity">
@@ -149,7 +150,7 @@
         
         <activity android:name="com.electricdreams.numo.feature.history.BasketReceiptActivity"
             android:exported="false"
-            android:label="Receipt"
+            android:label="@string/basket_receipt_title"
             android:theme="@style/Theme.Numo"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:parentActivityName=".feature.history.TransactionDetailActivity">
@@ -160,7 +161,7 @@
         
         <activity android:name="com.electricdreams.numo.feature.settings.SettingsActivity"
             android:exported="false"
-            android:label="Settings"
+            android:label="@string/settings_title"
             android:theme="@style/Theme.Numo"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:parentActivityName=".ModernPOSActivity">
@@ -171,7 +172,7 @@
         
         <activity android:name="com.electricdreams.numo.feature.settings.ThemeSettingsActivity"
             android:exported="false"
-            android:label="Theme"
+            android:label="@string/settings_theme_title"
             android:theme="@style/Theme.Numo"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:parentActivityName=".feature.settings.SettingsActivity">
@@ -182,7 +183,7 @@
         
         <activity android:name="com.electricdreams.numo.feature.settings.CurrencySettingsActivity"
             android:exported="false"
-            android:label="Fiat Currency"
+            android:label="@string/settings_currency_title"
             android:theme="@style/Theme.Numo"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:parentActivityName=".feature.settings.SettingsActivity">
@@ -193,7 +194,7 @@
         
         <activity android:name="com.electricdreams.numo.feature.settings.MintsSettingsActivity"
             android:exported="false"
-            android:label="Mints"
+            android:label="@string/settings_mints_title"
             android:theme="@style/Theme.Numo"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:parentActivityName=".feature.settings.SettingsActivity">
@@ -201,12 +202,20 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".feature.settings.SettingsActivity" />
         </activity>
-        
-
-        
         <activity android:name="com.electricdreams.numo.feature.settings.SecuritySettingsActivity"
             android:exported="false"
-            android:label="Security &amp; Privacy"
+            android:label="@string/settings_security_title"
+            android:theme="@style/Theme.Numo"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:parentActivityName=".feature.settings.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".feature.settings.SettingsActivity" />
+        </activity>
+
+        <activity android:name="com.electricdreams.numo.feature.settings.LanguageSettingsActivity"
+            android:exported="false"
+            android:label="@string/language_settings_title"
             android:theme="@style/Theme.Numo"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:parentActivityName=".feature.settings.SettingsActivity">
@@ -257,7 +266,7 @@
         
         <activity android:name="com.electricdreams.numo.feature.settings.DeveloperSettingsActivity"
             android:exported="false"
-            android:label="Developer Settings"
+            android:label="@string/developer_settings_title"
             android:theme="@style/Theme.Numo"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:parentActivityName=".feature.settings.SettingsActivity">
@@ -268,7 +277,7 @@
         
         <activity android:name="com.electricdreams.numo.feature.settings.SeedPhraseActivity"
             android:exported="false"
-            android:label="Seed Phrase"
+            android:label="@string/seed_phrase_toolbar_title"
             android:theme="@style/Theme.Numo"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:parentActivityName=".feature.settings.SecuritySettingsActivity">
@@ -279,7 +288,7 @@
         
         <activity android:name="com.electricdreams.numo.feature.settings.RestoreWalletActivity"
             android:exported="false"
-            android:label="Restore Wallet"
+            android:label="@string/restore_progress_title"
             android:theme="@style/Theme.Numo"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:parentActivityName=".feature.settings.SecuritySettingsActivity">
@@ -337,7 +346,7 @@
         
         <activity android:name="com.electricdreams.numo.feature.items.BarcodeScannerActivity"
             android:exported="false"
-            android:label="Scan Barcode"
+            android:label="@string/barcode_scanner_title"
             android:theme="@style/Theme.Numo.Fullscreen"
             android:screenOrientation="portrait"
             android:parentActivityName=".feature.items.ItemEntryActivity">
@@ -392,7 +401,7 @@
         
         <activity android:name="com.electricdreams.numo.feature.items.CheckoutScannerActivity"
             android:exported="false"
-            android:label="Scan Items"
+            android:label="@string/checkout_scanner_title"
             android:theme="@style/Theme.Numo.Fullscreen"
             android:screenOrientation="portrait"
             android:parentActivityName=".feature.items.ItemSelectionActivity">

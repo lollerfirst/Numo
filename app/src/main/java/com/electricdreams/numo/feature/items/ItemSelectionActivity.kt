@@ -243,14 +243,14 @@ class ItemSelectionActivity : AppCompatActivity() {
 
     private fun showClearBasketDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Clear Basket")
-            .setMessage("Remove all items from basket?")
-            .setPositiveButton("Clear") { _, _ ->
+            .setTitle(R.string.item_selection_dialog_clear_basket_title)
+            .setMessage(R.string.item_selection_dialog_clear_basket_message)
+            .setPositiveButton(R.string.item_selection_dialog_clear_basket_positive) { _, _ ->
                 basketManager.clearBasket()
                 itemsAdapter.clearAllQuantities()
                 refreshBasket()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(R.string.common_cancel, null)
             .show()
     }
 

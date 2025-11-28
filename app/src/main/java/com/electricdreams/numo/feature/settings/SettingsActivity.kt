@@ -95,6 +95,12 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent(this, ThemeSettingsActivity::class.java))
         }
 
+        // Language settings (look up by name to avoid compile-time dependency if R is stale)
+        val languageItemId = resources.getIdentifier("language_settings_item", "id", packageName)
+        findViewById<View?>(languageItemId)?.setOnClickListener {
+            startActivity(Intent(this, LanguageSettingsActivity::class.java))
+        }
+
         // === About Section ===
 
         findViewById<View>(R.id.about_item).setOnClickListener {
@@ -113,8 +119,8 @@ class SettingsActivity : AppCompatActivity() {
             // Need PIN verification
             pendingDestination = destination
             val intent = Intent(this, PinEntryActivity::class.java).apply {
-                putExtra(PinEntryActivity.EXTRA_TITLE, "Enter PIN")
-                putExtra(PinEntryActivity.EXTRA_SUBTITLE, "Verify to access settings")
+                putExtra(PinEntryActivity.EXTRA_TITLE, getString(R.string.dialog_title_enter_pin))
+                putExtra(PinEntryActivity.EXTRA_SUBTITLE, getString(R.string.settings_verify_pin_subtitle))
             }
             startActivityForResult(intent, REQUEST_PIN_VERIFY)
         } else {

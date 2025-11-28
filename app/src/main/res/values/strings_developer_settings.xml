@@ -1,0 +1,8 @@
+<resources>
+    <!-- Developer settings: restart onboarding dialog -->
+    <string name="developer_settings_restart_dialog_title">Restart Onboarding</string>
+    <string name="developer_settings_restart_dialog_message">
+        This will clear your onboarding completion status and take you back to the welcome screen. Are you sure you want to continue?
+    </string>
+    <string name="developer_settings_restart_dialog_positive">Restart</string>
+</resources>

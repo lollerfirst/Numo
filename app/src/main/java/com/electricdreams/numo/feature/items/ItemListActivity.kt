@@ -135,15 +135,15 @@ class ItemListActivity : AppCompatActivity() {
 
     private fun showClearAllDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Clear All Items")
-            .setMessage("Are you sure you want to delete ALL items from your catalog? This cannot be undone.")
-            .setPositiveButton("Delete All") { _, _ ->
+            .setTitle(R.string.item_list_dialog_clear_all_title)
+            .setMessage(R.string.item_list_dialog_clear_all_message)
+            .setPositiveButton(R.string.item_list_dialog_clear_all_positive) { _, _ ->
                 itemManager.clearItems()
                 refreshItems()
                 setResult(Activity.RESULT_OK)
-                Toast.makeText(this, "All items cleared", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.item_list_toast_all_items_cleared), Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(R.string.common_cancel, null)
             .show()
     }
 
@@ -156,22 +156,22 @@ class ItemListActivity : AppCompatActivity() {
                     copyStream(inputStream, outputStream)
                 }
             } ?: run {
-                Toast.makeText(this, "Failed to open CSV file", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.item_list_toast_failed_open_csv), Toast.LENGTH_SHORT).show()
                 return
             }
 
             val importedCount = itemManager.importItemsFromCsv(tempFile.absolutePath, true)
 
             if (importedCount > 0) {
-                Toast.makeText(this, "Imported $importedCount items", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.item_list_toast_imported_items, importedCount), Toast.LENGTH_SHORT).show()
                 refreshItems()
                 setResult(Activity.RESULT_OK)
             } else {
-                Toast.makeText(this, "No items imported from CSV", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.item_list_toast_no_items_imported), Toast.LENGTH_SHORT).show()
             }
         } catch (e: IOException) {
             Log.e(TAG, "Error importing CSV file: ${e.message}", e)
-            Toast.makeText(this, "Error importing CSV file: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.item_list_toast_error_importing_csv, e.message), Toast.LENGTH_SHORT).show()
         }
     }
 

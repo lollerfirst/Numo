@@ -24,9 +24,9 @@ class DeveloperSettingsActivity : AppCompatActivity() {
 
     private fun showRestartOnboardingDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Restart Onboarding")
-            .setMessage("This will clear your onboarding completion status and take you back to the welcome screen. Are you sure you want to continue?")
-            .setPositiveButton("Restart") { _, _ ->
+            .setTitle(R.string.developer_settings_restart_dialog_title)
+            .setMessage(R.string.developer_settings_restart_dialog_message)
+            .setPositiveButton(R.string.developer_settings_restart_dialog_positive) { _, _ ->
                 // Clear onboarding completion status
                 OnboardingActivity.setOnboardingComplete(this, false)
                 
@@ -36,7 +36,7 @@ class DeveloperSettingsActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(R.string.common_cancel, null)
             .show()
     }
 }

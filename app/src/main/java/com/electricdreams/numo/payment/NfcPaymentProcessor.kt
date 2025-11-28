@@ -34,13 +34,21 @@ class NfcPaymentProcessor(
     /** Handle NFC tag for payment */
     fun handleNfcPayment(tag: Tag, requestedAmount: Long) {
         if (requestedAmount <= 0) {
-            Toast.makeText(activity, "Please enter an amount first", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                activity,
+                activity.getString(R.string.nfc_payment_error_enter_amount_first),
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
         
         if (waitingForRescan && savedPin != null) {
             // TODO: Re-implement full PIN-based rescan flow
-            Toast.makeText(activity, "PIN-based rescan not supported in this build", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                activity,
+                activity.getString(R.string.nfc_payment_error_rescan_not_supported),
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
         
@@ -60,7 +68,9 @@ class NfcPaymentProcessor(
                     return@Thread
                 } catch (e: RuntimeException) {
                     if (e.message?.contains("not enough funds") == true) {
-                        onPaymentError("Insufficient funds on card")
+                        onPaymentError(
+                            activity.getString(R.string.nfc_payment_error_insufficient_funds)
+                        )
                         return@Thread
                     }
                     
@@ -69,20 +79,42 @@ class NfcPaymentProcessor(
                         val statusWord = cause.sw
                         if (statusWord == SW.UNAUTHORIZED) {
                             // TODO: Restore PIN entry + rescan UX
-                            onPaymentError("PIN-required flow not implemented in this build")
+                            onPaymentError(
+                                activity.getString(R.string.nfc_payment_error_pin_flow_not_implemented)
+                            )
                         } else {
-                            onPaymentError("Card Error: (SW: 0x%04X)".format(statusWord))
+                            onPaymentError(
+                                activity.getString(
+                                    R.string.nfc_payment_error_card_sw,
+                                    statusWord
+                                )
+                            )
                         }
                     } else {
-                        onPaymentError("Payment failed: ${e.message}")
+                        onPaymentError(
+                            activity.getString(
+                                R.string.nfc_payment_error_generic,
+                                e.message ?: ""
+                            )
+                        )
                     }
                 }
             } catch (e: java.io.IOException) {
-                onPaymentError("NFC Communication Error: ${e.message}")
+                onPaymentError(
+                    activity.getString(R.string.nfc_payment_error_nfc_comm, e.message ?: "")
+                )
             } catch (e: SatocashNfcClient.SatocashException) {
-                onPaymentError("Satocash Card Error: ${e.message} (SW: 0x%04X)".format(e.sw))
+                onPaymentError(
+                    activity.getString(
+                        R.string.nfc_payment_error_satocash,
+                        e.message ?: "",
+                        e.sw
+                    )
+                )
             } catch (e: Exception) {
-                onPaymentError("An unexpected error occurred: ${e.message}")
+                onPaymentError(
+                    activity.getString(R.string.nfc_payment_error_unexpected, e.message ?: "")
+                )
             } finally {
                 try {
                     satocashClient?.close()
@@ -133,7 +165,7 @@ class NfcPaymentProcessor(
     fun showPinDialog(callback: (String?) -> Unit) {
         android.os.Handler(android.os.Looper.getMainLooper()).post {
             val builder = AlertDialog.Builder(activity)
-            builder.setTitle("Enter PIN")
+            builder.setTitle(R.string.dialog_title_enter_pin)
             
             val layout = LinearLayout(activity).apply {
                 orientation = LinearLayout.VERTICAL
@@ -145,7 +177,7 @@ class NfcPaymentProcessor(
             
             val input = EditText(activity).apply {
                 inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
-                hint = "PIN"
+                hint = activity.getString(R.string.dialog_pin_hint)
             }
             layout.addView(input)
             
@@ -235,14 +267,14 @@ class NfcPaymentProcessor(
             }
             
             val cancelButton = Button(activity).apply {
-                text = "Cancel"
+                text = activity.getString(R.string.common_cancel)
                 layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { 
                     rightMargin = (8 * activity.resources.displayMetrics.density).toInt() 
                 }
             }
-            
+
             val okButton = Button(activity).apply {
-                text = "OK"
+                text = activity.getString(R.string.common_ok)
                 layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f).apply { 
                     leftMargin = (8 * activity.resources.displayMetrics.density).toInt() 
                 }

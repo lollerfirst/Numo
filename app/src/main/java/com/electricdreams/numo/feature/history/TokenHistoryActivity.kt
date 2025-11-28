@@ -32,7 +32,7 @@ class TokenHistoryActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
-            title = "Token History"
+            title = getString(R.string.token_history_toolbar_title)
         }
 
         val recyclerView: RecyclerView = findViewById(R.id.history_recycler_view)
@@ -41,10 +41,10 @@ class TokenHistoryActivity : AppCompatActivity() {
         adapter = TokenHistoryAdapter().apply {
             setOnDeleteClickListener { entry, position ->
                 AlertDialog.Builder(this@TokenHistoryActivity)
-                    .setTitle("Delete Token")
-                    .setMessage("Are you sure you want to delete this token from history?")
-                    .setPositiveButton("Delete") { _, _ -> deleteTokenFromHistory(position) }
-                    .setNegativeButton("Cancel", null)
+                    .setTitle(R.string.token_history_dialog_delete_title)
+                    .setMessage(R.string.token_history_dialog_delete_message)
+                    .setPositiveButton(R.string.token_history_dialog_delete_positive) { _, _ -> deleteTokenFromHistory(position) }
+                    .setNegativeButton(R.string.common_cancel, null)
                     .show()
             }
         }
@@ -72,10 +72,10 @@ class TokenHistoryActivity : AppCompatActivity() {
 
     private fun showClearHistoryConfirmation() {
         AlertDialog.Builder(this)
-            .setTitle("Clear History")
-            .setMessage("Are you sure you want to clear all token history? This action cannot be undone.")
-            .setPositiveButton("Clear All") { _, _ -> clearAllHistory() }
-            .setNegativeButton("Cancel", null)
+            .setTitle(R.string.token_history_dialog_clear_title)
+            .setMessage(R.string.token_history_dialog_clear_message)
+            .setPositiveButton(R.string.token_history_dialog_clear_positive) { _, _ -> clearAllHistory() }
+            .setNegativeButton(R.string.common_cancel, null)
             .show()
     }
 
