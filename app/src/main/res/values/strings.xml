@@ -784,4 +784,8 @@
     <string name="mint_details_fetch_error">Unable to fetch mint info</string>
     <string name="common_retry">Retry</string>
 
+    <string name="mint_details_software_value">Software: %1$s</string>
+    <string name="mint_details_version_value">Version: %1$s</string>
+    <string name="mint_details_software_unknown">Software: Unknown</string>
+    <string name="mint_details_version_unknown">Version: Unknown</string>
 </resources>

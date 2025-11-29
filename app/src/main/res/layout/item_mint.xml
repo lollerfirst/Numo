@@ -22,13 +22,16 @@
             android:id="@+id/mint_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@color/color_bg_surface"
+            android:layout_marginEnd="0dp"
             android:contentDescription="Mint icon"
+            android:importantForAccessibility="no"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_bitcoin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Circle" />
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Circle"
+            app:strokeColor="@color/color_bg_white"
+            app:strokeWidth="1dp" />
 
         <!-- Content container - all text aligned to right of icon -->
         <LinearLayout

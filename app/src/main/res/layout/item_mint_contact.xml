@@ -13,8 +13,7 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginEnd="12dp"
-        android:src="@drawable/ic_email"
-        app:tint="@color/color_text_tertiary" />
+        android:src="@drawable/ic_contact_email" />
 
     <!-- Method -->
     <TextView
@@ -22,9 +21,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Email"
-        android:textSize="15sp"
+        android:textSize="13sp"
         android:textColor="@color/color_text_secondary"
-        android:layout_marginEnd="12dp" />
+        android:layout_marginEnd="12dp"
+        android:textAllCaps="true"
+        android:letterSpacing="0.05" />
 
     <!-- Info (takes remaining space) -->
     <TextView
@@ -36,8 +37,7 @@
         android:textSize="15sp"
         android:textColor="@color/color_text_primary"
         android:maxLines="1"
-        android:ellipsize="end"
-        android:textAlignment="textEnd" />
+        android:ellipsize="end" />
 
     <!-- Copy Button -->
     <ImageView

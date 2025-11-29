@@ -19,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.electricdreams.numo.R
 import com.electricdreams.numo.core.cashu.CashuWalletManager
@@ -56,7 +57,7 @@ class MintDetailsActivity : AppCompatActivity() {
     private lateinit var errorText: TextView
     private lateinit var errorRetryButton: ImageButton
     private lateinit var iconContainer: FrameLayout
-    private lateinit var mintIcon: ImageView
+    private lateinit var mintIcon: com.google.android.material.imageview.ShapeableImageView
     private lateinit var mintName: TextView
     private lateinit var mintUrlText: TextView
     private lateinit var balanceText: TextView
@@ -73,7 +74,10 @@ class MintDetailsActivity : AppCompatActivity() {
     private lateinit var urlRow: View
     private lateinit var urlValue: TextView
     private lateinit var versionRow: View
-    private lateinit var versionValue: TextView
+    private lateinit var versionSoftware: TextView
+    private lateinit var versionNumber: TextView
+    private lateinit var contactSection: LinearLayout
+    private lateinit var contactContainer: LinearLayout
     
     // Actions
     private lateinit var setLightningButton: LinearLayout
@@ -87,6 +91,12 @@ class MintDetailsActivity : AppCompatActivity() {
     private var isLightningMint: Boolean = false
     private var hasFetchError: Boolean = false
 
+    private val contactMethods = listOf(
+        "nostr" to R.drawable.ic_contact_nostr,
+        "telegram" to R.drawable.ic_contact_telegram,
+        "twitter" to R.drawable.ic_contact_twitter,
+        "email" to R.drawable.ic_contact_email
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mint_details)
@@ -127,7 +137,10 @@ class MintDetailsActivity : AppCompatActivity() {
         urlRow = findViewById(R.id.url_row)
         urlValue = findViewById(R.id.url_value)
         versionRow = findViewById(R.id.version_row)
-        versionValue = findViewById(R.id.version_value)
+        versionSoftware = findViewById(R.id.version_software)
+        versionNumber = findViewById(R.id.version_number)
+        contactSection = findViewById(R.id.contact_section)
+        contactContainer = findViewById(R.id.contact_container)
         
         setLightningButton = findViewById(R.id.set_lightning_button)
         actionDivider1 = findViewById(R.id.action_divider_1)
@@ -245,29 +258,27 @@ class MintDetailsActivity : AppCompatActivity() {
                     displayCachedMintInfo(info)
                 }
             } catch (e: Exception) {
-                Log.w(TAG, "Failed to parse cached mint info: ${e.message}")
+                Log.w(TAG, "Failed to parse cached mint info: ${'$'}{e.message}")
             }
         }
     }
 
     private fun displayCachedMintInfo(info: CashuWalletManager.CachedMintInfo) {
-        // Description
         val descriptionValue = info.descriptionLong ?: info.description
         if (!descriptionValue.isNullOrBlank()) {
             descriptionSection.visibility = View.VISIBLE
             descriptionText.text = descriptionValue
         }
-        
-        // MOTD
+
         if (!info.motd.isNullOrBlank()) {
             motdSection.visibility = View.VISIBLE
             motdText.text = info.motd
         }
-        
-        // Version
+
         if (!info.version.isNullOrBlank()) {
             versionRow.visibility = View.VISIBLE
-            versionValue.text = info.version
+            versionSoftware.text = info.version
+            versionNumber.visibility = View.GONE
         }
     }
 
@@ -309,48 +320,58 @@ class MintDetailsActivity : AppCompatActivity() {
         }
     }
 
+
     private fun displayMintInfo(info: MintInfo) {
         // Description
         val descriptionValue = info.descriptionLong ?: info.description
         if (!descriptionValue.isNullOrBlank()) {
-            descriptionSection.visibility = View.VISIBLE
-            descriptionText.text = descriptionValue
-            
-            // Animate in if newly visible
-            descriptionSection.alpha = 0f
-            descriptionSection.animate()
-                .alpha(1f)
-                .setDuration(200)
-                .start()
+            if (!descriptionSection.isVisible || descriptionText.text.toString() != descriptionValue) {
+                descriptionSection.visibility = View.VISIBLE
+                descriptionText.text = descriptionValue
+                animateContentChange(descriptionSection)
+            }
         } else {
             descriptionSection.visibility = View.GONE
         }
-        
+
         // MOTD (Message of the Day)
         if (!info.motd.isNullOrBlank()) {
-            motdSection.visibility = View.VISIBLE
-            motdText.text = info.motd
-            
-            motdSection.alpha = 0f
-            motdSection.animate()
-                .alpha(1f)
-                .setDuration(200)
-                .setStartDelay(50)
-                .start()
+            if (!motdSection.isVisible || motdText.text.toString() != info.motd) {
+                motdSection.visibility = View.VISIBLE
+                motdText.text = info.motd
+                animateContentChange(motdSection, startDelay = 50)
+            }
         } else {
             motdSection.visibility = View.GONE
         }
         
         // Version
-        val versionString = info.version?.toString()
-        if (!versionString.isNullOrBlank()) {
+        val versionName = info.version?.name
+        val versionNumberValue = info.version?.version
+
+        if (!versionName.isNullOrBlank() || !versionNumberValue.isNullOrBlank()) {
             versionRow.visibility = View.VISIBLE
-            versionValue.text = versionString
+            versionSoftware.text = versionName?.let { getString(R.string.mint_details_software_value, it) }
+                ?: getString(R.string.mint_details_software_unknown)
+            versionNumber.text = versionNumberValue?.let { getString(R.string.mint_details_version_value, it) }
+                ?: getString(R.string.mint_details_version_unknown)
         } else {
             versionRow.visibility = View.GONE
         }
     }
 
+
+    private fun animateContentChange(target: View, startDelay: Long = 0, duration: Long = 250) {
+        target.alpha = 0f
+        target.translationY = 10f
+        target.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setStartDelay(startDelay)
+            .setDuration(duration)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
+    }
     private fun showError() {
         hasFetchError = true
         errorBanner.visibility = View.VISIBLE
@@ -363,6 +384,7 @@ class MintDetailsActivity : AppCompatActivity() {
             .setInterpolator(DecelerateInterpolator())
             .start()
     }
+
 
     private fun hideError() {
         if (hasFetchError) {
