@@ -119,4 +119,7 @@ dependencies {
     
     // Flexbox layout for tag-based category selection
     implementation("com.google.android.flexbox:flexbox:3.0.0")
+
+    // Memory leak detection (debug builds only)
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
 }
