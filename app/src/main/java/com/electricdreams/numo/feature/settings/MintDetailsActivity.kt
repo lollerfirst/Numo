@@ -73,9 +73,12 @@ class MintDetailsActivity : AppCompatActivity() {
     private lateinit var detailsSection: LinearLayout
     private lateinit var urlRow: View
     private lateinit var urlValue: TextView
+    private lateinit var urlDivider: View
+    private lateinit var softwareRow: View
+    private lateinit var softwareValue: TextView
+    private lateinit var softwareDivider: View
     private lateinit var versionRow: View
-    private lateinit var versionSoftware: TextView
-    private lateinit var versionNumber: TextView
+    private lateinit var versionValue: TextView
     private lateinit var contactSection: LinearLayout
     private lateinit var contactContainer: LinearLayout
     
@@ -136,9 +139,12 @@ class MintDetailsActivity : AppCompatActivity() {
         detailsSection = findViewById(R.id.details_section)
         urlRow = findViewById(R.id.url_row)
         urlValue = findViewById(R.id.url_value)
+        urlDivider = findViewById(R.id.url_divider)
+        softwareRow = findViewById(R.id.software_row)
+        softwareValue = findViewById(R.id.software_value)
+        softwareDivider = findViewById(R.id.software_divider)
         versionRow = findViewById(R.id.version_row)
-        versionSoftware = findViewById(R.id.version_software)
-        versionNumber = findViewById(R.id.version_number)
+        versionValue = findViewById(R.id.version_value)
         contactSection = findViewById(R.id.contact_section)
         contactContainer = findViewById(R.id.contact_container)
         
@@ -275,22 +281,27 @@ class MintDetailsActivity : AppCompatActivity() {
             motdText.text = info.motd
         }
 
-        // Version from cached structured data
+        // Version from cached structured data - show as separate rows
         val versionInfo = info.versionInfo
-        if (versionInfo != null && (!versionInfo.name.isNullOrBlank() || !versionInfo.version.isNullOrBlank())) {
+        val hasSoftware = !versionInfo?.name.isNullOrBlank()
+        val hasVersion = !versionInfo?.version.isNullOrBlank()
+        
+        if (hasSoftware) {
+            softwareRow.visibility = View.VISIBLE
+            softwareDivider.visibility = View.VISIBLE
+            softwareValue.text = versionInfo?.name
+        } else {
+            softwareRow.visibility = View.GONE
+            softwareDivider.visibility = View.GONE
+        }
+        
+        if (hasVersion) {
             versionRow.visibility = View.VISIBLE
-            if (!versionInfo.name.isNullOrBlank()) {
-                versionSoftware.visibility = View.VISIBLE
-                versionSoftware.text = getString(R.string.mint_details_software_value, versionInfo.name)
-            } else {
-                versionSoftware.visibility = View.GONE
-            }
-            if (!versionInfo.version.isNullOrBlank()) {
-                versionNumber.visibility = View.VISIBLE
-                versionNumber.text = getString(R.string.mint_details_version_value, versionInfo.version)
-            } else {
-                versionNumber.visibility = View.GONE
-            }
+            versionValue.text = versionInfo?.version
+            // Only show URL divider if no software row above
+            urlDivider.visibility = if (hasSoftware) View.VISIBLE else View.VISIBLE
+        } else {
+            versionRow.visibility = View.GONE
         }
         
         // Contact info from cached data
@@ -416,23 +427,29 @@ class MintDetailsActivity : AppCompatActivity() {
             motdSection.visibility = View.GONE
         }
         
-        // Version
+        // Version - show as separate rows
         val versionName = info.version?.name
-        val versionNumberValue = info.version?.version
-
-        if (!versionName.isNullOrBlank() || !versionNumberValue.isNullOrBlank()) {
-            versionRow.visibility = View.VISIBLE
-            if (!versionName.isNullOrBlank()) {
-                versionSoftware.visibility = View.VISIBLE
-                versionSoftware.text = getString(R.string.mint_details_software_value, versionName)
-            } else {
-                versionSoftware.visibility = View.GONE
+        val versionNumberVal = info.version?.version
+        val hasSoftware = !versionName.isNullOrBlank()
+        val hasVersion = !versionNumberVal.isNullOrBlank()
+        
+        if (hasSoftware) {
+            val newSoftwareValue = versionName!!
+            if (!softwareRow.isVisible || softwareValue.text.toString() != newSoftwareValue) {
+                softwareRow.visibility = View.VISIBLE
+                softwareDivider.visibility = View.VISIBLE
+                softwareValue.text = newSoftwareValue
             }
-            if (!versionNumberValue.isNullOrBlank()) {
-                versionNumber.visibility = View.VISIBLE
-                versionNumber.text = getString(R.string.mint_details_version_value, versionNumberValue)
-            } else {
-                versionNumber.visibility = View.GONE
+        } else {
+            softwareRow.visibility = View.GONE
+            softwareDivider.visibility = View.GONE
+        }
+        
+        if (hasVersion) {
+            val newVersionValue = versionNumberVal!!
+            if (!versionRow.isVisible || versionValue.text.toString() != newVersionValue) {
+                versionRow.visibility = View.VISIBLE
+                versionValue.text = newVersionValue
             }
         } else {
             versionRow.visibility = View.GONE

@@ -775,6 +775,7 @@
     <string name="mint_details_details">Details</string>
     <string name="mint_details_actions">Actions</string>
     <string name="mint_details_url">URL</string>
+    <string name="mint_details_software">Software</string>
     <string name="mint_details_version">Version</string>
     <string name="mint_details_features">Features</string>
     <string name="mint_details_copy_url">Copy Mint URL</string>
