@@ -9,10 +9,10 @@
 
     <!-- Auto-Withdraw Progress Indicator -->
     <include
-        android:id="@+id/auto_withdraw_progress"
         layout="@layout/auto_withdraw_progress_indicator"
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:id="@+id/auto_withdraw_progress"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Top Navigation Bar -->

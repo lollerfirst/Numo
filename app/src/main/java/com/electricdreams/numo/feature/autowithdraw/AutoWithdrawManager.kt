@@ -97,46 +97,110 @@ class AutoWithdrawManager private constructor(private val context: Context) {
     fun isWithdrawing(): Boolean = isWithdrawInProgress
 
     /**
+     * Called after a successful payment to check if auto-withdrawal should be triggered.
+     * This is the main entry point for triggering auto-withdrawals from payment flows.
+     * 
+     * @param token The Cashu token received (can be empty for Lightning payments)
+     * @param lightningMintUrl The mint URL for Lightning payments (used when token is empty)
+     */
+    suspend fun onPaymentReceived(token: String, lightningMintUrl: String?) {
+        // Determine the mint URL
+        val mintUrl: String? = if (token.isNotEmpty()) {
+            try {
+                com.cashujdk.nut00.Token.decode(token).mint
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not extract mint URL from token: ${e.message}")
+                null
+            }
+        } else {
+            lightningMintUrl
+        }
+        
+        Log.d(TAG, "💰 Payment received, checking for auto-withdrawal. mintUrl=$mintUrl")
+        
+        if (mintUrl != null) {
+            try {
+                checkAndTriggerWithdrawals(mintUrl)
+                Log.d(TAG, "✅ Auto-withdrawal check completed")
+            } catch (e: Exception) {
+                Log.e(TAG, "❌ Error checking auto-withdrawals", e)
+            }
+        } else {
+            Log.w(TAG, "⚠️ No mint URL available, skipping auto-withdrawal check")
+        }
+    }
+
+    /**
      * Check all mints and trigger withdrawals if needed.
      * Called after a payment is received.
      * 
      * @param paymentMintUrl Optional: the mint that just received payment (checked first)
      */
     suspend fun checkAndTriggerWithdrawals(paymentMintUrl: String? = null) {
+        Log.d(TAG, "=== checkAndTriggerWithdrawals START ===")
+        Log.d(TAG, "paymentMintUrl: $paymentMintUrl")
+        
         if (isWithdrawInProgress) {
             Log.d(TAG, "Withdrawal already in progress, skipping check")
             return
         }
 
         if (!settingsManager.isGloballyEnabled()) {
-            Log.d(TAG, "Auto-withdraw is globally disabled")
+            Log.d(TAG, "Auto-withdraw is globally disabled, skipping")
             return
         }
+        
+        Log.d(TAG, "Auto-withdraw is globally enabled, checking balances...")
 
         try {
             // Get all mint balances
             val balances = CashuWalletManager.getAllMintBalances()
+            Log.d(TAG, "Retrieved ${balances.size} mint balances: $balances")
+            
+            if (balances.isEmpty()) {
+                Log.w(TAG, "No mint balances found!")
+                return
+            }
             
             // Check payment mint first if specified
-            if (paymentMintUrl != null && balances.containsKey(paymentMintUrl)) {
-                val balance = balances[paymentMintUrl] ?: 0L
-                if (settingsManager.shouldTriggerWithdrawal(paymentMintUrl, balance)) {
-                    executeWithdrawal(paymentMintUrl, balance)
-                    return // Only process one withdrawal at a time
+            if (paymentMintUrl != null) {
+                Log.d(TAG, "Checking payment mint first: $paymentMintUrl")
+                if (balances.containsKey(paymentMintUrl)) {
+                    val balance = balances[paymentMintUrl] ?: 0L
+                    Log.d(TAG, "Payment mint balance: $balance sats")
+                    if (settingsManager.shouldTriggerWithdrawal(paymentMintUrl, balance)) {
+                        Log.d(TAG, ">>> Triggering withdrawal for payment mint!")
+                        executeWithdrawal(paymentMintUrl, balance)
+                        return // Only process one withdrawal at a time
+                    } else {
+                        Log.d(TAG, "Payment mint did not trigger withdrawal")
+                    }
+                } else {
+                    Log.w(TAG, "Payment mint URL not found in balances! Available mints: ${balances.keys}")
                 }
             }
 
             // Check other mints
+            Log.d(TAG, "Checking other mints...")
             for ((mintUrl, balance) in balances) {
-                if (mintUrl == paymentMintUrl) continue // Already checked
+                if (mintUrl == paymentMintUrl) {
+                    Log.d(TAG, "Skipping $mintUrl (already checked as payment mint)")
+                    continue
+                }
+                Log.d(TAG, "Checking mint: $mintUrl with balance: $balance")
                 if (settingsManager.shouldTriggerWithdrawal(mintUrl, balance)) {
+                    Log.d(TAG, ">>> Triggering withdrawal for mint: $mintUrl")
                     executeWithdrawal(mintUrl, balance)
                     return // Only process one withdrawal at a time
                 }
             }
+            
+            Log.d(TAG, "No withdrawals triggered for any mint")
         } catch (e: Exception) {
             Log.e(TAG, "Error checking balances for auto-withdraw", e)
         }
+        
+        Log.d(TAG, "=== checkAndTriggerWithdrawals END ===")
     }
 
     /**

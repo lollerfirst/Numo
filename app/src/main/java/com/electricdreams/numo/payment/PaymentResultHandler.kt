@@ -54,15 +54,9 @@ class PaymentResultHandler(
         )
         
         // Check for auto-withdrawal after successful payment
-        if (mintUrl != null) {
-            activity.lifecycleScope.launch {
-                try {
-                    val autoWithdrawManager = AutoWithdrawManager.getInstance(activity)
-                    autoWithdrawManager.checkAndTriggerWithdrawals(mintUrl)
-                } catch (e: Exception) {
-                    android.util.Log.e("PaymentResultHandler", "Error checking auto-withdrawals", e)
-                }
-            }
+        activity.lifecycleScope.launch {
+            AutoWithdrawManager.getInstance(activity)
+                .onPaymentReceived(token, mintUrl)
         }
         
         // Delegate to callback for unified success handling (feedback + screen)

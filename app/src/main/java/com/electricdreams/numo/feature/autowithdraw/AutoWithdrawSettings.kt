@@ -147,20 +147,45 @@ class AutoWithdrawSettingsManager private constructor(private val context: Conte
 
     /**
      * Check if auto-withdraw is enabled for a specific mint.
+     * 
+     * When globally enabled, all mints are eligible for auto-withdraw unless
+     * explicitly disabled per-mint. The per-mint settings are used for custom
+     * thresholds/percentages, but the default behavior uses global defaults.
      */
     fun isEnabledForMint(mintUrl: String): Boolean {
-        if (!isGloballyEnabled()) return false
-        return getMintSettings(mintUrl).enabled
+        if (!isGloballyEnabled()) {
+            android.util.Log.d("AutoWithdrawSettings", "isEnabledForMint($mintUrl): false - globally disabled")
+            return false
+        }
+        // When globally enabled, use per-mint enabled if set, otherwise default to true
+        val mintSettings = getAllMintSettings()[mintUrl]
+        val enabled = mintSettings?.enabled ?: true // Default to true when globally enabled
+        android.util.Log.d("AutoWithdrawSettings", "isEnabledForMint($mintUrl): $enabled (per-mint setting exists: ${mintSettings != null})")
+        return enabled
     }
 
     /**
      * Check if a mint balance exceeds the threshold for auto-withdrawal.
      */
     fun shouldTriggerWithdrawal(mintUrl: String, currentBalance: Long): Boolean {
-        if (!isEnabledForMint(mintUrl)) return false
+        android.util.Log.d("AutoWithdrawSettings", "shouldTriggerWithdrawal check: mint=$mintUrl, balance=$currentBalance")
+        
+        if (!isEnabledForMint(mintUrl)) {
+            android.util.Log.d("AutoWithdrawSettings", "shouldTriggerWithdrawal: false - not enabled for mint")
+            return false
+        }
+        
         val settings = getMintSettings(mintUrl)
-        if (settings.lightningAddress.isBlank()) return false
-        return currentBalance >= settings.thresholdSats
+        android.util.Log.d("AutoWithdrawSettings", "shouldTriggerWithdrawal: settings=$settings")
+        
+        if (settings.lightningAddress.isBlank()) {
+            android.util.Log.d("AutoWithdrawSettings", "shouldTriggerWithdrawal: false - no lightning address configured")
+            return false
+        }
+        
+        val shouldTrigger = currentBalance >= settings.thresholdSats
+        android.util.Log.d("AutoWithdrawSettings", "shouldTriggerWithdrawal: balance=$currentBalance >= threshold=${settings.thresholdSats} = $shouldTrigger")
+        return shouldTrigger
     }
 
     /**
