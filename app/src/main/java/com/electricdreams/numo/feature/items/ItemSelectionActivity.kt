@@ -70,6 +70,8 @@ class ItemSelectionActivity : AppCompatActivity() {
     private lateinit var emptyView: LinearLayout
     private lateinit var noResultsView: LinearLayout
     private lateinit var checkoutContainer: LinearLayout
+    private lateinit var basketUndoButton: TextView
+    private lateinit var basketRedoButton: TextView
     private lateinit var saveButtonContainer: CardView
     private lateinit var saveButton: Button
     private lateinit var checkoutButton: Button
@@ -187,6 +189,8 @@ class ItemSelectionActivity : AppCompatActivity() {
         emptyView = findViewById(R.id.empty_view)
         noResultsView = findViewById(R.id.no_results_view)
         checkoutContainer = findViewById(R.id.checkout_container)
+        basketUndoButton = findViewById(R.id.basket_undo_button)
+        basketRedoButton = findViewById(R.id.basket_redo_button)
         saveButtonContainer = findViewById(R.id.save_button_container)
         saveButton = findViewById(R.id.save_button)
         checkoutButton = findViewById(R.id.checkout_button)
@@ -222,6 +226,7 @@ class ItemSelectionActivity : AppCompatActivity() {
             onBasketUpdated = { 
                 basketAdapter.updateItems(basketManager.getBasketItems())
                 updateEditingState()
+                updateUndoRedoState()
             }
         )
         
@@ -251,7 +256,10 @@ class ItemSelectionActivity : AppCompatActivity() {
             context = this,
             basketManager = basketManager,
             mainScrollView = mainScrollView,
-            onQuantityChanged = { refreshBasket() },
+            onQuantityChanged = { 
+                refreshBasket()
+                updateUndoRedoState()
+            },
             onQuantityAnimation = { quantityView -> animationHandler.animateQuantityChange(quantityView) }
         )
 
@@ -281,6 +289,22 @@ class ItemSelectionActivity : AppCompatActivity() {
 
         clearBasketButton.setOnClickListener {
             showClearBasketDialog()
+        }
+
+        basketUndoButton.setOnClickListener {
+            if (basketManager.undo()) {
+                itemsAdapter.syncQuantitiesFromBasket()
+                refreshBasket()
+                updateUndoRedoState()
+            }
+        }
+
+        basketRedoButton.setOnClickListener {
+            if (basketManager.redo()) {
+                itemsAdapter.syncQuantitiesFromBasket()
+                refreshBasket()
+                updateUndoRedoState()
+            }
         }
 
         checkoutButton.setOnClickListener {
@@ -319,6 +343,20 @@ class ItemSelectionActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateUndoRedoState() {
+        val canUndo = basketManager.canUndo()
+        val canRedo = basketManager.canRedo()
+
+        basketUndoButton.isEnabled = canUndo
+        basketRedoButton.isEnabled = canRedo
+
+        val enabledAlpha = 1f
+        val disabledAlpha = 0.35f
+
+        basketUndoButton.alpha = if (canUndo) enabledAlpha else disabledAlpha
+        basketRedoButton.alpha = if (canRedo) enabledAlpha else disabledAlpha
+    }
+
     // ----- Saved Baskets -----
     
     /**
@@ -348,6 +386,8 @@ class ItemSelectionActivity : AppCompatActivity() {
             itemsAdapter.syncQuantitiesFromBasket()
             refreshBasket()
             updateEditingState()
+            basketManager.clearHistory()
+            updateUndoRedoState()
         }
     }
     
@@ -364,7 +404,9 @@ class ItemSelectionActivity : AppCompatActivity() {
             savedBasketManager.clearEditingState()
             basketManager.clearBasket()
             itemsAdapter.clearAllQuantities()
+            basketManager.clearHistory()
             refreshBasket()
+            updateUndoRedoState()
             finish()
         } else {
             // Show dialog for new basket name
@@ -403,7 +445,9 @@ class ItemSelectionActivity : AppCompatActivity() {
                 savedBasketManager.clearEditingState()
                 basketManager.clearBasket()
                 itemsAdapter.clearAllQuantities()
+                basketManager.clearHistory()
                 refreshBasket()
+                updateUndoRedoState()
                 dialog.dismiss()
                 finish()
             }
@@ -453,12 +497,15 @@ class ItemSelectionActivity : AppCompatActivity() {
                 .setNegativeButton("Discard") { _, _ ->
                     savedBasketManager.clearEditingState()
                     basketManager.clearBasket()
+                    basketManager.clearHistory()
                     finish()
                 }
                 .setNeutralButton(R.string.common_cancel, null)
                 .show()
         } else {
             savedBasketManager.clearEditingState()
+            basketManager.clearBasket()
+            basketManager.clearHistory()
             finish()
         }
     }
@@ -503,6 +550,7 @@ class ItemSelectionActivity : AppCompatActivity() {
         basketManager.removeItem(itemId)
         itemsAdapter.resetItemQuantity(itemId)
         refreshBasket()
+        updateUndoRedoState()
     }
 
     private fun showClearBasketDialog() {
@@ -514,7 +562,9 @@ class ItemSelectionActivity : AppCompatActivity() {
                 animationHandler.resetToCollapsedState()
                 basketManager.clearBasket()
                 itemsAdapter.clearAllQuantities()
+                basketManager.clearHistory()
                 refreshBasket()
+                updateUndoRedoState()
             }
             .setNegativeButton(R.string.common_cancel, null)
             .show()

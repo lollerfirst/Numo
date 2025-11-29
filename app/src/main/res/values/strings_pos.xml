@@ -18,8 +18,14 @@
     <!-- POS main screen - secondary BTC label when no fiat price -->
     <string name="pos_secondary_amount_btc_label">BTC</string>
 
-    <!-- Basket checkout button text -->
+    <!-- Basket checkout + history -->
     <string name="basket_charge_fiat_and_sats">Charge %1$s + %2$s</string>
     <string name="basket_charge_sats_only">Charge %1$s</string>
     <string name="basket_charge_fiat_only">Charge %1$s</string>
+
+    <!-- Basket undo/redo controls -->
+    <string name="item_selection_undo_button">Undo last change</string>
+    <string name="item_selection_redo_button">Redo change</string>
+    <string name="item_selection_undo_button_short">Undo</string>
+    <string name="item_selection_redo_button_short">Redo</string>
 </resources>

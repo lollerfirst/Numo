@@ -432,9 +432,37 @@
                             android:letterSpacing="0.05" />
 
                         <TextView
+                            android:id="@+id/basket_undo_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="4dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/item_selection_undo_button_short"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:alpha="0.35" />
+
+                        <TextView
+                            android:id="@+id/basket_redo_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:padding="4dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/item_selection_redo_button_short"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:alpha="0.35" />
+
+                        <TextView
                             android:id="@+id/clear_basket_button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
                             android:padding="4dp"
                             android:text="@string/item_selection_basket_clear"
                             android:textColor="@color/color_warning_red"

@@ -24,6 +24,73 @@ class BasketManager private constructor() {
 
     private val basketItems: MutableList<BasketItem> = mutableListOf()
 
+    // ─────────────────────────────────────────────────────────────────────────────
+    // Basket history (undo / redo)
+    // ─────────────────────────────────────────────────────────────────────────────
+    private val undoStack: ArrayDeque<List<BasketItem>> = ArrayDeque()
+    private val redoStack: ArrayDeque<List<BasketItem>> = ArrayDeque()
+    private val maxHistorySize: Int = 100
+
+    private fun snapshot(): List<BasketItem> = basketItems.map { original ->
+        BasketItem(
+            item = original.item.copy(),
+            quantity = original.quantity,
+        )
+    }
+
+    private fun restoreFromSnapshot(state: List<BasketItem>) {
+        basketItems.clear()
+        // Deep copy again so history snapshots remain immutable
+        basketItems.addAll(state.map { original ->
+            BasketItem(
+                item = original.item.copy(),
+                quantity = original.quantity,
+            )
+        })
+    }
+
+    /**
+     * Capture the current basket state into the undo history.
+     * Clears redo history because a new user action invalidates the redo chain.
+     */
+    private fun captureStateForUndo() {
+        // Push current state if there is already at least one state (we don't store initial empty twice)
+        undoStack.addLast(snapshot())
+        if (undoStack.size > maxHistorySize) {
+            undoStack.removeFirst()
+        }
+        redoStack.clear()
+    }
+
+    fun canUndo(): Boolean = undoStack.isNotEmpty()
+
+    fun canRedo(): Boolean = redoStack.isNotEmpty()
+
+    fun undo(): Boolean {
+        if (undoStack.isEmpty()) return false
+        val current = snapshot()
+        val previous = undoStack.removeLast()
+        // Current state becomes top of redo stack
+        redoStack.addLast(current)
+        restoreFromSnapshot(previous)
+        return true
+    }
+
+    fun redo(): Boolean {
+        if (redoStack.isEmpty()) return false
+        val current = snapshot()
+        val next = redoStack.removeLast()
+        // Current state goes back to undo stack
+        undoStack.addLast(current)
+        restoreFromSnapshot(next)
+        return true
+    }
+
+    fun clearHistory() {
+        undoStack.clear()
+        redoStack.clear()
+    }
+
     /**
      * Get all items in the basket.
      * @return List of basket items.
@@ -36,6 +103,8 @@ class BasketManager private constructor() {
      * @param quantity Quantity to add.
      */
     fun addItem(item: Item, quantity: Int) {
+        captureStateForUndo()
+
         // Check if item is already in basket
         for (basketItem in basketItems) {
             if (basketItem.item.id == item.id) {
@@ -56,8 +125,10 @@ class BasketManager private constructor() {
      * @return true if updated successfully, false if not found or quantity is 0.
      */
     fun updateItemQuantity(itemId: String, quantity: Int): Boolean {
+        captureStateForUndo()
+
         if (quantity <= 0) {
-            return removeItem(itemId)
+            return removeItemInternal(itemId)
         }
 
         for (basketItem in basketItems) {
@@ -77,6 +148,11 @@ class BasketManager private constructor() {
      * @return true if removed successfully, false if not found.
      */
     fun removeItem(itemId: String): Boolean {
+        captureStateForUndo()
+        return removeItemInternal(itemId)
+    }
+
+    private fun removeItemInternal(itemId: String): Boolean {
         val iterator = basketItems.iterator()
         while (iterator.hasNext()) {
             val basketItem = iterator.next()
@@ -92,6 +168,9 @@ class BasketManager private constructor() {
      * Clear the basket.
      */
     fun clearBasket() {
+        if (basketItems.isNotEmpty()) {
+            captureStateForUndo()
+        }
         basketItems.clear()
     }
 
