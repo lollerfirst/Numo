@@ -711,4 +711,55 @@
     <string name="withdraw_section_send_to">Send To</string>
     <string name="withdraw_balance_available">Available: %1$s</string>
 
+    <!-- QR Scanner -->
+    <string name="qr_scanner_title">Scan QR Code</string>
+    <string name="qr_scanner_instruction">Point camera at QR code</string>
+    <string name="qr_scanner_permission_required">Camera permission is required to scan QR codes</string>
+
+    <!-- Mints Settings Redesign -->
+    <string name="mints_explore_title">Mints</string>
+    <string name="mints_total_balance">Total Balance</string>
+    <string name="mints_your_mints">Your Mints</string>
+    <string name="mints_add_new_mint">Add New Mint</string>
+    <string name="mints_enter_url">Enter mint URL or scan QR code</string>
+    <string name="mints_url_hint">https://mint.example.com</string>
+    <string name="mints_add_button">Add Mint</string>
+    <string name="mints_scan_qr">Scan QR</string>
+    <string name="mints_scan_mint_qr">Scan Mint QR</string>
+    <string name="mints_scan_instruction">Point camera at mint QR code</string>
+    <string name="mints_empty_title">No Mints</string>
+    <string name="mints_empty_subtitle">Add a mint to get started with ecash</string>
+    <string name="mints_remove_title">Remove Mint</string>
+    <string name="mints_remove_message">Remove %1$s? Any balance in this mint will be lost.</string>
+    <string name="mints_remove_confirm">Remove</string>
+    <string name="mints_removed_toast">Mint removed</string>
+    <string name="mints_already_exists">This mint is already added</string>
+    <string name="mints_invalid_url">Invalid mint URL. Please check and try again.</string>
+    <string name="mints_added_toast">Mint added</string>
+    <string name="mints_reset_title">Reset Mints</string>
+    <string name="mints_reset_message">Reset to default mints? This will remove all custom mints.</string>
+    <string name="mints_reset_confirm">Reset</string>
+    <string name="mints_reset_toast">Mints reset to defaults</string>
+    <string name="mints_reset_description">Reset to defaults</string>
+    <string name="mint_icon_description">Mint icon</string>
+    <string name="mint_selected_description">Selected</string>
+    <string name="mint_remove_description">Remove mint</string>
+
+    <plurals name="mints_count">
+        <item quantity="one">%1$d mint</item>
+        <item quantity="other">%1$d mints</item>
+    </plurals>
+
+    <!-- Mints Lightning Section -->
+    <string name="mints_lightning_mint">Lightning Mint</string>
+    <string name="mints_all_mints">All Mints</string>
+    <string name="mints_balance">Balance</string>
+    <string name="mints_lightning_description">All Lightning payments will be received to this mint. Tap any mint below to set it as your Lightning mint.</string>
+    <string name="mints_set_as_lightning">Set as Lightning Mint</string>
+    <string name="mints_lightning_changed">Lightning mint updated</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_mint_icon">Mint icon</string>
+    <string name="cd_mint_selected">Selected as Lightning mint</string>
+
 </resources>

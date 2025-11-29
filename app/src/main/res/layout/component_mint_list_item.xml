@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="6dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/mint_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="1dp"
+        app:cardBackgroundColor="@color/color_bg_white"
+        app:rippleColor="@color/color_ripple">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <!-- Mint Icon -->
+            <FrameLayout
+                android:id="@+id/icon_container"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_circle_subtle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <ImageView
+                    android:id="@+id/mint_icon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_bitcoin"
+                    android:contentDescription="@string/cd_mint_icon" />
+
+            </FrameLayout>
+
+            <!-- Check Icon (shown when selected as primary) -->
+            <ImageView
+                android:id="@+id/check_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_check_small"
+                app:tint="@color/color_success_green"
+                android:visibility="gone"
+                android:contentDescription="@string/cd_mint_selected"
+                app:layout_constraintEnd_toEndOf="@id/icon_container"
+                app:layout_constraintBottom_toBottomOf="@id/icon_container"
+                android:translationX="4dp"
+                android:translationY="4dp" />
+
+            <!-- Mint Name -->
+            <TextView
+                android:id="@+id/mint_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="12dp"
+                android:text="Mint Name"
+                android:textSize="16sp"
+                android:textColor="@color/color_text_primary"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintStart_toEndOf="@id/icon_container"
+                app:layout_constraintEnd_toStartOf="@id/mint_balance"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/mint_url" />
+
+            <!-- Mint URL -->
+            <TextView
+                android:id="@+id/mint_url"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginTop="2dp"
+                android:text="mint.example.com"
+                android:textSize="13sp"
+                android:textColor="@color/color_text_tertiary"
+                android:fontFamily="sans-serif"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintStart_toEndOf="@id/icon_container"
+                app:layout_constraintEnd_toStartOf="@id/mint_balance"
+                app:layout_constraintTop_toBottomOf="@id/mint_name"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <!-- Balance -->
+            <TextView
+                android:id="@+id/mint_balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="₿0"
+                android:textSize="15sp"
+                android:textColor="@color/color_text_primary"
+                android:fontFamily="sans-serif-medium"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

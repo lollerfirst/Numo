@@ -44,6 +44,7 @@
 
     <!-- Overlays -->
     <color name="color_scrim">#66000000</color>
+    <color name="color_ripple">#1A000000</color>
 
     <!-- Legacy Compatibility (mapped to new colors) -->
     <color name="colorPrimary">@color/color_primary_green_light</color>

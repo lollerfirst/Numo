@@ -355,6 +355,13 @@
                 android:value=".feature.items.ItemEntryActivity" />
         </activity>
         
+        <!-- Reusable QR Code Scanner -->
+        <activity android:name="com.electricdreams.numo.feature.scanner.QRScannerActivity"
+            android:exported="false"
+            android:label="@string/qr_scanner_title"
+            android:theme="@style/Theme.Numo.Fullscreen"
+            android:screenOrientation="portrait" />
+        
         <activity android:name="com.electricdreams.numo.feature.items.ItemListActivity"
             android:exported="false"
             android:label="Items"

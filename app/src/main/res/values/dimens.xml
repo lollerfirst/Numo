@@ -71,4 +71,12 @@
     <dimen name="settings_item_height">56dp</dimen>
     <dimen name="settings_horizontal_padding">24dp</dimen>
     <dimen name="icon_button_size">44dp</dimen>
+
+    <!-- QR Scanner -->
+    <dimen name="qr_viewfinder_size">280dp</dimen>
+
+    <!-- 3D Card Effects -->
+    <dimen name="card_elevation_3d_max">12dp</dimen>
+    <dimen name="card_elevation_3d_min">2dp</dimen>
+    <dimen name="card_stroke_selected">2dp</dimen>
 </resources>

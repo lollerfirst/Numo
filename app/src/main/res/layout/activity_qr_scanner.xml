@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:fitsSystemWindows="false">
+
+    <!-- Camera Preview -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/preview_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Dark overlay -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/qr_scanner_overlay" />
+
+    <!-- Clean viewfinder frame (just a subtle white border) -->
+    <View
+        android:id="@+id/viewfinder_frame"
+        android:layout_width="@dimen/qr_viewfinder_size"
+        android:layout_height="@dimen/qr_viewfinder_size"
+        android:layout_gravity="center"
+        android:background="@drawable/qr_viewfinder_frame" />
+
+    <!-- Top bar with close button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="56dp"
+        android:paddingHorizontal="16dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/close_button"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_gravity="start"
+                android:background="@drawable/bg_circle_button_dark"
+                android:contentDescription="@string/common_close"
+                android:src="@drawable/ic_close"
+                app:tint="@android:color/white" />
+
+            <TextView
+                android:id="@+id/title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/qr_scanner_title"
+                android:textColor="@android:color/white"
+                android:textSize="17sp"
+                android:fontFamily="sans-serif-medium" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- Instruction text at bottom -->
+    <TextView
+        android:id="@+id/instruction_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="120dp"
+        android:text="@string/qr_scanner_instruction"
+        android:textColor="#B3FFFFFF"
+        android:textSize="15sp"
+        android:textAlignment="center"
+        android:fontFamily="sans-serif" />
+
+</FrameLayout>
