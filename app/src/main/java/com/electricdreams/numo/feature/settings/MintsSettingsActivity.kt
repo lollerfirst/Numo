@@ -47,7 +47,6 @@ class MintsSettingsActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "MintsSettings"
-        private const val PREF_LIGHTNING_MINT = "lightning_mint_url"
         const val REQUEST_MINT_DETAILS = 1001
     }
 
@@ -121,8 +120,8 @@ class MintsSettingsActivity : AppCompatActivity() {
         MintIconCache.initialize(this)
         mintManager = MintManager.getInstance(this)
 
-        // Load saved lightning mint preference
-        selectedLightningMint = getPreferences(MODE_PRIVATE).getString(PREF_LIGHTNING_MINT, null)
+        // Load saved Lightning mint preference from MintManager (single source of truth)
+        selectedLightningMint = mintManager.getPreferredLightningMint()
 
         initViews()
         setupListeners()
@@ -301,11 +300,10 @@ class MintsSettingsActivity : AppCompatActivity() {
 
     private fun setLightningMint(mintUrl: String, animate: Boolean) {
         selectedLightningMint = mintUrl
-        
-        // Save preference
-        getPreferences(MODE_PRIVATE).edit()
-            .putString(PREF_LIGHTNING_MINT, mintUrl)
-            .apply()
+
+        // Persist preference via MintManager so that payment flows (PaymentRequestActivity)
+        // pick up the same Lightning mint when creating invoices.
+        mintManager.setPreferredLightningMint(mintUrl)
         
         // Update hero card
         updateLightningMintCard()
@@ -382,16 +380,11 @@ class MintsSettingsActivity : AppCompatActivity() {
         mintBalances.remove(mintUrl)
         mintItems.remove(mintUrl)
         
-        // If deleted mint was lightning mint, select new one
+        // If deleted mint was Lightning mint, MintManager.removeMint() (called from
+        // MintDetailsActivity) will already have updated its preferred Lightning mint.
+        // We just re-sync our local selection to match MintManager.
         if (selectedLightningMint == mintUrl) {
-            val mints = mintManager.getAllowedMints()
-            val newLightning = mints.maxByOrNull { mintBalances[it] ?: 0L }
-            if (newLightning != null) {
-                setLightningMint(newLightning, animate = true)
-            } else {
-                selectedLightningMint = null
-                lightningMintSection.visibility = View.GONE
-            }
+            selectedLightningMint = mintManager.getPreferredLightningMint()
         }
         
         if (mintManager.getAllowedMints().isEmpty()) {
@@ -524,8 +517,8 @@ class MintsSettingsActivity : AppCompatActivity() {
 
     private fun resetToDefaults() {
         mintManager.resetToDefaults()
-        selectedLightningMint = null
-        getPreferences(MODE_PRIVATE).edit().remove(PREF_LIGHTNING_MINT).apply()
+        // After reset, MintManager sets its own preferred Lightning mint
+        selectedLightningMint = mintManager.getPreferredLightningMint()
         loadMintsAndBalances()
         
         // Broadcast that mints were reset so other activities can refresh
