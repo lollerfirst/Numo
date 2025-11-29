@@ -89,8 +89,9 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <!-- Keep bottom sheet nav bar transparent so it floats above sheet/background -->
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <!-- For bottom sheets, use a solid background under the gesture nav pill so it visually merges with the sheet. -->
+        <item name="android:navigationBarColor">@color/color_bg_white</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
     
     <!-- Bottom Sheet Widget Style -->

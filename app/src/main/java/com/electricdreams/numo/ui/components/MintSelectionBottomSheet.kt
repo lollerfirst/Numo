@@ -92,6 +92,10 @@ class MintSelectionBottomSheet : BottomSheetDialogFragment() {
             )
             
             bottomSheet?.let { sheet ->
+                sheet.setBackgroundColor(
+                    ContextCompat.getColor(requireContext(), R.color.color_bg_white)
+                )
+
                 val behavior = BottomSheetBehavior.from(sheet)
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
                 behavior.skipCollapsed = true

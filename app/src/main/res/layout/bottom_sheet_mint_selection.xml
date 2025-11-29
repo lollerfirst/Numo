@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/bg_bottom_sheet"
     android:paddingBottom="32dp">
 
     <!-- Drag Handle -->
@@ -37,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@string/mint_selection_subtitle"
+        android:text="@string/mint_selection_subtitle"
             android:textAppearance="@style/Text.Body"
             android:textColor="@color/color_text_secondary"
             android:textSize="14sp" />
