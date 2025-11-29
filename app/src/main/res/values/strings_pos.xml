@@ -26,4 +26,6 @@
     <!-- Basket undo/redo controls -->
     <string name="item_selection_undo_button">Undo last change</string>
     <string name="item_selection_redo_button">Redo change</string>
+    <string name="item_selection_undo_button_short">Undo</string>
+    <string name="item_selection_redo_button_short">Redo</string>
 </resources>

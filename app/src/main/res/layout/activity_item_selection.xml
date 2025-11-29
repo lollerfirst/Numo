@@ -432,9 +432,41 @@
                             android:letterSpacing="0.05" />
 
                         <TextView
+                            android:id="@+id/basket_undo_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="4dp"
+                            android:drawablePadding="4dp"
+                            android:drawableStart="@drawable/ic_undo"
+                            android:gravity="center_vertical"
+                            android:text="@string/item_selection_undo_button_short"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:alpha="0.35" />
+
+                        <TextView
+                            android:id="@+id/basket_redo_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:padding="4dp"
+                            android:drawablePadding="4dp"
+                            android:drawableStart="@drawable/ic_redo"
+                            android:gravity="center_vertical"
+                            android:text="@string/item_selection_redo_button_short"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:alpha="0.35" />
+
+                        <TextView
                             android:id="@+id/clear_basket_button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
                             android:padding="4dp"
                             android:text="@string/item_selection_basket_clear"
                             android:textColor="@color/color_warning_red"
@@ -464,7 +496,7 @@
         </androidx.cardview.widget.CardView>
 
         <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- BUTTONS ROW: Undo/Redo + Save + Charge (Save only when editing) -->
+        <!-- BUTTONS ROW: Save + Charge (Save only shown when editing)       -->
         <!-- ═══════════════════════════════════════════════════════════════ -->
         <LinearLayout
             android:id="@+id/checkout_container"
@@ -472,61 +504,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:weightSum="1.5"
             android:visibility="gone"
             tools:visibility="visible">
-
-            <!-- Undo / Redo controls -->
-            <LinearLayout
-                android:id="@+id/undo_redo_container"
-                android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_weight="0.5"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingEnd="8dp">
-
-                <ImageButton
-                    android:id="@+id/undo_button"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_button_icon"
-                    android:contentDescription="@string/item_selection_undo_button"
-                    android:padding="12dp"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_undo"
-                    android:tint="@color/color_text_primary"
-                    android:alpha="0.35"
-                    android:enabled="false" />
-
-                <Space
-                    android:layout_width="4dp"
-                    android:layout_height="0dp" />
-
-                <ImageButton
-                    android:id="@+id/redo_button"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_button_icon"
-                    android:contentDescription="@string/item_selection_redo_button"
-                    android:padding="12dp"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_redo"
-                    android:tint="@color/color_text_primary"
-                    android:alpha="0.35"
-                    android:enabled="false" />
-
-            </LinearLayout>
 
             <!-- Save Button (only visible when editing existing basket) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/save_button_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
+                android:layout_weight="1"
                 android:layout_marginEnd="8dp"
                 app:cardBackgroundColor="@android:color/transparent"
                 app:cardCornerRadius="16dp"
@@ -552,7 +538,7 @@
                 android:id="@+id/charge_button_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
+                android:layout_weight="1"
                 app:cardBackgroundColor="@android:color/transparent"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="8dp">

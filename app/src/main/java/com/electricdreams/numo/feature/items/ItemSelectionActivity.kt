@@ -70,8 +70,8 @@ class ItemSelectionActivity : AppCompatActivity() {
     private lateinit var emptyView: LinearLayout
     private lateinit var noResultsView: LinearLayout
     private lateinit var checkoutContainer: LinearLayout
-    private lateinit var undoButton: ImageButton
-    private lateinit var redoButton: ImageButton
+    private lateinit var basketUndoButton: TextView
+    private lateinit var basketRedoButton: TextView
     private lateinit var saveButtonContainer: CardView
     private lateinit var saveButton: Button
     private lateinit var checkoutButton: Button
@@ -189,8 +189,8 @@ class ItemSelectionActivity : AppCompatActivity() {
         emptyView = findViewById(R.id.empty_view)
         noResultsView = findViewById(R.id.no_results_view)
         checkoutContainer = findViewById(R.id.checkout_container)
-        undoButton = findViewById(R.id.undo_button)
-        redoButton = findViewById(R.id.redo_button)
+        basketUndoButton = findViewById(R.id.basket_undo_button)
+        basketRedoButton = findViewById(R.id.basket_redo_button)
         saveButtonContainer = findViewById(R.id.save_button_container)
         saveButton = findViewById(R.id.save_button)
         checkoutButton = findViewById(R.id.checkout_button)
@@ -287,11 +287,7 @@ class ItemSelectionActivity : AppCompatActivity() {
             clearAllFilters()
         }
 
-        clearBasketButton.setOnClickListener {
-            showClearBasketDialog()
-        }
-
-        undoButton.setOnClickListener {
+        basketUndoButton.setOnClickListener {
             if (basketManager.undo()) {
                 itemsAdapter.syncQuantitiesFromBasket()
                 refreshBasket()
@@ -299,7 +295,7 @@ class ItemSelectionActivity : AppCompatActivity() {
             }
         }
 
-        redoButton.setOnClickListener {
+        basketRedoButton.setOnClickListener {
             if (basketManager.redo()) {
                 itemsAdapter.syncQuantitiesFromBasket()
                 refreshBasket()
@@ -347,14 +343,14 @@ class ItemSelectionActivity : AppCompatActivity() {
         val canUndo = basketManager.canUndo()
         val canRedo = basketManager.canRedo()
 
-        undoButton.isEnabled = canUndo
-        redoButton.isEnabled = canRedo
+        basketUndoButton.isEnabled = canUndo
+        basketRedoButton.isEnabled = canRedo
 
         val enabledAlpha = 1f
         val disabledAlpha = 0.35f
 
-        undoButton.alpha = if (canUndo) enabledAlpha else disabledAlpha
-        redoButton.alpha = if (canRedo) enabledAlpha else disabledAlpha
+        basketUndoButton.alpha = if (canUndo) enabledAlpha else disabledAlpha
+        basketRedoButton.alpha = if (canRedo) enabledAlpha else disabledAlpha
     }
 
     // ----- Saved Baskets -----
