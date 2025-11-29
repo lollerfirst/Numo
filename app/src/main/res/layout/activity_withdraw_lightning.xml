@@ -44,6 +44,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_bar">
 
@@ -53,22 +54,24 @@
             android:orientation="vertical"
             android:paddingBottom="32dp">
 
-            <!-- Balance Summary Card -->
+            <!-- Balance Hero Section -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/balance_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
                 app:cardBackgroundColor="@color/color_bg_card"
-                app:cardCornerRadius="12dp"
+                app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="24dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -76,17 +79,19 @@
                         android:text="@string/withdraw_lightning_balance_label"
                         android:textAppearance="@style/Text.Caption"
                         android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp" />
+                        android:textSize="13sp"
+                        android:textAllCaps="true"
+                        android:letterSpacing="0.05" />
 
                     <TextView
                         android:id="@+id/balance_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="8dp"
                         android:text="₿0"
-                        android:textAppearance="@style/Text.Title"
+                        android:textAppearance="@style/Text.DisplayAmount"
                         android:textColor="@color/color_text_primary"
-                        android:textSize="32sp"
+                        android:textSize="40sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -96,8 +101,11 @@
                         android:layout_marginTop="8dp"
                         android:text="@string/withdraw_lightning_mint_name_label"
                         android:textAppearance="@style/Text.Caption"
-                        android:textColor="@color/color_text_secondary"
-                        android:textSize="13sp" />
+                        android:textColor="@color/color_text_tertiary"
+                        android:textSize="13sp"
+                        android:drawableStart="@drawable/ic_lightning_bolt"
+                        android:drawablePadding="6dp"
+                        android:drawableTint="@color/color_text_tertiary" />
 
                 </LinearLayout>
 
@@ -107,217 +115,86 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="28dp"
                 android:layout_marginBottom="12dp"
-                android:text="@string/withdraw_lightning_section_withdraw_to"
+                android:text="@string/withdraw_section_send_to"
                 android:textAppearance="@style/Text.SectionHeader" />
 
-            <!-- Invoice Option -->
-            <LinearLayout
-                android:id="@+id/invoice_option"
+            <!-- Invoice Card -->
+            <com.electricdreams.numo.ui.components.WithdrawInvoiceCard
+                android:id="@+id/invoice_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:orientation="vertical"
-                android:paddingVertical="16dp">
+                android:layout_marginHorizontal="20dp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+            <!-- OR Divider -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginVertical="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/color_divider" />
+
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_marginHorizontal="16dp"
+                    android:text="@string/common_or"
+                    android:textAppearance="@style/Text.Caption"
+                    android:textColor="@color/color_text_tertiary"
+                    android:textSize="12sp"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.1" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/withdraw_lightning_option_invoice"
-                        android:textAppearance="@style/Text.Body"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_chevron_down"
-                        android:tint="@color/color_text_secondary" />
-
-                </LinearLayout>
-
-                <!-- Expanded Content -->
-                <LinearLayout
-                    android:id="@+id/invoice_expanded_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="@string/withdraw_lightning_invoice_hint_label"
-                        android:textAppearance="@style/Text.Caption"
-                        android:textColor="@color/color_text_secondary" />
-
-                    <EditText
-                        android:id="@+id/invoice_input"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_search_field"
-                        android:hint="@string/withdraw_lightning_invoice_hint_value"
-                        android:inputType="textMultiLine"
-                        android:maxLines="4"
-                        android:minHeight="48dp"
-                        android:padding="12dp"
-                        android:textAppearance="@style/Text.Body"
-                        android:textSize="14sp" />
-
-                    <Button
-                        android:id="@+id/continue_invoice_button"
-                        style="@style/Widget.Button.Primary.Green"
-                        android:layout_width="match_parent"
-                        android:layout_height="52dp"
-                        android:layout_marginTop="12dp"
-                        android:enabled="false"
-                        android:text="Continue"
-                        android:textAllCaps="false"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/color_divider" />
 
             </LinearLayout>
 
-            <!-- Divider -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginHorizontal="24dp"
-                android:background="@color/color_divider" />
-
-            <!-- Lightning Address Option -->
-            <LinearLayout
-                android:id="@+id/lightning_address_option"
+            <!-- Address Card -->
+            <com.electricdreams.numo.ui.components.WithdrawAddressCard
+                android:id="@+id/address_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:orientation="vertical"
-                android:paddingVertical="16dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/withdraw_lightning_option_address"
-                        android:textAppearance="@style/Text.Body"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_chevron_down"
-                        android:tint="@color/color_text_secondary" />
-
-                </LinearLayout>
-
-                <!-- Expanded Content -->
-                <LinearLayout
-                    android:id="@+id/address_expanded_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="@string/withdraw_lightning_address_hint_label"
-                        android:textAppearance="@style/Text.Caption"
-                        android:textColor="@color/color_text_secondary" />
-
-                    <EditText
-                        android:id="@+id/address_input"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_search_field"
-                        android:hint="@string/withdraw_lightning_address_hint_value"
-                        android:inputType="textEmailAddress"
-                        android:minHeight="48dp"
-                        android:padding="12dp"
-                        android:textAppearance="@style/Text.Body"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="8dp"
-                        android:text="@string/withdraw_lightning_amount_label"
-                        android:textAppearance="@style/Text.Caption"
-                        android:textColor="@color/color_text_secondary" />
-
-                    <EditText
-                        android:id="@+id/amount_input"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_search_field"
-                        android:hint="@string/withdraw_lightning_amount_hint"
-                        android:inputType="number"
-                        android:minHeight="48dp"
-                        android:padding="12dp"
-                        android:textAppearance="@style/Text.Body"
-                        android:textSize="14sp" />
-
-                    <Button
-                        android:id="@+id/continue_address_button"
-                        style="@style/Widget.Button.Primary.Green"
-                        android:layout_width="match_parent"
-                        android:layout_height="52dp"
-                        android:layout_marginTop="12dp"
-                        android:enabled="false"
-                        android:text="Continue"
-                        android:textAllCaps="false"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-            </LinearLayout>
+                android:layout_marginHorizontal="20dp" />
 
         </LinearLayout>
 
     </ScrollView>
 
-    <!-- Loading Spinner Overlay -->
-    <ProgressBar
-        android:id="@+id/loading_spinner"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:indeterminate="true"
+    <!-- Loading Overlay -->
+    <FrameLayout
+        android:id="@+id/loading_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80FFFFFF"
+        android:clickable="true"
+        android:focusable="true"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:id="@+id/loading_spinner"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/color_primary" />
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

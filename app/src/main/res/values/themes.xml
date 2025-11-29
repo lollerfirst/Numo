@@ -79,4 +79,33 @@
         <item name="android:windowEnterAnimation">@anim/slide_up</item>
         <item name="android:windowExitAnimation">@anim/slide_down</item>
     </style>
+    
+    <!-- Apple-style Bottom Sheet Fragment Theme -->
+    <style name="Theme.Numo.BottomSheet" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.4</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="bottomSheetStyle">@style/Widget.Numo.BottomSheet</item>
+        <item name="android:navigationBarColor">@color/color_bg_white</item>
+    </style>
+    
+    <!-- Bottom Sheet Widget Style -->
+    <style name="Widget.Numo.BottomSheet" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Numo.BottomSheet</item>
+        <item name="behavior_peekHeight">auto</item>
+        <item name="behavior_fitToContents">true</item>
+    </style>
+    
+    <!-- Bottom Sheet Shape -->
+    <style name="ShapeAppearance.Numo.BottomSheet" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">20dp</item>
+        <item name="cornerSizeTopRight">20dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
 </resources>

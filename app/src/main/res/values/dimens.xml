@@ -54,6 +54,10 @@
     <!-- Elevation -->
     <dimen name="elevation_card">2dp</dimen>
     <dimen name="elevation_dialog">8dp</dimen>
+    <dimen name="card_elevation_small">2dp</dimen>
+    
+    <!-- Card Corner Radius -->
+    <dimen name="card_corner_radius">16dp</dimen>
 
     <!-- Divider -->
     <dimen name="divider_height">0.5dp</dimen>

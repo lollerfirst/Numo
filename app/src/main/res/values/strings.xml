@@ -291,6 +291,7 @@
 
     <!-- Common buttons -->
     <string name="common_ok">OK</string>
+    <string name="common_or">or</string>
 
     <!-- Withdraw - Lightning selection screen -->
     <string name="withdraw_lightning_toolbar_back">Back</string>
@@ -691,5 +692,23 @@
 
     <!-- Mints Settings Additional -->
     <string name="mints_settings_balance_label">Balance</string>
+
+    <!-- Mint Selection Bottom Sheet -->
+    <string name="mint_selection_title">Select Mint</string>
+    <string name="mint_selection_subtitle">Choose which mint to withdraw from</string>
+    <string name="mint_selection_icon_description">Mint icon</string>
+    <string name="mint_selection_select_description">Select this mint</string>
+
+    <!-- Withdraw Lightning Redesign -->
+    <string name="withdraw_invoice_card_title">Lightning Invoice</string>
+    <string name="withdraw_invoice_card_subtitle">Paste an invoice to pay instantly</string>
+    <string name="withdraw_address_card_title">Lightning Address</string>
+    <string name="withdraw_address_card_subtitle">Send to an email-like address</string>
+    <string name="withdraw_invoice_placeholder">lnbc1...</string>
+    <string name="withdraw_amount_placeholder">Enter amount in sats</string>
+    <string name="withdraw_continue_button">Continue</string>
+    <string name="withdraw_scan_qr">Scan QR</string>
+    <string name="withdraw_section_send_to">Send To</string>
+    <string name="withdraw_balance_available">Available: %1$s</string>
 
 </resources>

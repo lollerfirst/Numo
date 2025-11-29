@@ -17,6 +17,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
@@ -30,6 +31,7 @@ import com.electricdreams.numo.core.cashu.CashuWalletManager
 import com.electricdreams.numo.core.model.Amount
 import com.electricdreams.numo.core.util.MintManager
 import com.electricdreams.numo.feature.settings.WithdrawLightningActivity
+import com.electricdreams.numo.ui.components.MintSelectionBottomSheet
 import com.google.android.material.slider.Slider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -200,32 +202,25 @@ class AutoWithdrawSettingsActivity : AppCompatActivity() {
             val mintsWithBalance = balances.filter { it.value > 0 }
             
             if (mintsWithBalance.isEmpty()) {
-                // No balance to withdraw
-                AlertDialog.Builder(this@AutoWithdrawSettingsActivity, R.style.Theme_Numo_Dialog)
-                    .setTitle(R.string.manual_withdraw_title)
-                    .setMessage(R.string.manual_withdraw_no_balance)
-                    .setPositiveButton(R.string.common_ok, null)
-                    .show()
+                // No balance to withdraw - show a nice toast instead of dialog
+                Toast.makeText(
+                    this@AutoWithdrawSettingsActivity,
+                    R.string.manual_withdraw_no_balance,
+                    Toast.LENGTH_LONG
+                ).show()
                 return@launch
             }
             
-            // Build list of mint options with display names and balances
-            val mintOptions = mintsWithBalance.map { (mintUrl, balance) ->
-                val displayName = mintManager.getMintDisplayName(mintUrl)
-                val amountStr = Amount(balance, Amount.Currency.BTC).toString()
-                "$displayName ($amountStr)" to Pair(mintUrl, balance)
-            }
-            
-            val displayNames = mintOptions.map { it.first }.toTypedArray()
-            
-            AlertDialog.Builder(this@AutoWithdrawSettingsActivity, R.style.Theme_Numo_Dialog)
-                .setTitle(R.string.manual_withdraw_select_mint)
-                .setItems(displayNames) { _, which ->
-                    val (mintUrl, balance) = mintOptions[which].second
-                    openWithdrawScreen(mintUrl, balance)
+            // Show beautiful bottom sheet
+            val bottomSheet = MintSelectionBottomSheet.newInstance(
+                mintBalances = mintsWithBalance,
+                listener = object : MintSelectionBottomSheet.OnMintSelectedListener {
+                    override fun onMintSelected(mintUrl: String, balance: Long) {
+                        openWithdrawScreen(mintUrl, balance)
+                    }
                 }
-                .setNegativeButton(R.string.common_cancel, null)
-                .show()
+            )
+            bottomSheet.show(supportFragmentManager, "MintSelectionBottomSheet")
         }
     }
     

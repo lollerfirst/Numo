@@ -3,15 +3,12 @@ package com.electricdreams.numo.feature.settings
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.OvershootInterpolator
+import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,14 +17,23 @@ import com.electricdreams.numo.R
 import com.electricdreams.numo.core.cashu.CashuWalletManager
 import com.electricdreams.numo.core.model.Amount
 import com.electricdreams.numo.core.util.MintManager
+import com.electricdreams.numo.ui.components.WithdrawAddressCard
+import com.electricdreams.numo.ui.components.WithdrawInvoiceCard
+import com.google.android.material.card.MaterialCardView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.cashudevkit.MintUrl
 
 /**
- * Activity for withdrawing balance from a mint via Lightning
- * Supports both Lightning invoices and Lightning addresses
+ * Premium Apple-like activity for withdrawing balance from a mint via Lightning.
+ * 
+ * Features:
+ * - Beautiful card-based design
+ * - Separate cards for Invoice and Lightning Address
+ * - Smooth entrance animations
+ * - Elegant loading states
+ * - Professional UX suitable for checkout operators
  */
 class WithdrawLightningActivity : AppCompatActivity() {
 
@@ -45,21 +51,12 @@ class WithdrawLightningActivity : AppCompatActivity() {
 
     // Views
     private lateinit var backButton: ImageButton
+    private lateinit var balanceCard: MaterialCardView
     private lateinit var mintNameText: TextView
     private lateinit var balanceText: TextView
-    private lateinit var invoiceOption: LinearLayout
-    private lateinit var lightningAddressOption: LinearLayout
-    private lateinit var invoiceExpandedContent: LinearLayout
-    private lateinit var addressExpandedContent: LinearLayout
-    private lateinit var invoiceInput: EditText
-    private lateinit var addressInput: EditText
-    private lateinit var amountInput: EditText
-    private lateinit var continueInvoiceButton: Button
-    private lateinit var continueAddressButton: Button
-    private lateinit var loadingSpinner: ProgressBar
-
-    private var isInvoiceExpanded = false
-    private var isAddressExpanded = false
+    private lateinit var invoiceCard: WithdrawInvoiceCard
+    private lateinit var addressCard: WithdrawAddressCard
+    private lateinit var loadingOverlay: FrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,98 +81,37 @@ class WithdrawLightningActivity : AppCompatActivity() {
         setupListeners()
         displayMintInfo()
         prefillFields()
+        startEntranceAnimations()
     }
 
     private fun initViews() {
         backButton = findViewById(R.id.back_button)
+        balanceCard = findViewById(R.id.balance_card)
         mintNameText = findViewById(R.id.mint_name_text)
         balanceText = findViewById(R.id.balance_text)
-        invoiceOption = findViewById(R.id.invoice_option)
-        lightningAddressOption = findViewById(R.id.lightning_address_option)
-        invoiceExpandedContent = findViewById(R.id.invoice_expanded_content)
-        addressExpandedContent = findViewById(R.id.address_expanded_content)
-        invoiceInput = findViewById(R.id.invoice_input)
-        addressInput = findViewById(R.id.address_input)
-        amountInput = findViewById(R.id.amount_input)
-        continueInvoiceButton = findViewById(R.id.continue_invoice_button)
-        continueAddressButton = findViewById(R.id.continue_address_button)
-        loadingSpinner = findViewById(R.id.loading_spinner)
+        invoiceCard = findViewById(R.id.invoice_card)
+        addressCard = findViewById(R.id.address_card)
+        loadingOverlay = findViewById(R.id.loading_overlay)
     }
 
     private fun setupListeners() {
-        backButton.setOnClickListener { finish() }
-
-        // Invoice option toggle
-        invoiceOption.setOnClickListener {
-            toggleInvoiceOption()
+        backButton.setOnClickListener { 
+            finish() 
         }
 
-        // Lightning address option toggle
-        lightningAddressOption.setOnClickListener {
-            toggleAddressOption()
-        }
-
-        // Continue buttons
-        continueInvoiceButton.setOnClickListener {
-            processInvoice()
-        }
-
-        continueAddressButton.setOnClickListener {
-            processLightningAddress()
-        }
-
-        // Text watchers to enable/disable buttons
-        invoiceInput.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                continueInvoiceButton.isEnabled = !s.isNullOrBlank()
+        // Invoice card continue listener
+        invoiceCard.setOnContinueListener(object : WithdrawInvoiceCard.OnContinueListener {
+            override fun onContinue(invoice: String) {
+                processInvoice(invoice)
             }
         })
 
-        addressInput.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                updateAddressButtonState()
+        // Address card continue listener
+        addressCard.setOnContinueListener(object : WithdrawAddressCard.OnContinueListener {
+            override fun onContinue(address: String, amountSats: Long) {
+                processLightningAddress(address, amountSats)
             }
         })
-
-        amountInput.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                updateAddressButtonState()
-            }
-        })
-    }
-
-    private fun updateAddressButtonState() {
-        val hasAddress = !addressInput.text.isNullOrBlank()
-        val hasAmount = !amountInput.text.isNullOrBlank() && amountInput.text.toString().toLongOrNull() != null
-        continueAddressButton.isEnabled = hasAddress && hasAmount
-    }
-
-    private fun toggleInvoiceOption() {
-        isInvoiceExpanded = !isInvoiceExpanded
-        invoiceExpandedContent.visibility = if (isInvoiceExpanded) View.VISIBLE else View.GONE
-
-        if (isInvoiceExpanded && isAddressExpanded) {
-            // Collapse the other option
-            isAddressExpanded = false
-            addressExpandedContent.visibility = View.GONE
-        }
-    }
-
-    private fun toggleAddressOption() {
-        isAddressExpanded = !isAddressExpanded
-        addressExpandedContent.visibility = if (isAddressExpanded) View.VISIBLE else View.GONE
-
-        if (isAddressExpanded && isInvoiceExpanded) {
-            // Collapse the other option
-            isInvoiceExpanded = false
-            invoiceExpandedContent.visibility = View.GONE
-        }
     }
 
     private fun displayMintInfo() {
@@ -190,18 +126,44 @@ class WithdrawLightningActivity : AppCompatActivity() {
         // Pre-fill lightning address from preferences
         val lastAddress = preferences.getString(KEY_LAST_LIGHTNING_ADDRESS, "")
         if (!lastAddress.isNullOrEmpty()) {
-            addressInput.setText(lastAddress)
+            addressCard.setAddress(lastAddress)
         }
 
-        // Pre-fill amount with balance - 2%
+        // Pre-fill amount with balance - 2% fee buffer
         val suggestedAmount = (balance * (1 - FEE_BUFFER_PERCENT)).toLong()
         if (suggestedAmount > 0) {
-            amountInput.setText(suggestedAmount.toString())
+            addressCard.setSuggestedAmount(suggestedAmount)
         }
     }
 
-    private fun processInvoice() {
-        val invoice = invoiceInput.text.toString().trim()
+    private fun startEntranceAnimations() {
+        // Balance card slide in from top
+        balanceCard.alpha = 0f
+        balanceCard.translationY = -40f
+        balanceCard.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(400)
+            .setInterpolator(AccelerateDecelerateInterpolator())
+            .start()
+
+        // Balance text scale
+        balanceText.scaleX = 0.8f
+        balanceText.scaleY = 0.8f
+        balanceText.animate()
+            .scaleX(1f)
+            .scaleY(1f)
+            .setStartDelay(200)
+            .setDuration(350)
+            .setInterpolator(OvershootInterpolator(2f))
+            .start()
+
+        // Cards stagger entrance
+        invoiceCard.animateEntrance(300)
+        addressCard.animateEntrance(450)
+    }
+
+    private fun processInvoice(invoice: String) {
         if (invoice.isBlank()) {
             Toast.makeText(
                 this,
@@ -211,7 +173,6 @@ class WithdrawLightningActivity : AppCompatActivity() {
             return
         }
 
-        // Show loading
         setLoading(true)
 
         lifecycleScope.launch {
@@ -219,7 +180,11 @@ class WithdrawLightningActivity : AppCompatActivity() {
                 val wallet = CashuWalletManager.getWallet()
                 if (wallet == null) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@WithdrawLightningActivity, "Wallet not initialized", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@WithdrawLightningActivity, 
+                            "Wallet not initialized", 
+                            Toast.LENGTH_SHORT
+                        ).show()
                         setLoading(false)
                     }
                     return@launch
@@ -262,10 +227,7 @@ class WithdrawLightningActivity : AppCompatActivity() {
         }
     }
 
-    private fun processLightningAddress() {
-        val address = addressInput.text.toString().trim()
-        val amountSats = amountInput.text.toString().toLongOrNull()
-
+    private fun processLightningAddress(address: String, amountSats: Long) {
         if (address.isBlank()) {
             Toast.makeText(
                 this,
@@ -275,7 +237,7 @@ class WithdrawLightningActivity : AppCompatActivity() {
             return
         }
 
-        if (amountSats == null || amountSats <= 0) {
+        if (amountSats <= 0) {
             Toast.makeText(
                 this,
                 getString(R.string.withdraw_lightning_error_enter_valid_amount),
@@ -284,7 +246,6 @@ class WithdrawLightningActivity : AppCompatActivity() {
             return
         }
 
-        // Show loading
         setLoading(true)
 
         lifecycleScope.launch {
@@ -292,7 +253,11 @@ class WithdrawLightningActivity : AppCompatActivity() {
                 val wallet = CashuWalletManager.getWallet()
                 if (wallet == null) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@WithdrawLightningActivity, "Wallet not initialized", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@WithdrawLightningActivity, 
+                            "Wallet not initialized", 
+                            Toast.LENGTH_SHORT
+                        ).show()
                         setLoading(false)
                     }
                     return@launch
@@ -339,7 +304,11 @@ class WithdrawLightningActivity : AppCompatActivity() {
         }
     }
 
-    private fun launchMeltQuoteActivity(meltQuote: org.cashudevkit.MeltQuote, invoice: String?, lightningAddress: String?) {
+    private fun launchMeltQuoteActivity(
+        meltQuote: org.cashudevkit.MeltQuote, 
+        invoice: String?, 
+        lightningAddress: String?
+    ) {
         val intent = Intent(this, WithdrawMeltQuoteActivity::class.java)
         intent.putExtra("mint_url", mintUrl)
         intent.putExtra("quote_id", meltQuote.id)
@@ -352,11 +321,19 @@ class WithdrawLightningActivity : AppCompatActivity() {
     }
 
     private fun setLoading(loading: Boolean) {
-        loadingSpinner.visibility = if (loading) View.VISIBLE else View.GONE
-        continueInvoiceButton.isEnabled = !loading
-        continueAddressButton.isEnabled = !loading
-        invoiceInput.isEnabled = !loading
-        addressInput.isEnabled = !loading
-        amountInput.isEnabled = !loading
+        loadingOverlay.visibility = if (loading) View.VISIBLE else View.GONE
+        
+        // Animate loading overlay
+        if (loading) {
+            loadingOverlay.alpha = 0f
+            loadingOverlay.animate()
+                .alpha(1f)
+                .setDuration(200)
+                .start()
+        }
+        
+        // Disable cards during loading
+        invoiceCard.setCardEnabled(!loading)
+        addressCard.setCardEnabled(!loading)
     }
 }

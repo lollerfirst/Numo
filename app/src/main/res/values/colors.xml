@@ -30,6 +30,7 @@
     <color name="color_chip_border">#E1E1E5</color>
 
     <!-- Status & Semantic Colors -->
+    <color name="color_primary">#00C244</color>
     <color name="color_success_green">#00C244</color>
     <color name="color_primary_green_pressed">#00A03A</color>
     <color name="color_warning">#FF9500</color>
