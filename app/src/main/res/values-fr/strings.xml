@@ -555,7 +555,6 @@
     <string name="item_selection_basket_items_count">%1$d articles</string>
     <string name="item_selection_charge_button">Encaisser</string>
     <string name="item_selection_charge_button_default">Encaisser</string>
-    <string name="pos_error_no_mints_configured">Ajoutez au moins un mint dans Réglages → Mints avant d’encaisser des clients.</string>
 
     <string name="item_selection_save_button">Enregistrer</string>
     <string name="item_selection_saved_baskets_button">Enregistrés</string>
@@ -817,4 +816,7 @@ Parfait pour les tables de restaurant ou les commandes clients.</string>
     <!-- Confirmation dialog defaults -->
     <string name="dialog_confirmation_default_title">Confirmer</string>
     <string name="dialog_confirmation_default_message">Êtes‑vous sûr de vouloir continuer ?</string>
+
+    <!-- POS error -->
+    <string name="pos_error_no_mints_configured">Ajoutez au moins un mint dans Réglages → Mints avant d’encaisser des clients.</string>
 </resources>
