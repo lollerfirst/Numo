@@ -3,6 +3,10 @@
 
     <!-- Balance check -->
     <string name="balance_check_toolbar_back">Atrás</string>
+    <string name="mint_selection_item_name_placeholder">Nombre del mint</string>
+    <string name="mint_selection_item_url_placeholder">mint.ejemplo.com</string>
+    <string name="mint_selection_item_balance_placeholder">₿1,234</string>
+
     <string name="balance_check_actionbar_title">Comprobar saldo NFC</string>
     <string name="balance_check_title">Ver saldo</string>
     <string name="balance_check_cta_tap_card">Acerca la tarjeta</string>
