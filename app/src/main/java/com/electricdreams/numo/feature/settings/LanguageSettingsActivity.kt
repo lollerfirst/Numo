@@ -1,6 +1,5 @@
 package com.electricdreams.numo.feature.settings
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
@@ -10,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import com.electricdreams.numo.R
+import com.electricdreams.numo.core.util.LocaleUtils
 
 class LanguageSettingsActivity : AppCompatActivity() {
 
@@ -34,12 +34,8 @@ class LanguageSettingsActivity : AppCompatActivity() {
             appLocales[0]?.language ?: "en"
         } else {
             // Fallback to system default, but map to supported set
-            val sys = if (Build.VERSION.SDK_INT >= 24) {
-                resources.configuration.locales[0]
-            } else {
-                @Suppress("DEPRECATION") resources.configuration.locale
-            }
-            when (sys.language) {
+            val sysLanguage = LocaleUtils.getSystemLanguageCode(this)
+            when (sysLanguage) {
                 "es" -> "es"
                 else -> "en"
             }
