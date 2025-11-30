@@ -18,10 +18,11 @@ import com.electricdreams.numo.core.worker.BitcoinPriceWorker
 import com.electricdreams.numo.feature.history.PaymentsHistoryActivity
 import com.electricdreams.numo.feature.items.ItemSelectionActivity
 import com.electricdreams.numo.feature.settings.SettingsActivity
+import com.electricdreams.numo.payment.NfcPaymentProcessor
 import com.electricdreams.numo.payment.PaymentMethodHandler
 import com.electricdreams.numo.payment.PaymentResultHandler
-import com.electricdreams.numo.payment.NfcPaymentProcessor
 import com.electricdreams.numo.ui.theme.ThemeManager
+import com.electricdreams.numo.ui.util.VibrationHelper
 
 /**
  * Coordinates all UI managers and handles main POS interface logic.
@@ -99,6 +100,7 @@ class PosUiCoordinator(
     fun showAmountRequiredError() {
         errorMessage.visibility = View.VISIBLE
         amountDisplayManager.shakeAmountDisplay()
+        VibrationHelper.performClick(activity)
         
         mainHandler.postDelayed({
             errorMessage.visibility = View.GONE
@@ -139,19 +141,18 @@ class PosUiCoordinator(
             mediaPlayer?.setOnCompletionListener { it.release() }
             mediaPlayer?.start()
         } catch (e: Exception) {
-            android.util.Log.e("PosUiCoordinator", "Error playing success sound: ${e.message}")
+            Log.e("PosUiCoordinator", "Error playing success sound: ${e.message}")
         }
         
-        // Vibrate
+        // Vibrate using shared helper
         try {
-            val vibrator = activity.getSystemService(android.content.Context.VIBRATOR_SERVICE) as android.os.Vibrator?
-            vibrator?.vibrate(PATTERN_SUCCESS, -1)
+            VibrationHelper.performClick(activity, durationMs = 50L)
         } catch (e: Exception) {
-            android.util.Log.e("PosUiCoordinator", "Error vibrating: ${e.message}")
+            Log.e("PosUiCoordinator", "Error vibrating: ${e.message}")
         }
 
         // Show success screen
-        val successIntent = android.content.Intent(activity, com.electricdreams.numo.PaymentReceivedActivity::class.java).apply {
+        val successIntent = Intent(activity, com.electricdreams.numo.PaymentReceivedActivity::class.java).apply {
             putExtra(com.electricdreams.numo.PaymentReceivedActivity.EXTRA_TOKEN, token)
             putExtra(com.electricdreams.numo.PaymentReceivedActivity.EXTRA_AMOUNT, amount)
         }
@@ -165,10 +166,6 @@ class PosUiCoordinator(
 
     /** Get requested amount */
     fun getRequestedAmount(): Long = amountDisplayManager.requestedAmount
-
-    companion object {
-        private val PATTERN_SUCCESS = longArrayOf(0, 50, 100, 50)
-    }
 
     private fun initializeViews() {
         amountDisplay = activity.findViewById(R.id.amount_display)
@@ -236,26 +233,33 @@ class PosUiCoordinator(
         val secondaryAmountContainer = activity.findViewById<View>(R.id.secondary_amount_container)
         secondaryAmountContainer.setOnClickListener { 
             if (amountDisplayManager.toggleInputMode(satoshiInput, fiatInput)) {
+                VibrationHelper.performClick(activity)
                 amountDisplayManager.updateDisplay(satoshiInput, fiatInput, AmountDisplayManager.AnimationType.CURRENCY_SWITCH)
             }
         }
 
         // Navigation buttons
         activity.findViewById<ImageButton>(R.id.action_more_options).setOnClickListener { 
+            VibrationHelper.performClick(activity)
             showOverflowMenu(it) 
         }
         activity.findViewById<ImageButton>(R.id.action_history).setOnClickListener {
+            VibrationHelper.performClick(activity)
             activity.startActivity(Intent(activity, PaymentsHistoryActivity::class.java))
         }
         activity.findViewById<ImageButton>(R.id.action_catalog).setOnClickListener {
+            VibrationHelper.performClick(activity)
             activity.startActivity(Intent(activity, ItemSelectionActivity::class.java))
         }
         activity.findViewById<ImageButton>(R.id.action_settings).setOnClickListener {
+            VibrationHelper.performClick(activity)
             activity.startActivity(Intent(activity, SettingsActivity::class.java))
         }
 
         // Submit button
         submitButton.setOnClickListener {
+            VibrationHelper.performClick(activity)
+
             // Do not allow charging if no mints are configured
             if (!mintManager.hasAnyMints()) {
                 // Optional: show a gentle message guiding user to configure mints

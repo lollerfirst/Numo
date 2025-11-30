@@ -5,12 +5,9 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.VibrationEffect
-import android.os.Vibrator
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
@@ -18,6 +15,8 @@ import android.widget.Button
 import android.widget.GridLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -29,6 +28,7 @@ import com.electricdreams.numo.R
 import com.electricdreams.numo.core.model.Amount
 import com.electricdreams.numo.core.model.Amount.Currency
 import com.electricdreams.numo.core.worker.BitcoinPriceWorker
+import com.electricdreams.numo.ui.util.VibrationHelper
 import kotlin.math.roundToLong
 
 /**
@@ -84,18 +84,17 @@ class TipSelectionActivity : AppCompatActivity() {
 
     private var bitcoinPriceWorker: BitcoinPriceWorker? = null
 
-    // Haptic feedback
-    private var vibrator: Vibrator? = null
+    // Activity Result launcher for PaymentRequest flow
+    private lateinit var paymentLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tip_selection)
 
-        vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator?
-
         setupWindowSettings()
         initializeFromIntent()
         initializeViews()
+        initLaunchers()
         setupPresetButtons()
         setupCustomKeypad()
         setupClickListeners()
@@ -167,6 +166,17 @@ class TipSelectionActivity : AppCompatActivity() {
         amountDisplay.text = formattedAmount
         updateConvertedAmount()
         updateCustomCurrencyDisplay()
+    }
+
+    private fun initLaunchers() {
+        paymentLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            // Pass payment result back to caller and close tip screen
+            setResult(result.resultCode, result.data)
+            finish()
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+        }
     }
 
     private fun updateConvertedAmount() {
@@ -259,6 +269,7 @@ class TipSelectionActivity : AppCompatActivity() {
         button.tag = Pair(percentage, tipSats) // Store data in tag
 
         button.setOnClickListener {
+            vibrateKeypad()
             selectPreset(percentage, tipSats, button)
         }
 
@@ -504,11 +515,13 @@ class TipSelectionActivity : AppCompatActivity() {
 
         // Custom tip button
         customTipButton.setOnClickListener {
+            vibrateKeypad()
             showCustomInputMode()
         }
 
         // No tip button
         noTipButton.setOnClickListener {
+            vibrateKeypad()
             selectedTipSats = 0
             selectedTipPercentage = 0
             proceedToPayment()
@@ -516,6 +529,7 @@ class TipSelectionActivity : AppCompatActivity() {
 
         // Main confirm button
         confirmButton.setOnClickListener {
+            vibrateKeypad()
             if (selectedTipSats > 0 || selectedTipPercentage > 0) {
                 proceedToPayment()
             }
@@ -523,11 +537,13 @@ class TipSelectionActivity : AppCompatActivity() {
 
         // Custom mode back button
         customBackButton.setOnClickListener {
+            vibrateKeypad()
             showTipOptionsMode()
         }
 
         // Custom mode confirm button
         customConfirmButton.setOnClickListener {
+            vibrateKeypad()
             if (selectedTipSats > 0) {
                 proceedToPayment()
             }
@@ -535,6 +551,7 @@ class TipSelectionActivity : AppCompatActivity() {
 
         // Currency toggle in custom mode
         customCurrencyToggle.setOnClickListener {
+            vibrateKeypad()
             toggleCustomCurrency()
         }
     }
@@ -857,21 +874,10 @@ class TipSelectionActivity : AppCompatActivity() {
             }
         }
         
-        startActivityForResult(intent, REQUEST_CODE_PAYMENT)
+        paymentLauncher.launch(intent)
         
         // Smooth transition
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        
-        if (requestCode == REQUEST_CODE_PAYMENT) {
-            // Pass the result back to the caller
-            setResult(resultCode, data)
-            finish()
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-        }
     }
 
     override fun onBackPressed() {
@@ -885,14 +891,7 @@ class TipSelectionActivity : AppCompatActivity() {
     }
 
     private fun vibrateKeypad() {
-        vibrator?.let { v ->
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                v.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
-            } else {
-                @Suppress("DEPRECATION")
-                v.vibrate(VIBRATE_KEYPAD)
-            }
-        }
+        VibrationHelper.performClick(this)
     }
 
     private fun dpToPx(dp: Int): Int {
@@ -907,7 +906,5 @@ class TipSelectionActivity : AppCompatActivity() {
         const val EXTRA_TIP_PERCENTAGE = "tip_percentage"
         const val EXTRA_BASE_AMOUNT_SATS = "base_amount_sats"
         const val EXTRA_BASE_FORMATTED_AMOUNT = "base_formatted_amount"
-        const val REQUEST_CODE_PAYMENT = 1002
-        private const val VIBRATE_KEYPAD = 20L
     }
 }

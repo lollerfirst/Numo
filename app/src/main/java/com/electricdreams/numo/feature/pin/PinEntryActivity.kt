@@ -10,6 +10,9 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.electricdreams.numo.R
 
@@ -41,12 +44,17 @@ class PinEntryActivity : AppCompatActivity() {
     private var cooldownTimer: CountDownTimer? = null
     private var isInputDisabled = false
 
+    // Activity Result launcher for PIN reset flow
+    private lateinit var pinResetLauncher: ActivityResultLauncher<Intent>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pin_entry)
 
         pinManager = PinManager.getInstance(this)
         initViews()
+        initLaunchers()
+        setupBackHandler()
         setupListeners()
         setupCustomization()
         checkLockout()
@@ -67,6 +75,31 @@ class PinEntryActivity : AppCompatActivity() {
 
         intent.getStringExtra(EXTRA_TITLE)?.let { titleView.text = it }
         intent.getStringExtra(EXTRA_SUBTITLE)?.let { subtitleView.text = it }
+    }
+
+    private fun initLaunchers() {
+        pinResetLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // PIN was reset, close this activity with success
+                setResult(RESULT_PIN_VERIFIED)
+                finish()
+            }
+        }
+    }
+
+    private fun setupBackHandler() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val allowBack = intent.getBooleanExtra(EXTRA_ALLOW_BACK, true)
+                if (allowBack) {
+                    setResult(RESULT_CANCELLED)
+                    finish()
+                }
+                // If back is not allowed, we just swallow the back press
+            }
+        })
     }
 
     private fun setupCustomization() {
@@ -234,17 +267,7 @@ class PinEntryActivity : AppCompatActivity() {
 
     private fun openPinReset() {
         val intent = Intent(this, PinResetActivity::class.java)
-        startActivityForResult(intent, REQUEST_PIN_RESET)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_PIN_RESET && resultCode == Activity.RESULT_OK) {
-            // PIN was reset, close this activity with success
-            setResult(RESULT_PIN_VERIFIED)
-            finish()
-        }
+        pinResetLauncher.launch(intent)
     }
 
     override fun onDestroy() {
@@ -253,21 +276,11 @@ class PinEntryActivity : AppCompatActivity() {
         cooldownTimer?.cancel()
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        val allowBack = intent.getBooleanExtra(EXTRA_ALLOW_BACK, true)
-        if (allowBack) {
-            setResult(RESULT_CANCELLED)
-            super.onBackPressed()
-        }
-    }
-
     companion object {
         const val EXTRA_TITLE = "extra_title"
         const val EXTRA_SUBTITLE = "extra_subtitle"
         const val EXTRA_ALLOW_BACK = "extra_allow_back"
         const val RESULT_PIN_VERIFIED = Activity.RESULT_OK
         const val RESULT_CANCELLED = Activity.RESULT_CANCELED
-        private const val REQUEST_PIN_RESET = 1001
     }
 }
