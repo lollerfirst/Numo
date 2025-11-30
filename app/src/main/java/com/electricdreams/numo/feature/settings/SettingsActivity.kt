@@ -4,16 +4,18 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.electricdreams.numo.R
+import com.electricdreams.numo.feature.autowithdraw.AutoWithdrawSettingsActivity
+import com.electricdreams.numo.feature.baskets.BasketNamesSettingsActivity
+import com.electricdreams.numo.feature.enableEdgeToEdgeWithPill
 import com.electricdreams.numo.feature.items.ItemListActivity
 import com.electricdreams.numo.feature.pin.PinEntryActivity
 import com.electricdreams.numo.feature.pin.PinManager
 import com.electricdreams.numo.feature.pin.PinProtectionHelper
-import com.electricdreams.numo.feature.enableEdgeToEdgeWithPill
 import com.electricdreams.numo.feature.tips.TipsSettingsActivity
-import com.electricdreams.numo.feature.baskets.BasketNamesSettingsActivity
-import com.electricdreams.numo.feature.autowithdraw.AutoWithdrawSettingsActivity
 
 /**
  * Main Settings screen.
@@ -29,6 +31,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private lateinit var pinManager: PinManager
     private var pendingDestination: Class<*>? = null
+    private lateinit var pinVerifyLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +42,7 @@ class SettingsActivity : AppCompatActivity() {
 
         pinManager = PinManager.getInstance(this)
 
+        initLaunchers()
         setupViews()
         setupListeners()
     }
@@ -47,6 +51,20 @@ class SettingsActivity : AppCompatActivity() {
         super.onResume()
         // Update developer section visibility when returning from About
         updateDeveloperSectionVisibility()
+    }
+
+    private fun initLaunchers() {
+        pinVerifyLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                PinProtectionHelper.markVerified()
+                pendingDestination?.let { destination ->
+                    startActivity(Intent(this, destination))
+                }
+            }
+            pendingDestination = null
+        }
     }
 
     private fun setupViews() {
@@ -138,27 +156,10 @@ class SettingsActivity : AppCompatActivity() {
                 putExtra(PinEntryActivity.EXTRA_TITLE, getString(R.string.dialog_title_enter_pin))
                 putExtra(PinEntryActivity.EXTRA_SUBTITLE, getString(R.string.settings_verify_pin_subtitle))
             }
-            startActivityForResult(intent, REQUEST_PIN_VERIFY)
+            pinVerifyLauncher.launch(intent)
         } else {
             // No PIN or recently verified
             startActivity(Intent(this, destination))
         }
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        
-        if (requestCode == REQUEST_PIN_VERIFY && resultCode == Activity.RESULT_OK) {
-            PinProtectionHelper.markVerified()
-            pendingDestination?.let { destination ->
-                startActivity(Intent(this, destination))
-            }
-        }
-        pendingDestination = null
-    }
-
-    companion object {
-        private const val REQUEST_PIN_VERIFY = 1001
     }
 }

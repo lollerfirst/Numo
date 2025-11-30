@@ -15,6 +15,8 @@ import android.widget.Button
 import android.widget.GridLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -82,6 +84,9 @@ class TipSelectionActivity : AppCompatActivity() {
 
     private var bitcoinPriceWorker: BitcoinPriceWorker? = null
 
+    // Activity Result launcher for PaymentRequest flow
+    private lateinit var paymentLauncher: ActivityResultLauncher<Intent>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tip_selection)
@@ -89,6 +94,7 @@ class TipSelectionActivity : AppCompatActivity() {
         setupWindowSettings()
         initializeFromIntent()
         initializeViews()
+        initLaunchers()
         setupPresetButtons()
         setupCustomKeypad()
         setupClickListeners()
@@ -160,6 +166,17 @@ class TipSelectionActivity : AppCompatActivity() {
         amountDisplay.text = formattedAmount
         updateConvertedAmount()
         updateCustomCurrencyDisplay()
+    }
+
+    private fun initLaunchers() {
+        paymentLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            // Pass payment result back to caller and close tip screen
+            setResult(result.resultCode, result.data)
+            finish()
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+        }
     }
 
     private fun updateConvertedAmount() {
@@ -857,21 +874,10 @@ class TipSelectionActivity : AppCompatActivity() {
             }
         }
         
-        startActivityForResult(intent, REQUEST_CODE_PAYMENT)
+        paymentLauncher.launch(intent)
         
         // Smooth transition
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        
-        if (requestCode == REQUEST_CODE_PAYMENT) {
-            // Pass the result back to the caller
-            setResult(resultCode, data)
-            finish()
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-        }
     }
 
     override fun onBackPressed() {
@@ -900,6 +906,5 @@ class TipSelectionActivity : AppCompatActivity() {
         const val EXTRA_TIP_PERCENTAGE = "tip_percentage"
         const val EXTRA_BASE_AMOUNT_SATS = "base_amount_sats"
         const val EXTRA_BASE_FORMATTED_AMOUNT = "base_formatted_amount"
-        const val REQUEST_CODE_PAYMENT = 1002
     }
 }
